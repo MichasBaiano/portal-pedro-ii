@@ -1,0 +1,131 @@
+:root {
+  --cor-primaria: #0056b3; 
+  --cor-secundaria: #6c757d; 
+  --cor-destaque: #ffd700;
+  --fundo-pagina: #f8f9fa; 
+  --fundo-card: #ffffff;   
+  --texto-principal: #343a40;
+  --texto-secundario: #495057;
+  --borda-suave: #dee2e6;
+  --fonte-titulo: 'Merriweather', serif;
+  --fonte-corpo: 'Inter', sans-serif;
+}
+
+body {
+  font-family: var(--fonte-corpo);
+  background-color: var(--fundo-pagina);
+  color: var(--texto-principal);
+  margin: 0;
+  padding: 0;
+  line-height: 1.6;
+}
+
+main {
+  padding: 2rem;
+  min-height: calc(100vh - 250px); 
+}
+
+h1, h2, h3 {
+  font-family: var(--fonte-titulo);
+  color: var(--cor-primaria); 
+}
+
+a {
+  color: var(--cor-primaria); 
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+a:hover {
+  text-decoration: underline;
+}
+
+header {
+  background-color: var(--cor-primaria); 
+  color: var(--fundo-card);
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+header h1 {
+  margin: 0;
+  color: var(--fundo-card);
+  font-size: 1.5rem;
+}
+
+nav ul {
+  list-style: none;
+  display: flex;
+  gap: 1.5rem;
+  margin: 0;
+}
+
+nav a {
+  color: var(--fundo-card);
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.2s ease-in-out;
+}
+
+nav a:hover,
+nav a.ativo {
+  color: var(--cor-destaque);
+  text-decoration: none;
+}
+
+.container {
+  background: var(--fundo-card);
+  max-width: 600px;
+  margin: 2rem auto;
+  padding: 2.5rem 3rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 25px rgba(0,0,0,0.07);
+  border: 1px solid #e9ecef;
+}
+
+h2 {
+  text-align: center;
+  margin-top: 0;
+  margin-bottom: 2rem;
+  font-size: 2rem;
+}
+
+.btn {
+  border: none;
+  padding: 0.8rem 1.75rem;
+  border-radius: 50px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 700;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.btn-enviar {
+  background-color: var(--cor-primaria);
+  color: white;
+}
+
+.btn-cancelar {
+  background-color: var(--cor-secundaria);
+  color: white;
+}
+
+.oculto {
+  display: none;
+}
+
+footer {
+  text-align: center;
+  background-color: var(--cor-primaria);
+  color: var(--fundo-pagina);
+  padding: 1.5rem;
+  margin-top: 3rem;
+  font-size: 0.9rem;
+}
