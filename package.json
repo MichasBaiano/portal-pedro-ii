@@ -1,0 +1,16 @@
+{
+  "name": "site-sobre-p2",
+  "version": "1.0.0",
+  "description": "Portal turístico de Pedro II - Projeto MVC com Express.js",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "keywords": [],
+  "author": "Michel Ferreira da Silva Júnior",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}
