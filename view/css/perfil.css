@@ -1,0 +1,72 @@
+form label {
+  display: block;
+  margin-top: 1.25rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--texto-secundario);
+}
+
+form input {
+  width: 100%;
+  padding: 0.8rem 1rem;
+  border-radius: 8px;
+  background-color: var(--fundo-pagina);
+  border: 1px solid var(--borda-suave);
+  margin-top: 0.5rem;
+  font-size: 1rem;
+  font-family: var(--fonte-corpo);
+  color: var(--texto-principal);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+form input:focus {
+  outline: none;
+  border-color: var(--cor-primaria);
+  box-shadow: 0 0 0 3px rgba(59, 93, 42, 0.15);
+}
+
+.botoes {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+#perfilSalvo {
+  margin-top: 2rem;
+  background: #e6f2e1;
+  border-left: 5px solid var(--cor-primaria);
+  padding: 1.5rem;
+  border-radius: 8px;
+}
+
+.foto-container {
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+#previewFoto, #fotoSucesso {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%; 
+  object-fit: cover;
+  border: 4px solid var(--borda-suave);
+  background-color: var(--fundo-pagina);
+}
+
+.erro-mensagem {
+  background-color: #fff0f0; 
+  color: #dc3545; 
+  border: 1px solid #dc3545;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-top: 1.5rem;
+  text-align: center;
+  font-weight: 600;
+}
+
+form input[type="file"] {
+  background-color: transparent;
+  border: none;
+  padding: 0;
+}
