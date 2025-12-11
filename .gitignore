@@ -1,0 +1,12 @@
+# Dependências do Node (nunca envie isso também, é muito pesado)
+node_modules/
+
+# Banco de dados SQLite
+*.sqlite
+*.db
+*.sqlite3
+database.sqlite
+
+# Arquivos de sistema/IDE
+.DS_Store
+.vscode/

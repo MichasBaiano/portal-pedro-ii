@@ -1,6 +1,7 @@
 import express from "express";
 import path from "path";
 import { fileURLToPath } from "url";
+import { inicializarBanco } from "./Config/db.js";
 import { MapaController } from "./controller/mapaController.js";
 import { SugestaoController } from "./controller/sugestaoController.js";
 import { EventosController } from "./controller/eventoController.js";
@@ -50,4 +51,6 @@ app.get("/api/estabelecimentos", EstabelecimentosController.listar);
 app.get("/api/transportes", TransportesController.listar);
 
 const PORT = 3000;
-app.listen(PORT, () => console.log(`Servidor rodando em http://localhost:${PORT}`));
+inicializarBanco().then(() => {
+    app.listen(PORT, () => console.log(`Servidor rodando em http://localhost:${PORT}`));
+});
