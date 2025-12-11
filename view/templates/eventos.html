@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agenda de Eventos - Portal Pedro II</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Merriweather:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/eventos.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <h1>Portal Pedro II</h1>
+            <ul>
+                <li><a href="/">Início</a></li>
+                <li><a href="/mapa">Mapa</a></li>
+                <li><a href="/eventos" class="ativo">Eventos</a></li>
+                <li><a href="/sugestao">Sugerir</a></li>
+                <li><a href="/perfil">Perfil</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <div class="header-eventos">
+            <h2>Agenda Cultural</h2>
+            <p>Fique por dentro do que acontece na cidade.</p>
+            
+            <div class="filtro-container">
+                <label for="filtroCategoria">Filtrar por:</label>
+                <select id="filtroCategoria">
+                    <option value="todos">Todos os eventos</option>
+                    <option value="Música">Música / Shows</option>
+                    <option value="Feira">Feiras e Artesanato</option>
+                    <option value="Religioso">Religioso</option>
+                </select>
+            </div>
+        </div>
+
+        <div id="listaEventos" class="eventos-grid">
+            <p class="carregando">Carregando eventos...</p>
+        </div>
+    </main>
+
+    <footer>
+        <p>© 2025 - Portal Pedro II | Projeto IFPI</p>
+    </footer>
+
+    <script src="../js/eventos.js"></script>
+</body>
+</html>
