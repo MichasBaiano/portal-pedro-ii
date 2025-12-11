@@ -11,44 +11,37 @@ import { TransportesController } from "./controller/transporteController.js";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
 
+// 1. Middleware JSON (Essencial para receber dados do formulário)
 app.use(express.json()); 
 
-app.use(express.static(path.join(__dirname, "view")));
+app.use(express.static(path.join(__dirname, "view"))); // Notei que sua pasta view está minúscula no Windows
 
-app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "./view/templates/index.html"));
+// --- Rotas de Páginas (HTML) ---
+app.get("/", (req, res) => res.sendFile(path.join(__dirname, "./view/templates/index.html")));
+app.get("/perfil", (req, res) => res.sendFile(path.join(__dirname, "./view/templates/perfil.html")));
+app.get("/mapa", (req, res) => res.sendFile(path.join(__dirname, "./view/templates/mapa.html"))); // Verifique se a pasta é 'View' ou 'view'
+app.get("/sugestao", (req, res) => res.sendFile(path.join(__dirname, "./view/templates/sugestao.html")));
+app.get("/eventos", (req, res) => res.sendFile(path.join(__dirname, "./view/templates/eventos.html")));
+app.get("/estabelecimentos", (req, res) => res.sendFile(path.join(__dirname, "./view/templates/estabelecimentos.html")));
+app.get("/transportes", (req, res) => res.sendFile(path.join(__dirname, "./view/templates/transportes.html")));
+
+// --- Área Admin ---
+app.get("/admin/eventos", (req, res) => {
+  res.sendFile(path.join(__dirname, "./view/templates/admin-eventos.html"));
 });
 
-app.get("/perfil", (req, res) => {
-  res.sendFile(path.join(__dirname, "./view/templates/perfil.html"));
-});
-
-app.get("/mapa", (req, res) => {
-  res.sendFile(path.join(__dirname, "./View/templates/mapa.html"));
-});
-
-app.get("/sugestao", (req, res) => {
-  res.sendFile(path.join(__dirname, "./View/templates/sugestao.html"));
-});
-
-app.get("/eventos", (req, res) => {
-  res.sendFile(path.join(__dirname, "./View/templates/eventos.html"));
-});
-
-app.get("/estabelecimentos", (req, res) => {
-  res.sendFile(path.join(__dirname, "./View/templates/estabelecimentos.html"));
-});
-
-app.get("/transportes", (req, res) => {
-  res.sendFile(path.join(__dirname, "./View/templates/transportes.html"));
-});
-
-
+// --- Rotas da API (Dados) ---
 app.get("/api/pontos-mapa", MapaController.getPontosMapa);
 app.post("/api/sugestao", SugestaoController.enviarSugestao);
-app.get("/api/eventos", EventosController.listarEventos);
+
 app.get("/api/estabelecimentos", EstabelecimentosController.listar);
 app.get("/api/transportes", TransportesController.listar);
+
+// --- CRUD DE EVENTOS (Adicionado) ---
+app.get("/api/eventos", EventosController.listarEventos);      // Ler
+app.post("/api/eventos", EventosController.criarEvento);       // Criar (Faltava essa)
+app.put("/api/eventos/:id", EventosController.editarEvento);   // Editar (Faltava essa)
+app.delete("/api/eventos/:id", EventosController.deletarEvento); // Deletar (Faltava essa)
 
 const PORT = 3000;
 inicializarBanco().then(() => {

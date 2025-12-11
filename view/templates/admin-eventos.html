@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Eventos</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/style.css">
+    <style>
+        /* CSS Inline para simplificar, mas idealmente iria para admin.css */
+        .admin-container { display: grid; grid-template-columns: 1fr 2fr; gap: 2rem; padding: 2rem; max-width: 1400px; margin: 0 auto; }
+        .form-card { background: white; padding: 2rem; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); height: fit-content; }
+        table { width: 100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        th, td { padding: 1rem; text-align: left; border-bottom: 1px solid #eee; }
+        th { background-color: var(--cor-primaria); color: white; }
+        .acoes button { padding: 0.4rem 0.8rem; border: none; border-radius: 4px; cursor: pointer; margin-right: 5px; }
+        .btn-editar { background-color: #ffc107; color: #333; }
+        .btn-deletar { background-color: #dc3545; color: white; }
+        .cabecalho-admin { display: flex; justify-content: space-between; align-items: center; padding: 1rem 2rem; background: #333; color: white; }
+        .cabecalho-admin a { color: white; margin-left: 20px; }
+    </style>
+</head>
+<body>
+
+    <div class="cabecalho-admin">
+        <h2>Painel Administrativo - Pedro II</h2>
+        <nav>
+            <a href="/">Ver Site</a>
+            <a href="/admin/eventos" style="text-decoration: underline;">Gerenciar Eventos</a>
+        </nav>
+    </div>
+
+    <main class="admin-container">
+        <div class="form-card">
+            <h3 id="formTitulo">Novo Evento</h3>
+            <form id="formEvento">
+                <input type="hidden" id="eventoId"> <label>Nome do Evento:</label>
+                <input type="text" id="nome" required>
+
+                <label>Data:</label>
+                <input type="date" id="data" required>
+
+                <label>Local:</label>
+                <input type="text" id="local" required>
+
+                <label>Categoria:</label>
+                <select id="categoria">
+                    <option value="Música">Música</option>
+                    <option value="Feira">Feira</option>
+                    <option value="Religioso">Religioso</option>
+                    <option value="Esporte">Esporte</option>
+                </select>
+
+                <label>Link da Imagem:</label>
+                <input type="text" id="imagem" placeholder="https://..." required>
+
+                <label>Descrição:</label>
+                <textarea id="descricao" rows="4"></textarea>
+
+                <button type="submit" class="btn btn-enviar" style="width: 100%; margin-top: 1rem;">Salvar Evento</button>
+                <button type="button" id="btnCancelar" class="btn btn-cancelar oculto" style="width: 100%; margin-top: 0.5rem;">Cancelar Edição</button>
+            </form>
+        </div>
+
+        <div class="lista-card">
+            <h3>Eventos Cadastrados</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Data</th>
+                        <th>Local</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="tabelaCorpo">
+                    </tbody>
+            </table>
+        </div>
+    </main>
+
+    <script>
+        const form = document.getElementById('formEvento');
+        const tabela = document.getElementById('tabelaCorpo');
+        const btnCancelar = document.getElementById('btnCancelar');
+        let editandoId = null;
+
+        // 1. CARREGAR EVENTOS
+        function carregarEventos() {
+            fetch('/api/eventos')
+                .then(res => res.json())
+                .then(eventos => {
+                    tabela.innerHTML = '';
+                    eventos.forEach(ev => {
+                        const dataFormatada = new Date(ev.data).toLocaleDateString('pt-BR');
+                        tabela.innerHTML += `
+                            <tr>
+                                <td>${ev.nome}</td>
+                                <td>${dataFormatada}</td>
+                                <td>${ev.local}</td>
+                                <td class="acoes">
+                                    <button class="btn-editar" onclick='prepararEdicao(${JSON.stringify(ev)})'>✏️</button>
+                                    <button class="btn-deletar" onclick="deletarEvento(${ev.id})">🗑️</button>
+                                </td>
+                            </tr>
+                        `;
+                    });
+                });
+        }
+
+        // 2. SALVAR (CRIAR OU EDITAR)
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const dados = {
+                nome: document.getElementById('nome').value,
+                data: document.getElementById('data').value,
+                local: document.getElementById('local').value,
+                categoria: document.getElementById('categoria').value,
+                imagem: document.getElementById('imagem').value,
+                descricao: document.getElementById('descricao').value
+            };
+
+            const url = editandoId ? `/api/eventos/${editandoId}` : '/api/eventos';
+            const method = editandoId ? 'PUT' : 'POST';
+
+            await fetch(url, {
+                method: method,
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(dados)
+            });
+
+            form.reset();
+            editandoId = null;
+            document.getElementById('formTitulo').textContent = 'Novo Evento';
+            btnCancelar.classList.add('oculto');
+            carregarEventos(); // Recarrega a tabela
+        });
+
+        // 3. DELETAR
+        window.deletarEvento = async (id) => {
+            if(confirm('Tem certeza que deseja excluir este evento?')) {
+                await fetch(`/api/eventos/${id}`, { method: 'DELETE' });
+                carregarEventos();
+            }
+        };
+
+        // 4. PREPARAR EDIÇÃO (Joga os dados da tabela para o form)
+        window.prepararEdicao = (evento) => {
+            document.getElementById('nome').value = evento.nome;
+            document.getElementById('data').value = evento.data; // Formato YYYY-MM-DD funciona direto no input date
+            document.getElementById('local').value = evento.local;
+            document.getElementById('categoria').value = evento.categoria;
+            document.getElementById('imagem').value = evento.imagem;
+            document.getElementById('descricao').value = evento.descricao;
+            
+            editandoId = evento.id;
+            document.getElementById('formTitulo').textContent = 'Editando: ' + evento.nome;
+            btnCancelar.classList.remove('oculto');
+        };
+
+        btnCancelar.addEventListener('click', () => {
+            form.reset();
+            editandoId = null;
+            document.getElementById('formTitulo').textContent = 'Novo Evento';
+            btnCancelar.classList.add('oculto');
+        });
+
+        // Iniciar carregando
+        carregarEventos();
+    </script>
+</body>
+</html>
