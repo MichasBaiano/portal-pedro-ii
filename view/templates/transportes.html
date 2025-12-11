@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transportes - Portal Pedro II</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Merriweather:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/transportes.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <h1>Portal Pedro II</h1>
+            <ul>
+                <li><a href="/">Início</a></li>
+                <li><a href="/mapa">Mapa</a></li>
+                <li><a href="/transportes" class="ativo">Transportes</a></li>
+                <li><a href="/estabelecimentos">Serviços</a></li>
+                <li><a href="/perfil">Perfil</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <div class="header-transportes">
+            <h2>Como ir e vir</h2>
+            <p>Horários de ônibus, vans e contatos de mototáxis.</p>
+            
+            <div class="icones-legenda">
+                <span class="badge-legenda" onclick="filtrar('todos')">Todos</span>
+                <span class="badge-legenda" onclick="filtrar('onibus')">🚌 Ônibus</span>
+                <span class="badge-legenda" onclick="filtrar('van')">🚐 Vans</span>
+                <span class="badge-legenda" onclick="filtrar('mototaxi')">🏍️ Mototáxi</span>
+            </div>
+        </div>
+
+        <div id="gridTransportes" class="transportes-grid">
+            </div>
+    </main>
+
+    <footer>
+        <p>© 2025 - Portal Pedro II | Projeto IFPI</p>
+    </footer>
+
+    <script src="../js/transportes.js"></script>
+</body>
+</html>

@@ -1,0 +1,98 @@
+.header-transportes {
+    text-align: center;
+    margin-bottom: 2.5rem;
+}
+
+.icones-legenda {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.badge-legenda {
+    background: white;
+    border: 1px solid var(--borda-suave);
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background 0.2s;
+}
+
+.badge-legenda:hover {
+    background: var(--fundo-pagina);
+    border-color: var(--cor-primaria);
+}
+
+.transportes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.card-transporte {
+    background: white;
+    border-left: 5px solid var(--cor-primaria);
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.icone-grande {
+    font-size: 2.5rem;
+    background: var(--fundo-pagina);
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+.info-transporte {
+    flex-grow: 1;
+}
+
+.info-transporte h3 {
+    margin: 0;
+    color: var(--cor-primaria);
+    font-size: 1.1rem;
+}
+
+.rota {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--texto-principal);
+    margin: 0.3rem 0;
+}
+
+.horarios {
+    font-size: 0.85rem;
+    color: var(--texto-secundario);
+    margin-bottom: 0.8rem;
+}
+
+.btn-ligar {
+    display: inline-block;
+    background-color: #28a745; /* Verde telefone */
+    color: white;
+    padding: 0.4rem 0.8rem;
+    border-radius: 4px;
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: background 0.2s;
+}
+
+.btn-ligar:hover {
+    background-color: #218838;
+    text-decoration: none;
+    color: white;
+}
