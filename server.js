@@ -25,11 +25,6 @@ app.get("/eventos", (req, res) => res.sendFile(path.join(__dirname, "./view/temp
 app.get("/estabelecimentos", (req, res) => res.sendFile(path.join(__dirname, "./view/templates/estabelecimentos.html")));
 app.get("/transportes", (req, res) => res.sendFile(path.join(__dirname, "./view/templates/transportes.html")));
 
-// --- Área Admin ---
-app.get("/admin/eventos", (req, res) => {
-  res.sendFile(path.join(__dirname, "./view/templates/admin-eventos.html"));
-});
-
 // --- Rotas da API (Dados) ---
 app.get("/api/pontos-mapa", MapaController.getPontosMapa);
 app.post("/api/sugestao", SugestaoController.enviarSugestao);
@@ -49,8 +44,23 @@ app.post("/api/estabelecimentos", EstabelecimentosController.criar);
 app.put("/api/estabelecimentos/:id", EstabelecimentosController.editar);
 app.delete("/api/estabelecimentos/:id", EstabelecimentosController.deletar);
 
+// --- CRUD TRANSPORTES ---
+app.get("/api/transportes", TransportesController.listar);
+app.post("/api/transportes", TransportesController.criar);
+app.put("/api/transportes/:id", TransportesController.editar);
+app.delete("/api/transportes/:id", TransportesController.deletar);
+
+// --- NOVAS ROTAS DE ADMIN (HTML) ---
+app.get("/admin/eventos", (req, res) => {
+  res.sendFile(path.join(__dirname, "./view/templates/admin-eventos.html"));
+});
+
 app.get("/admin/estabelecimentos", (req, res) => {
   res.sendFile(path.join(__dirname, "./view/templates/admin-estabelecimentos.html"));
+});
+
+app.get("/admin/transportes", (req, res) => {
+  res.sendFile(path.join(__dirname, "./view/templates/admin-transportes.html"));
 });
 
 const PORT = 3000;
