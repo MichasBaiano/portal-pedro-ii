@@ -43,6 +43,16 @@ app.post("/api/eventos", EventosController.criarEvento);       // Criar (Faltava
 app.put("/api/eventos/:id", EventosController.editarEvento);   // Editar (Faltava essa)
 app.delete("/api/eventos/:id", EventosController.deletarEvento); // Deletar (Faltava essa)
 
+// --- CRUD ESTABELECIMENTOS ---
+app.get("/api/estabelecimentos", EstabelecimentosController.listar);
+app.post("/api/estabelecimentos", EstabelecimentosController.criar);
+app.put("/api/estabelecimentos/:id", EstabelecimentosController.editar);
+app.delete("/api/estabelecimentos/:id", EstabelecimentosController.deletar);
+
+app.get("/admin/estabelecimentos", (req, res) => {
+  res.sendFile(path.join(__dirname, "./view/templates/admin-estabelecimentos.html"));
+});
+
 const PORT = 3000;
 inicializarBanco().then(() => {
     app.listen(PORT, () => console.log(`Servidor rodando em http://localhost:${PORT}`));

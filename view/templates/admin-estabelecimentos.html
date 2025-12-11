@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Estabelecimentos</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/style.css">
+    <style>
+        .admin-container { display: grid; grid-template-columns: 1fr 2fr; gap: 2rem; padding: 2rem; max-width: 1400px; margin: 0 auto; }
+        .form-card { background: white; padding: 2rem; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); height: fit-content; }
+        table { width: 100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden; }
+        th, td { padding: 1rem; text-align: left; border-bottom: 1px solid #eee; }
+        th { background-color: var(--cor-primaria); color: white; }
+        .btn-editar { background-color: #ffc107; border:none; padding: 5px 10px; cursor: pointer; border-radius: 4px; }
+        .btn-deletar { background-color: #dc3545; color: white; border:none; padding: 5px 10px; cursor: pointer; border-radius: 4px; }
+        .cabecalho-admin { display: flex; justify-content: space-between; align-items: center; padding: 1rem 2rem; background: #333; color: white; }
+        .cabecalho-admin a { color: #ccc; margin-left: 20px; text-decoration: none; }
+        .cabecalho-admin a:hover, .cabecalho-admin a.ativo { color: white; text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <div class="cabecalho-admin">
+        <h2>Painel Admin</h2>
+        <nav>
+            <a href="/admin/eventos">Eventos</a>
+            <a href="/admin/estabelecimentos" class="ativo">Estabelecimentos</a>
+            <a href="/admin/transportes">Transportes</a>
+            <a href="/">Sair</a>
+        </nav>
+    </div>
+
+    <main class="admin-container">
+        <div class="form-card">
+            <h3 id="formTitulo">Novo Local</h3>
+            <form id="formLocal">
+                <input type="hidden" id="localId">
+                
+                <label>Nome:</label>
+                <input type="text" id="nome" required>
+
+                <label>Categoria:</label>
+                <select id="categoria">
+                    <option value="gastronomia">Gastronomia</option>
+                    <option value="hospedagem">Hospedagem</option>
+                    <option value="comercio">Comércio</option>
+                </select>
+
+                <label>Endereço:</label>
+                <input type="text" id="endereco" required>
+
+                <label>Telefone:</label>
+                <input type="text" id="telefone" required>
+
+                <label>Link da Imagem:</label>
+                <input type="text" id="imagem" placeholder="https://..." required>
+                
+                <label>
+                    <input type="checkbox" id="destaque"> Destaque (Recomendado)
+                </label>
+
+                <label>Descrição:</label>
+                <textarea id="descricao" rows="3"></textarea>
+
+                <button type="submit" class="btn btn-enviar" style="width: 100%; margin-top: 1rem;">Salvar</button>
+                <button type="button" id="btnCancelar" class="btn btn-cancelar oculto" style="width: 100%; margin-top: 0.5rem;">Cancelar</button>
+            </form>
+        </div>
+
+        <div class="lista-card">
+            <h3>Locais Cadastrados</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Categoria</th>
+                        <th>Telefone</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="tabelaCorpo"></tbody>
+            </table>
+        </div>
+    </main>
+
+    <script>
+        const form = document.getElementById('formLocal');
+        const tabela = document.getElementById('tabelaCorpo');
+        const btnCancelar = document.getElementById('btnCancelar');
+        let editandoId = null;
+
+        function carregar() {
+            fetch('/api/estabelecimentos')
+                .then(res => res.json())
+                .then(locais => {
+                    tabela.innerHTML = '';
+                    locais.forEach(l => {
+                        tabela.innerHTML += `
+                            <tr>
+                                <td>${l.destaque ? '⭐ ' : ''}${l.nome}</td>
+                                <td>${l.categoria}</td>
+                                <td>${l.telefone}</td>
+                                <td>
+                                    <button class="btn-editar" onclick='prepararEdicao(${JSON.stringify(l)})'>✏️</button>
+                                    <button class="btn-deletar" onclick="deletar(${l.id})">🗑️</button>
+                                </td>
+                            </tr>`;
+                    });
+                });
+        }
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const dados = {
+                nome: document.getElementById('nome').value,
+                categoria: document.getElementById('categoria').value,
+                endereco: document.getElementById('endereco').value,
+                telefone: document.getElementById('telefone').value,
+                imagem: document.getElementById('imagem').value,
+                descricao: document.getElementById('descricao').value,
+                destaque: document.getElementById('destaque').checked
+            };
+
+            const url = editandoId ? `/api/estabelecimentos/${editandoId}` : '/api/estabelecimentos';
+            const method = editandoId ? 'PUT' : 'POST';
+
+            await fetch(url, { method, headers: {'Content-Type': 'application/json'}, body: JSON.stringify(dados) });
+            
+            form.reset();
+            editandoId = null;
+            document.getElementById('formTitulo').textContent = 'Novo Local';
+            btnCancelar.classList.add('oculto');
+            carregar();
+        });
+
+        window.deletar = async (id) => {
+            if(confirm('Excluir este local?')) {
+                await fetch(`/api/estabelecimentos/${id}`, { method: 'DELETE' });
+                carregar();
+            }
+        };
+
+        window.prepararEdicao = (l) => {
+            document.getElementById('nome').value = l.nome;
+            document.getElementById('categoria').value = l.categoria;
+            document.getElementById('endereco').value = l.endereco;
+            document.getElementById('telefone').value = l.telefone;
+            document.getElementById('imagem').value = l.imagem;
+            document.getElementById('descricao').value = l.descricao;
+            document.getElementById('destaque').checked = !!l.destaque;
+            
+            editandoId = l.id;
+            document.getElementById('formTitulo').textContent = 'Editando: ' + l.nome;
+            btnCancelar.classList.remove('oculto');
+        };
+
+        btnCancelar.addEventListener('click', () => {
+            form.reset();
+            editandoId = null;
+            document.getElementById('formTitulo').textContent = 'Novo Local';
+            btnCancelar.classList.add('oculto');
+        });
+
+        carregar();
+    </script>
+</body>
+</html>
