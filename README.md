@@ -1,56 +1,77 @@
 # 🏛️ Portal Turístico de Pedro II (MVP)
 
-**Status:** Funcionalidade básica (Perfil e Home) concluída. Design moderno implementado.
+> **Status:** MVP Completo (Frontend + Backend + Banco de Dados + Painel Admin).
 
-Este projeto é um *Produto Mínimo Viável* (MVP) de um portal turístico desenvolvido para demonstrar arquitetura MVC (Model-View-Controller) e persistência de dados no lado do cliente (Client-Side Storage).
+Bem-vindo ao repositório do **Portal de Pedro II**, uma solução digital desenvolvida para fomentar o turismo na "Suíça Piauiense". Este projeto demonstra uma arquitetura de software robusta, saindo de páginas estáticas para uma aplicação web dinâmica.
 
-## 🚀 Tecnologias
+## 🚀 Tecnologias e Arquitetura
 
-O projeto é construído sobre uma pilha moderna de desenvolvimento web:
+O projeto foi construído utilizando tecnologias modernas e padrões de mercado:
 
-* **Backend (Servidor):** Node.js com **Express.js** para roteamento e para servir arquivos estáticos.
-* **Frontend:** HTML5, CSS3, e JavaScript ES Modules.
-* **Design:** CSS modular (`style.css` global) com paleta Azul e Amarelo moderna.
-* **Persistência de Dados:** Uso de **`localStorage`** para salvar dados do perfil e foto (Base64), garantindo funcionalidade offline sem a necessidade de um banco de dados de servidor.
+* **Backend:** Node.js com **Express.js**.
+* **Banco de Dados:** **SQLite** (Relacional), garantindo persistência de dados sem necessidade de configuração complexa de servidores externos.
+* **Frontend:** HTML5, CSS3, JavaScript (ES6+) e **Leaflet.js** (Mapas interativos).
+* **Arquitetura:** **MVC (Model-View-Controller)** com separação clara de responsabilidades.
+* **API:** RESTful API interna servindo dados em JSON para o frontend.
 
-## 🎯 Arquitetura do Projeto
+## 📂 Estrutura do Projeto
 
-O projeto segue a arquitetura **MVC (Model-View-Controller)** para garantir organização e escalabilidade, mesmo em um projeto pequeno.
+A organização das pastas reflete a arquitetura MVC implementada:
 
-| Pasta | Camada | Função Atual |
+| Pasta | Função | Descrição |
 | :--- | :--- | :--- |
-| `server.js` | **Controlador (Roteamento)** | Inicia o servidor Express.js e define as rotas (`/`, `/perfil`). |
-| `view/` | **View (Interface do Usuário)** | Contém todos os arquivos visuais (HTML, CSS e JS do Frontend). |
-| `model/` | **Model (Dados)** | **(Vazio)** Destinado a lógica de banco de dados e regras de negócio. |
-| `controller/` | **Controller (Lógica)** | **(Vazio)** Destinado a manipular requisições entre a View e o Model. |
+| `Config/` | **Database** | Configuração e conexão com o SQLite (`db.js`). Inclui sistema de "Seed" automático. |
+| `controller/` | **Lógica** | Gerencia as requisições, valida dados e conecta o Model à View. |
+| `model/` | **Dados** | Executa as queries SQL (CRUD) no banco de dados. |
+| `routes/` | **Roteamento** | Separação organizada entre rotas do site (`siteRoutes.js`) e da API (`apiRoutes.js`). |
+| `view/` | **Interface** | Arquivos HTML, CSS e JS do cliente (Front-end desacoplado). |
+| `server.js` | **Servidor** | Ponto de entrada da aplicação. |
 
-## ✨ Funcionalidades Entregues (Sprint 01)
+## ✨ Funcionalidades
 
-As seguintes funcionalidades estão completas e funcionando:
+### 🌍 Área Pública (Turista)
+1.  **Home Page:** Dashboard visual com acesso rápido a todas as seções.
+2.  **Mapa Interativo:** Mapa dinâmico (Leaflet) com pinos marcando pontos turísticos reais.
+3.  **Guia de Eventos:** Agenda cultural com listagem de festivais e filtros por categoria.
+4.  **Serviços (Onde Ficar/Comer):** Catálogo de pousadas e restaurantes com sistema de "Destaque".
+5.  **Transportes:** Informações utilitárias de ônibus, vans e mototáxis com botões de "Ligar agora".
+6.  **Sugestões:** Formulário para moradores enviarem dicas, salvas diretamente no banco de dados.
+7.  **Perfil do Usuário:** Funcionalidade *Client-Side* que salva preferências e foto no navegador (`localStorage`).
 
-1.  **Estrutura do Servidor:** Servidor Node/Express rodando na porta 3000.
-2.  **Página Inicial (`/`):**
-    * Exibe mensagem de boas-vindas condicional.
-    * Altera o link de navegação para "Criar Perfil" ou "Ver Perfil" com base no status do usuário.
-3.  **Criação/Edição de Perfil (`/perfil`):**
-    * **Modo Criar/Editar:** O formulário preenche automaticamente os dados salvos (`localStorage`) para edição.
-    * **Persistência de Dados:** Salva Nome, E-mail e Cidade no `localStorage`.
-    * **Foto de Perfil:** Implementação avançada de upload e salvamento da foto como **Base64** no `localStorage`.
-    * **Validação UX:** Valida campos obrigatórios e formato de e-mail antes de salvar, dando feedback visual de erro.
-4.  **Licenciamento:** O projeto está sob a Licença **MIT**, permitindo uso e modificação livres.
+### 🔒 Área Administrativa (Gestão)
+O sistema conta com um **Painel de Controle (CRUD Completo)** onde o administrador pode gerenciar o conteúdo do site sem mexer no código:
 
-## 🛠️ Como Rodar o Projeto
+* **Gerenciar Eventos:** Adicionar, editar e excluir eventos da agenda.
+* **Gerenciar Estabelecimentos:** Cadastrar novos comércios e definir destaques.
+* **Gerenciar Transportes:** Atualizar horários e contatos.
 
-1.  **Clonar o Repositório:**
+> **Acesso ao Admin:** Navegue até o rodapé do site e clique em "Área Admin" ou acesse `/admin/eventos`.
+
+## 🎨 Identidade Visual
+
+O projeto respeita as cores da bandeira e a identidade cultural do município:
+* 🔵 **Azul:** Representando o céu e as águas.
+* 🟡 **Amarelo/Dourado:** Representando as riquezas e a Opala.
+* ⚪ **Interface Limpa:** Design focado na usabilidade e leitura.
+
+## 🛠️ Como Rodar o Projeto Localmente
+
+1.  **Pré-requisitos:** Tenha o [Node.js](https://nodejs.org/) instalado.
+2.  **Clonar o repositório:**
     ```bash
-    git clone [Link do seu repositório no GitHub]
+    git clone [URL_DO_SEU_REPO]
     ```
-2.  **Instalar Dependências:**
+3.  **Instalar dependências:**
     ```bash
     npm install
     ```
-3.  **Iniciar o Servidor:**
+4.  **Rodar o servidor:**
     ```bash
-    npm start
+    node server.js
     ```
-    *O servidor estará acessível em `http://localhost:3000`.*
+    *(Nota: O banco de dados `database.sqlite` será criado e populado automaticamente na primeira execução).*
+5.  **Acessar:** Abra `http://localhost:3000` no seu navegador.
+
+---
+Desenvolvido como projeto acadêmico/MVP para o programa Centelha/IFPI.
+Licença MIT.
