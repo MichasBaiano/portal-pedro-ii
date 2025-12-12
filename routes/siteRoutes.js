@@ -1,6 +1,9 @@
 import express from "express";
 import path from "path";
 import { fileURLToPath } from "url";
+// 1. Importe o Middleware e o Controller de Auth
+import { verificarAutenticacao } from "../Middleware/authMiddleware.js";
+import { AuthController } from "../controller/authController.js";
 
 const router = express.Router();
 
@@ -19,11 +22,14 @@ router.get("/sugestao", (req, res) => res.sendFile(path.join(viewPath, "sugestao
 router.get("/eventos", (req, res) => res.sendFile(path.join(viewPath, "eventos.html")));
 router.get("/estabelecimentos", (req, res) => res.sendFile(path.join(viewPath, "estabelecimentos.html")));
 router.get("/transportes", (req, res) => res.sendFile(path.join(viewPath, "transportes.html")));
+
+// Rotas de Login e Logout
 router.get("/login", (req, res) => res.sendFile(path.join(viewPath, "login.html")));
+router.get("/logout", AuthController.logout); // Rota para sair
 
 // --- Rotas Admin ---
-router.get("/admin/eventos", (req, res) => res.sendFile(path.join(viewPath, "admin-eventos.html")));
-router.get("/admin/estabelecimentos", (req, res) => res.sendFile(path.join(viewPath, "admin-estabelecimentos.html")));
-router.get("/admin/transportes", (req, res) => res.sendFile(path.join(viewPath, "admin-transportes.html")));
+router.get("/admin/eventos", verificarAutenticacao, (req, res) => res.sendFile(path.join(viewPath, "admin-eventos.html")));
+router.get("/admin/estabelecimentos", verificarAutenticacao, (req, res) => res.sendFile(path.join(viewPath, "admin-estabelecimentos.html")));
+router.get("/admin/transportes", verificarAutenticacao, (req, res) => res.sendFile(path.join(viewPath, "admin-transportes.html")));
 
 export default router;
