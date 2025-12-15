@@ -12,9 +12,13 @@ import { BannersController } from "../controller/bannersController.js";
 
 const router = express.Router();
 
-// --- Mapa e Sugestões ---
+// --- Mapa ---
 router.get("/pontos-mapa", MapaController.getPontosMapa);
-router.post("/sugestao", SugestaoController.enviarSugestao);
+
+// --- SUGESTÕES ---
+router.post("/sugestao", SugestaoController.enviarSugestao); // Já existia (Público)
+router.get("/sugestoes", SugestaoController.listar);         // Novo (Admin)
+router.delete("/sugestoes/:id", SugestaoController.deletar); // Novo (Admin)
 
 // --- CRUD Eventos ---
 router.get("/eventos", EventosController.listarEventos);

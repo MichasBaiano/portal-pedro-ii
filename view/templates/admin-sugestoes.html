@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Sugestões</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/admin.css">
+    <style>
+        /* Estilo específico para mensagens */
+        .card-mensagem {
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            border-radius: 8px;
+            border-left: 4px solid var(--cor-primaria);
+        }
+        .meta-info { font-size: 0.85rem; color: #666; margin-bottom: 0.5rem; }
+        .texto-msg { font-size: 1rem; color: #333; white-space: pre-wrap; }
+        .tipo-badge {
+            background: #eee; padding: 2px 8px; border-radius: 4px; 
+            font-size: 0.75rem; text-transform: uppercase; font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="cabecalho-admin">
+        <h2>Caixa de Sugestões</h2>
+        <nav>
+            <a href="/admin/eventos">Eventos</a>
+            <a href="/admin/estabelecimentos">Locais</a>
+            <a href="/admin/sugestoes" class="ativo">Sugestões</a>
+            <a href="/logout" style="margin-left: 20px; color: #ff9999;">Sair</a>
+        </nav>
+    </div>
+
+    <main class="admin-container" style="grid-template-columns: 1fr;"> <div class="lista-card">
+            <h3 style="padding: 1rem; border-bottom: 1px solid #eee; margin: 0;">Mensagens Recebidas</h3>
+            <div id="listaSugestoes" style="padding: 1.5rem; background: #f8fafc;">
+                </div>
+        </div>
+    </main>
+
+    <script>
+        function carregar() {
+            fetch('/api/sugestoes')
+                .then(res => res.json())
+                .then(lista => {
+                    const container = document.getElementById('listaSugestoes');
+                    container.innerHTML = '';
+                    
+                    if(lista.length === 0) {
+                        container.innerHTML = '<p>Nenhuma sugestão pendente.</p>';
+                        return;
+                    }
+
+                    lista.forEach(s => {
+                        container.innerHTML += `
+                            <div class="card-mensagem">
+                                <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                                    <div class="meta-info">
+                                        <span class="tipo-badge">${s.tipo}</span> • 
+                                        <strong>${s.nome}</strong> (${s.email || 'Sem e-mail'})
+                                    </div>
+                                    <button class="btn-deletar" onclick="deletar(${s.id})">Arquivar/Excluir</button>
+                                </div>
+                                <p class="texto-msg">"${s.mensagem}"</p>
+                            </div>
+                        `;
+                    });
+                });
+        }
+
+        window.deletar = async (id) => {
+            if(confirm('Marcar como lido e excluir?')) {
+                await fetch(`/api/sugestoes/${id}`, { method: 'DELETE' });
+                carregar();
+            }
+        };
+
+        carregar();
+    </script>
+</body>
+</html>
