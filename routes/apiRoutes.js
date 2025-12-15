@@ -9,6 +9,7 @@ import { EstabelecimentosController } from "../controller/estabelecimentoControl
 import { TransportesController } from "../controller/transporteController.js";
 import { AuthController } from "../controller/authController.js";
 import { BannersController } from "../controller/bannersController.js";
+import { DashboardController } from "../controller/dashboardController.js";
 
 const router = express.Router();
 
@@ -47,5 +48,8 @@ router.post("/login", AuthController.login);
 router.get("/banners", BannersController.listar);
 router.post("/banners", upload.single('imagem'), BannersController.criar);
 router.delete("/banners/:id", BannersController.deletar);
+
+// --- DASHBOARD ---
+router.get("/dashboard/stats", DashboardController.getStats);
 
 export default router;

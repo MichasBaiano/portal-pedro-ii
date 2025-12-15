@@ -69,7 +69,7 @@
             if (dados.sucesso) {
                 // Se o login funcionar, salva um "token" fake e redireciona
                 sessionStorage.setItem('usuarioLogado', 'true'); 
-                window.location.href = '/admin/eventos';
+                window.location.href = '/admin';            
             } else {
                 msgErro.style.display = 'block';
                 msgErro.textContent = dados.erro;

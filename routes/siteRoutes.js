@@ -36,4 +36,8 @@ router.get("/admin/sugestoes", verificarAutenticacao, (req, res) => res.sendFile
 
 // rotas banners
 router.get("/admin/banners", verificarAutenticacao, (req, res) => res.sendFile(path.join(viewPath, "admin-banners.html")));
+
+// Rota da Tela Inicial do Admin
+router.get("/admin", verificarAutenticacao, (req, res) => res.sendFile(path.join(viewPath, "admin-dashboard.html")));
+
 export default router;
