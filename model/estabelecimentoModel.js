@@ -36,4 +36,10 @@ export class EstabelecimentosModel {
         const db = await openDb();
         return db.get('SELECT * FROM estabelecimentos WHERE id = ?', [id]);
     }
+
+    // Pesquisa por nome ou descrição
+    static async search(termo) {
+        const db = await openDb();
+        return db.all('SELECT * FROM estabelecimentos WHERE nome LIKE ? OR descricao LIKE ?', [`%${termo}%`, `%${termo}%`]);
+    }
 }

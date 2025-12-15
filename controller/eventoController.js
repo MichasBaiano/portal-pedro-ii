@@ -4,8 +4,15 @@ export class EventosController {
     // GET: Listar todos
     static async listarEventos(req, res) {
         try {
-            const eventos = await EventosModel.getAll();
-            res.json(eventos);
+            const busca = req.query.q; // Pega o ?q= da URL
+            
+            if (busca) {
+                const resultados = await EventosModel.search(busca);
+                res.json(resultados);
+            } else {
+                const eventos = await EventosModel.getAll();
+                res.json(eventos);
+            }
         } catch (erro) {
             console.error(erro);
             res.status(500).json({ erro: "Erro ao buscar eventos." });

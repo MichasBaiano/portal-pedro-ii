@@ -30,6 +30,11 @@
             <h2>Guia da Cidade</h2>
             <p>Encontre os melhores lugares para comer, ficar e comprar.</p>
             
+            <div style="margin: 1rem 0;">
+                <input type="text" id="buscaLocais" placeholder="🔎 Buscar restaurante, hotel..." 
+                       style="padding: 10px; width: 100%; max-width: 400px; border: 1px solid #ccc; border-radius: 20px;">
+            </div>
+
             <div class="filtros-botoes">
                 <button class="btn-filtro ativo" data-cat="todos">Todos</button>
                 <button class="btn-filtro" data-cat="gastronomia">🍽️ Onde Comer</button>
@@ -38,12 +43,15 @@
             </div>
         </div>
 
-        <div id="gridEstabelecimentos" class="servicos-grid">
-            </div>
+        <div id="gridEstabelecimentos" class="servicos-grid"></div>
+        
     </main>
 
     <footer>
         <p>© 2025 - Portal Pedro II | Projeto IFPI</p>
+        <p style="font-size: 0.8rem; margin-top: 10px;">
+            <a href="/admin/estabelecimentos">🔒 Área Admin</a>
+        </p>
     </footer>
 
     <script src="../js/estabelecimentos.js"></script>

@@ -38,4 +38,11 @@ export class EventosModel {
         const db = await openDb();
         return db.get('SELECT * FROM eventos WHERE id = ?', [id]);
     }
+
+    // Pesquisa por nome ou descrição
+    static async search(termo) {
+        const db = await openDb();
+        // O símbolo % significa "qualquer coisa antes ou depois"
+        return db.all('SELECT * FROM eventos WHERE nome LIKE ? OR descricao LIKE ?', [`%${termo}%`, `%${termo}%`]);
+    }
 }
