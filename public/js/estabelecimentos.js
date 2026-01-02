@@ -1,8 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     const container = document.getElementById('gridEstabelecimentos');
     const inputBusca = document.getElementById('buscaLocais');
-    // Para simplificar, o filtro de botões (gastronomia/hotel) pode ser feito via CSS ou JS Client-Side, 
-    // mas aqui vamos focar na busca por texto via Backend.
 
     function carregarLocais(termo = '') {
         const url = termo ? `/api/estabelecimentos?q=${termo}` : '/api/estabelecimentos';
@@ -18,14 +16,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 locais.forEach(l => {
                     const cardHTML = `
-                        <div class="card-local" style="background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
-                            <div class="card-img" style="background-image: url('${l.imagem || 'https://via.placeholder.com/400'}'); height: 200px; background-size: cover; background-position: center;"></div>
-                            <div class="card-conteudo" style="padding: 1.5rem; display: flex; flex-direction: column; gap: 0.5rem;">
-                                ${l.destaque ? '<span style="color: goldenrod; font-weight: bold;">⭐ Destaque</span>' : ''}
-                                <h3 style="margin: 0;">${l.nome}</h3>
-                                <span style="background: #eee; padding: 2px 8px; border-radius: 4px; font-size: 0.8rem; width: fit-content;">${l.categoria}</span>
+                        <div class="card-local">
+                            <div class="card-img" style="background-image: url('${l.imagem || '/img/placeholder.jpg'}');"></div>
+                            <div class="card-conteudo">
+                                ${l.destaque ? '<span class="badge-destaque">⭐ Destaque</span>' : ''}
+                                <h3>${l.nome}</h3>
+                                <span class="badge-categoria">${l.categoria}</span>
                                 <p>📞 ${l.telefone}</p>
-                                <a href="/detalhe?tipo=estabelecimento&id=${l.id}" class="btn" style="background-color: var(--cor-primaria); color: white; text-align: center; text-decoration: none; margin-top: 10px; display: block; padding: 10px; border-radius: 5px;">
+                                <a href="/detalhe?tipo=estabelecimento&id=${l.id}" class="btn btn-primary">
                                     Saiba Mais
                                 </a>
                             </div>
@@ -35,9 +33,29 @@ document.addEventListener('DOMContentLoaded', () => {
             });
     }
 
-    inputBusca.addEventListener('input', (e) => {
-        carregarLocais(e.target.value);
-    });
+    // Filtragem visual simples (Client Side)
+    window.filtrar = function(categoria, btn) {
+        // Atualiza botões
+        document.querySelectorAll('.btn-filtro').forEach(b => b.classList.remove('ativo'));
+        btn.classList.add('ativo');
+
+        // Recarrega todos e filtra visualmente (ou chama API se preferir)
+        const cards = document.querySelectorAll('.card-local');
+        cards.forEach(card => {
+            const catCard = card.querySelector('.badge-categoria').innerText.toLowerCase();
+            if(categoria === 'todos' || catCard.includes(categoria)) {
+                card.style.display = 'flex';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+    };
+
+    if(inputBusca) {
+        inputBusca.addEventListener('input', (e) => {
+            carregarLocais(e.target.value);
+        });
+    }
 
     carregarLocais();
 });
