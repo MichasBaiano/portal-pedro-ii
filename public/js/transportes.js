@@ -20,24 +20,24 @@ function renderizar(lista) {
         return;
     }
 
-    lista.forEach(item => {
-        const card = document.createElement('div');
-        card.className = 'card-transporte'; // O CSS controla o visual agora
+lista.forEach(item => {
+    const card = document.createElement('div');
+    card.className = 'card-transporte';
+    const numeroLimpo = item.contato.replace(/\D/g, '');
+    const linkFake = '#'; // Transporte não tem página de detalhe, usamos '#'
 
-        // Remove caracteres não numéricos para o link tel:
-        const numeroLimpo = item.contato.replace(/\D/g, '');
-
-        card.innerHTML = `
-            <div class="icone-grande">${item.icone}</div>
-            <div class="info-transporte">
-                <h3>${item.nome}</h3>
-                <div class="rota">${item.rota}</div>
-                <div class="horarios">🕒 ${item.horarios}</div>
-                <a href="tel:${numeroLimpo}" class="btn-ligar">📞 Ligar: ${item.contato}</a>
-            </div>
-        `;
-        grid.appendChild(card);
-    });
+    card.innerHTML = `
+        <div class="icone-grande">${item.icone}</div>
+        ${Favoritos.renderizarBotao(item.id, 'transporte', item.nome, '', linkFake)}
+        <div class="info-transporte">
+            <h3>${item.nome}</h3>
+            <div class="rota">${item.rota}</div>
+            <div class="horarios">🕒 ${item.horarios}</div>
+            <a href="tel:${numeroLimpo}" class="btn-ligar">📞 Ligar: ${item.contato}</a>
+        </div>
+    `;
+    grid.appendChild(card);
+});
 }
 
 // Função global de filtro

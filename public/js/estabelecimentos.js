@@ -15,8 +15,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
 
                 locais.forEach(l => {
+                    const linkDetalhe = `/detalhe?tipo=estabelecimento&id=${l.id}`;
                     const cardHTML = `
                         <div class="card-local">
+                        ${Favoritos.renderizarBotao(l.id, 'estabelecimento', l.nome, l.imagem || '/img/placeholder.jpg', linkDetalhe)}
                             <div class="card-img" style="background-image: url('${l.imagem || '/img/placeholder.jpg'}');"></div>
                             <div class="card-conteudo">
                                 ${l.destaque ? '<span class="badge-destaque">⭐ Destaque</span>' : ''}

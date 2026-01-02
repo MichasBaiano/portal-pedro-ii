@@ -1,95 +1,80 @@
-<%- include('partials/header', { titulo: 'Meu Perfil - Portal Pedro II' }) %>
+<%- include('partials/header', { titulo: 'Meu Perfil' }) %>
 
-<main style="max-width: 500px; margin: 4rem auto; padding: 0 1rem;">
-    <div class="form-card" style="padding: 2.5rem;">
-        
-        <div style="text-align: center; margin-bottom: 2rem;">
-            <div style="width: 80px; height: 80px; background-color: var(--cor-primaria-clara); color: var(--cor-primaria); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; margin: 0 auto 1rem auto;">
-                👤
+<main style="max-width: 800px; margin: 3rem auto; padding: 0 1rem;">
+    <div class="form-card" style="padding: 2rem; margin-bottom: 2rem;">
+        <div style="display: flex; align-items: center; gap: 15px;">
+            <div style="font-size: 2.5rem;">👤</div>
+            <div>
+                <h2 style="margin: 0; color: var(--cor-primaria);">Olá, <span id="spanNome">Visitante</span>!</h2>
+                <p style="margin: 0; color: var(--texto-leve);">Seus dados e favoritos ficam salvos neste navegador.</p>
             </div>
-            <h2 style="color: var(--cor-primaria); margin: 0;">Meu Perfil</h2>
-            <p style="color: var(--texto-leve); font-size: 0.9rem; margin-top: 0.5rem;">
-                Seus dados ficam salvos apenas neste navegador para agilizar o envio de sugestões.
-            </p>
         </div>
-
-        <form id="formPerfil">
-            <label for="nomeSalvo">Seu Nome:</label>
-            <input type="text" id="nomeSalvo" placeholder="Ex: João da Silva">
-
-            <label for="emailSalvo">Seu E-mail:</label>
-            <input type="email" id="emailSalvo" placeholder="joao@exemplo.com">
-
-            <label for="cidadeSalva">Sua Cidade:</label>
-            <input type="text" id="cidadeSalva" placeholder="Ex: Pedro II">
-
-            <div style="display: flex; gap: 10px; margin-top: 1.5rem;">
-                <button type="submit" class="btn btn-enviar" style="flex: 2;">💾 Salvar Preferências</button>
-                <button type="button" id="btnLimpar" class="btn btn-cancelar" style="flex: 1;">🗑️ Limpar</button>
-            </div>
+        <form id="formPerfil" style="margin-top: 1rem; display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+            <input type="text" id="nomeSalvo" placeholder="Seu Nome">
+            <input type="email" id="emailSalvo" placeholder="Seu E-mail">
+            <button type="submit" class="btn btn-enviar" style="grid-column: span 2;">Salvar Dados</button>
         </form>
+    </div>
 
+    <div>
+        <h3 style="border-bottom: 2px solid var(--borda-suave); padding-bottom: 10px;">❤️ Meus Favoritos</h3>
+        <div id="listaFavoritos" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1.5rem; margin-top: 1.5rem;">
+            <p>Carregando favoritos...</p>
+        </div>
     </div>
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="/js/favoritos.js"></script>
 
 <script>
     document.addEventListener('DOMContentLoaded', () => {
-        const nome = document.getElementById('nomeSalvo');
-        const email = document.getElementById('emailSalvo');
-        const cidade = document.getElementById('cidadeSalva');
-        const btnLimpar = document.getElementById('btnLimpar');
+        // 1. Perfil
+        const perfil = JSON.parse(localStorage.getItem('perfil_visitante')) || {};
+        if(perfil.nome) {
+            document.getElementById('nomeSalvo').value = perfil.nome;
+            document.getElementById('spanNome').innerText = perfil.nome.split(' ')[0];
+        }
+        if(perfil.email) document.getElementById('emailSalvo').value = perfil.email;
 
-        // 1. CARREGAR DADOS SALVOS (Ao abrir a página)
-        const perfilSalvo = JSON.parse(localStorage.getItem('perfil_visitante')) || {};
-        
-        if (perfilSalvo.nome) nome.value = perfilSalvo.nome;
-        if (perfilSalvo.email) email.value = perfilSalvo.email;
-        if (perfilSalvo.cidade) cidade.value = perfilSalvo.cidade;
-
-        // 2. SALVAR DADOS
         document.getElementById('formPerfil').addEventListener('submit', (e) => {
             e.preventDefault();
-            
-            const dados = {
-                nome: nome.value,
-                email: email.value,
-                cidade: cidade.value
-            };
-
-            // Salva no navegador do usuário
+            const dados = { nome: document.getElementById('nomeSalvo').value, email: document.getElementById('emailSalvo').value };
             localStorage.setItem('perfil_visitante', JSON.stringify(dados));
-            
-            Swal.fire({
-                title: 'Salvo!',
-                text: 'Seus dados serão usados para preencher formulários automaticamente.',
-                icon: 'success',
-                timer: 2000,
-                showConfirmButton: false
-            });
+            Swal.fire('Salvo!', '', 'success');
+            if(dados.nome) document.getElementById('spanNome').innerText = dados.nome.split(' ')[0];
         });
 
-        // 3. LIMPAR DADOS
-        btnLimpar.addEventListener('click', () => {
-            Swal.fire({
-                title: 'Tem certeza?',
-                text: 'Isso apagará seus dados salvos neste navegador.',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#d33',
-                confirmButtonText: 'Sim, limpar'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    localStorage.removeItem('perfil_visitante');
-                    nome.value = '';
-                    email.value = '';
-                    cidade.value = '';
-                    Swal.fire('Limpo!', '', 'success');
-                }
-            });
-        });
+        // 2. Renderizar Favoritos
+        renderizarFavoritos();
     });
+
+    function renderizarFavoritos() {
+        const lista = Favoritos.getTodos();
+        const container = document.getElementById('listaFavoritos');
+        
+        if (lista.length === 0) {
+            container.innerHTML = '<p style="color: var(--texto-leve); grid-column: 1/-1; text-align: center;">Nada salvo ainda. Clique nos corações pelo site!</p>';
+            return;
+        }
+
+        container.innerHTML = '';
+        lista.forEach(item => {
+            container.innerHTML += `
+                <div class="card-menu" style="padding: 0; overflow: hidden; display: flex; flex-direction: column; text-align: left;">
+                    <div style="height: 120px; background-image: url('${item.imagem}'); background-size: cover; background-position: center; position: relative;">
+                        <button onclick="Favoritos.toggle('${item.id}', '${item.tipo}'); renderizarFavoritos();" 
+                                style="position: absolute; top:5px; right:5px; background: rgba(0,0,0,0.6); color: white; border: none; border-radius: 50%; width: 30px; height: 30px; cursor: pointer;">✕</button>
+                    </div>
+                    <div style="padding: 1rem; flex-grow: 1;">
+                        <span style="font-size: 0.75rem; color: var(--cor-primaria); font-weight: bold; text-transform: uppercase;">${item.tipo}</span>
+                        <h4 style="margin: 5px 0; font-size: 1rem; color: var(--texto-titulo);">${item.nome}</h4>
+                        <a href="${item.link}" class="btn btn-primary" style="display: block; text-align: center; margin-top: 10px; font-size: 0.8rem;">Ver</a>
+                    </div>
+                </div>
+            `;
+        });
+    }
 </script>
 
 <%- include('partials/footer') %>
