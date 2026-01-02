@@ -3,6 +3,29 @@
         <p style="font-size: 0.8rem; margin-top: 10px;">
             <a href="/login">🔒 Acesso Administrativo</a>
         </p>
-    </footer>
+</footer>
+
+<script>
+    // BLINDAGEM DE IMAGENS 🛡️
+    // Esse script vigia todas as imagens do site. Se alguma der erro, ele troca.
+    document.addEventListener('error', function(e) {
+        // Verifica se o elemento que deu erro é uma imagem
+        if (e.target.tagName.toLowerCase() === 'img') {
+            
+            // Evita loop infinito (se a imagem de backup também falhar)
+            // Se já estiver tentando carregar o placeholder, para por aqui.
+            if(e.target.src.includes('placehold.co')) return;
+            
+            // Troca a imagem quebrada por um placeholder elegante
+            // Usamos o placehold.co que é rápido e gera imagens com texto
+            e.target.src = 'https://placehold.co/600x400/EEE/31343C?text=Portal+Pedro+II';
+            e.target.alt = 'Imagem indisponível';
+            
+            // Adiciona uma borda suave para indicar que é um placeholder
+            e.target.style.border = '1px solid #ddd';
+            e.target.style.objectFit = 'cover';
+        }
+    }, true); // O 'true' é obrigatório para pegar erros de carregamento
+</script>
 </body>
 </html>
