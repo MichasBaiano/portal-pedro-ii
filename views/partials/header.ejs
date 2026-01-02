@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= typeof titulo !== 'undefined' ? titulo : 'Portal Pedro II' %></title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Merriweather:wght@700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="/css/style.css">
+    
+    <script src="/js/tema.js" defer></script> 
+</head>
+<body>
+    <header>
+        <nav style="width: 100%; display: flex; justify-content: space-between; align-items: center;">
+            <h1>Portal Pedro II</h1>
+            <ul>
+                <li><a href="/">Início</a></li>
+                <li><a href="/mapa">Mapa</a></li>
+                <li><a href="/eventos">Eventos</a></li>
+                <li><a href="/estabelecimentos">Serviços</a></li>
+                <li><a href="/transportes">Transportes</a></li>
+                <li><a href="/sugestao">Sugerir</a></li>
+                <li><a href="/perfil">Perfil</a></li>
+
+                <li>
+                    <button id="btnTema" style="background: none; border: none; font-size: 1.2rem; cursor: pointer; padding: 0 10px;" title="Mudar Tema">
+                        🌙
+                    </button>
+                </li>
+            </ul>
+        </nav>
+    </header>

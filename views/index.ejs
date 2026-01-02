@@ -1,41 +1,9 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Início - Portal Pedro II</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Merriweather:wght@700&display=swap" rel="stylesheet">
+<%- include('partials/header', { titulo: 'Início - Portal Pedro II' }) %>
 
-  <link rel="stylesheet" href="../css/style.css">
-  <link rel="stylesheet" href="../css/home.css">
+<link rel="stylesheet" href="/css/home.css">
 
-</head>
-<body>
-  <header>
-        <nav style="width: 100%; display: flex; justify-content: space-between; align-items: center;">
-        <h1>Portal Pedro II</h1>
-        <ul>
-            <li><a href="/">Início</a></li>
-            <li><a href="/mapa">Mapa</a></li>
-            <li><a href="/eventos">Eventos</a></li>
-            <li><a href="/estabelecimentos">Serviços</a></li>
-            <li><a href="/transportes">Transportes</a></li>
-            <li><a href="/sugestao">Sugerir</a></li>
-            <li><a href="/perfil">Perfil</a></li>
-            
-            <li>
-                <a href="#" id="btnTema" style="font-size: 1.2rem; padding: 5px; display: flex; align-items: center;" title="Alternar Tema">
-                    <span id="iconeTema">🌙</span>
-                </a>
-            </li>
-        </ul>
-        </nav>
-  </header>
-
-  <main>
-    <section class="hero" style="text-align: center; padding: 3rem 0;">
+<main>
+    <section class="hero">
       <h2>Bem-vindo a Pedro II</h2>
       <p>A Suíça Piauiense: Opala, Serras e Cultura.</p>
       <h3 id="mensagemBoasVindas"></h3>
@@ -83,37 +51,29 @@
 
         </div>
     </section>
-  </main>
+</main>
 
-  <footer>
-    <p>© 2025 - Portal Pedro II | Projeto IFPI</p>
-    <p style="font-size: 0.8rem; margin-top: 10px;">
-        <a href="/admin/eventos">🔒 Acesso Administrativo</a>
-    </p>
-  </footer>
+<script src="/js/auth.js"></script>
 
-  <script src="/js/tema.js"></script>
-  <script src="../js/auth.js"></script>
+<script>
+    // Carregar Banners
+    fetch('/api/banners')
+        .then(res => res.json())
+        .then(banners => {
+            const container = document.getElementById('banner-container');
+            const secao = document.getElementById('secao-banners');
 
-  <script>
-      // Carregar Banners
-      fetch('/api/banners')
-          .then(res => res.json())
-          .then(banners => {
-              const container = document.getElementById('banner-container');
-              const secao = document.getElementById('secao-banners');
+            if (banners.length > 0) {
+                secao.style.display = 'block'; 
+                banners.forEach(b => {
+                    container.innerHTML += `
+                        <a href="${b.link}" target="_blank" style="flex: 0 0 auto; width: 300px;">
+                            <img src="${b.imagem}" alt="${b.titulo}" style="width: 100%; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); border: 2px solid #fff;">
+                        </a>
+                    `;
+                });
+            }
+        });
+</script>
 
-              if (banners.length > 0) {
-                  secao.style.display = 'block'; // Mostra a seção só se tiver anúncio
-                  banners.forEach(b => {
-                      container.innerHTML += `
-                          <a href="${b.link}" target="_blank" style="flex: 0 0 auto; width: 300px;">
-                              <img src="${b.imagem}" alt="${b.titulo}" style="width: 100%; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); border: 2px solid #fff;">
-                          </a>
-                      `;
-                  });
-              }
-          });
-  </script>
-</body>
-</html>
+<%- include('partials/footer') %>
