@@ -46,25 +46,25 @@
 }
 
 .card-menu {
-  background: white;
+  background: var(--bg-card); /* Usa a variável que muda no dark mode */
   padding: 2.5rem 1.5rem;
   border-radius: 16px;
   text-align: center;
   text-decoration: none;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  border: 1px solid transparent;
-  box-shadow: var(--sombra-p);
+  border: 1px solid var(--borda-suave); /* Borda sutil */
+  box-shadow: var(--sombra-card);
 }
 
 .card-menu:hover {
   transform: translateY(-8px);
-  box-shadow: var(--sombra-g);
-  border-color: var(--cor-primaria-clara);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+  border-color: var(--cor-primaria);
 }
 
 .card-menu span {
   display: block;
-  font-size: 2.5rem; /* Emoji maior */
+  font-size: 2.5rem;
   margin-bottom: 1rem;
   transition: transform 0.3s;
 }
@@ -72,7 +72,7 @@
 .card-menu:hover span { transform: scale(1.1); }
 
 .card-menu h3 {
-  color: var(--texto-titulo);
+  color: var(--texto-titulo); /* Garante que o título fique branco no escuro */
   margin: 0.5rem 0;
   font-size: 1.1rem;
   font-weight: 700;

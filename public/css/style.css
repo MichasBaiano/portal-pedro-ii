@@ -1,7 +1,7 @@
 :root {
   /* --- TEMA CLARO (Padrão) --- */
   --bg-body: #f7f9fc;
-  --bg-card: #ffffff;
+  --bg-card: #ffffff; /* Fundo dos cards e footer no claro */
   --bg-header: #ffffff;
   
   --texto-titulo: #1a202c;
@@ -15,29 +15,27 @@
   --cor-primaria-clara: #ebf2f8; 
   --cor-destaque: #e0a800;       
 
-  /* Configurações Globais */
   --radius: 12px;
   --fonte-titulo: 'Merriweather', serif;
   --fonte-corpo: 'Inter', sans-serif;
 }
 
-/* --- TEMA ESCURO (Dark Mode) --- */
+/* --- TEMA ESCURO (Correções) --- */
 [data-theme="dark"] {
-  --bg-body: #121212;          /* Quase preto */
-  --bg-card: #1e1e1e;          /* Cinza Chumbo */
+  --bg-body: #121212;          
+  --bg-card: #1e1e1e;          /* Cinza chumbo para cards e footer */
   --bg-header: #1e1e1e;
   
-  --texto-titulo: #e2e8f0;     /* Branco suave */
-  --texto-corpo: #a0aec0;      /* Cinza claro */
-  --texto-leve: #718096;
+  --texto-titulo: #e2e8f0;     
+  --texto-corpo: #cbd5e0;      
+  --texto-leve: #a0aec0;
   
-  --borda-suave: #2d3748;      /* Borda escura sutil */
-  --sombra-card: 0 4px 20px rgba(0,0,0,0.4); /* Sombra mais forte no escuro */
+  --borda-suave: #2d3748;      
+  --sombra-card: 0 4px 20px rgba(0,0,0,0.4); 
   
-  /* Ajuste nas cores da marca para não "gritar" no fundo preto */
-  --cor-primaria: #63b3ed;     /* Azul mais claro e neon */
-  --cor-primaria-clara: #2a4365; /* Azul marinho para fundos */
-  --cor-destaque: #f6e05e;     /* Amarelo mais vivo */
+  --cor-primaria: #63b3ed;     /* Azul claro neon */
+  --cor-primaria-clara: #2a4365; 
+  --cor-destaque: #f6e05e;     
 }
 
 * { box-sizing: border-box; }
@@ -167,11 +165,35 @@ input:focus, select:focus, textarea:focus {
 
 /* --- FOOTER --- */
 footer {
-  background-color: white;
+  background-color: var(--bg-card); /* Agora usa a variável! */
   border-top: 1px solid var(--borda-suave);
   color: var(--texto-leve);
   padding: 3rem;
   text-align: center;
   margin-top: 4rem;
+  transition: background-color 0.3s ease; /* Suaviza a troca */
 }
 footer a { color: var(--cor-primaria); text-decoration: none; font-weight: 600; }
+
+
+
+/* Correção Global para Formulários e Cards no Dark Mode */
+.login-card, 
+.form-card, 
+.lista-card, 
+.card-evento, 
+.card-local,
+.container-sugestao {
+    background-color: var(--bg-card) !important; /* Força o uso da variável */
+    border: 1px solid var(--borda-suave);
+    color: var(--texto-corpo);
+}
+
+/* Garante que inputs não fiquem brancos cegantes no modo escuro */
+[data-theme="dark"] input, 
+[data-theme="dark"] select, 
+[data-theme="dark"] textarea {
+    background-color: #2d3748;
+    color: #e2e8f0;
+    border-color: #4a5568;
+}
