@@ -46,7 +46,7 @@ export async function inicializarBanco() {
         `);
     }
 
-    // --- 3. TABELA EVENTOS (NOVO) ---
+    // --- 3. TABELA EVENTOS ---
     await db.exec(`
         CREATE TABLE IF NOT EXISTS eventos (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -55,21 +55,23 @@ export async function inicializarBanco() {
             local TEXT,
             categoria TEXT,
             descricao TEXT,
-            imagem TEXT
+            imagem TEXT,
+            latitude REAL,
+            longitude REAL
         )
     `);
 
     // Seed Eventos
     const qtdEventos = await db.get("SELECT count(*) as count FROM eventos");
     if (qtdEventos.count === 0) {
-        await db.exec(`
-            INSERT INTO eventos (nome, data, local, categoria, descricao, imagem) VALUES 
-            ('Festival de Inverno', '2025-06-20', 'Praça da Bonelle', 'Música', 'O maior evento de jazz e blues.', 'https://via.placeholder.com/400x200'),
-            ('Feira da Opala', '2025-07-15', 'Mercado', 'Feira', 'Exposição de joias.', 'https://via.placeholder.com/400x200')
+        await db.run(`
+            INSERT INTO eventos (nome, data, local, categoria, descricao, imagem, latitude, longitude) VALUES 
+            ('Festival de Inverno', '2025-06-20', 'Praça da Bonelle', 'Música', 'O maior festival de jazz.', 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Morro_do_Gritador.jpg/800px-Morro_do_Gritador.jpg', -4.4255, -41.4586),
+            ('Feira da Opala', '2025-07-15', 'Mercado do Artesão', 'Feira', 'Exposição de joias.', 'https://upload.wikimedia.org/wikipedia/commons/e/e3/Opala_Pedro_II.jpg', -4.4240, -41.4590)
         `);
     }
 
-    // --- 4. TABELA ESTABELECIMENTOS (NOVO) ---
+    // --- 4. TABELA ESTABELECIMENTOS ---
     await db.exec(`
         CREATE TABLE IF NOT EXISTS estabelecimentos (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -79,17 +81,19 @@ export async function inicializarBanco() {
             telefone TEXT,
             descricao TEXT,
             imagem TEXT,
-            destaque INTEGER
+            destaque INTEGER,
+            latitude REAL,
+            longitude REAL
         )
     `);
 
-    // Seed Estabelecimentos (Note: destaque 1 = true, 0 = false)
+    // Seed Estabelecimentos
     const qtdEst = await db.get("SELECT count(*) as count FROM estabelecimentos");
     if (qtdEst.count === 0) {
-        await db.exec(`
-            INSERT INTO estabelecimentos (nome, categoria, endereco, telefone, descricao, imagem, destaque) VALUES 
-            ('Pousada do Norte', 'hospedagem', 'Rua A, 123', '(86) 9999-0000', 'Conforto no centro.', 'https://via.placeholder.com/400x300', 1),
-            ('Restaurante Sabor', 'gastronomia', 'Av. B, 456', '(86) 9888-1111', 'Comida típica.', 'https://via.placeholder.com/400x300', 0)
+        await db.run(`
+            INSERT INTO estabelecimentos (nome, categoria, endereco, telefone, descricao, imagem, destaque, latitude, longitude) VALUES 
+            ('Pousada do Norte', 'hospedagem', 'Centro Histórico', '(86) 9999-0000', 'Conforto no centro.', 'https://dynamic-media-cdn.tripadvisor.com/media/photo-o/13/64/73/0c/fachada.jpg?w=700&h=-1&s=1', 1, -4.4260, -41.4575),
+            ('Mirante do Gritador', 'turismo', 'Serra dos Matões', '(86) 0000-0000', 'Vista panorâmica.', 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Morro_do_Gritador.jpg/800px-Morro_do_Gritador.jpg', 1, -4.3800, -41.4000)
         `);
     }
 
