@@ -1,58 +1,161 @@
-<%- include('partials/header', { titulo: 'Meu Perfil' }) %>
+<%- include('partials/header', { titulo: 'Detalhes' }) %>
 
-<main style="max-width: 600px; margin: 4rem auto;">
-    <div style="background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
-        <h2 style="color: var(--cor-primaria); margin-top: 0;">Meu Perfil (Visitante)</h2>
-        <p style="color: #666; margin-bottom: 2rem;">Salve seus dados para preencher formulários automaticamente.</p>
+<style>
+    .container-detalhe { 
+        max-width: 800px; 
+        margin: 0 auto; 
+        background: var(--bg-card); /* Usa variável para Dark Mode */
+        border-radius: 16px; 
+        overflow: hidden; 
+        box-shadow: var(--sombra-card); 
+        border: 1px solid var(--borda-suave);
+    }
+    
+    .detalhe-img { 
+        width: 100%; 
+        height: 400px; 
+        object-fit: cover; 
+        background-color: #eee; 
+    }
+    
+    .detalhe-conteudo { 
+        padding: 2rem; 
+    }
+    
+    .detalhe-meta { 
+        display: flex; 
+        gap: 15px; 
+        margin: 1rem 0; 
+        color: var(--texto-leve); 
+        font-size: 0.95rem; 
+        flex-wrap: wrap; 
+    }
+    
+    .detalhe-meta span { 
+        display: flex; 
+        align-items: center; 
+        gap: 5px; 
+        background: var(--cor-primaria-clara);
+        padding: 5px 10px;
+        border-radius: 6px;
+        color: var(--cor-primaria);
+        font-weight: 600;
+    }
+    
+    .detalhe-desc { 
+        font-size: 1.1rem; 
+        line-height: 1.8; 
+        color: var(--texto-corpo); 
+        margin-top: 1.5rem; 
+        white-space: pre-wrap; 
+    }
+    
+    .btn-voltar { 
+        display: inline-block; 
+        color: var(--cor-primaria); 
+        text-decoration: none; 
+        font-weight: 600; 
+        font-size: 1.1rem;
+    }
 
-        <form id="formPerfil">
-            <label>Seu Nome:</label>
-            <input type="text" id="nomeSalvo" placeholder="Seu nome">
+    /* Ajuste para o topo da página */
+    .barra-topo {
+        max-width: 800px; 
+        margin: 0 auto 1rem auto; 
+        display: flex; 
+        justify-content: space-between; 
+        align-items: center;
+    }
+</style>
 
-            <label>Seu E-mail:</label>
-            <input type="email" id="emailSalvo" placeholder="Seu e-mail">
+<main>
+    <div class="barra-topo">
+        <a href="javascript:history.back()" class="btn-voltar">← Voltar</a>
+        
+        <button onclick="compartilharZap()" class="btn" style="background-color: #25D366; color: white; border: none; font-weight: bold; display: flex; align-items: center; gap: 8px; cursor: pointer;">
+            📲 Compartilhar
+        </button>
+    </div>
 
-            <label>Cidade:</label>
-            <input type="text" id="cidadeSalva" placeholder="Onde você mora?">
-
-            <button type="submit" class="btn btn-enviar" style="width: 100%; margin-top: 1rem;">Salvar Preferências</button>
-        </form>
+    <div class="container-detalhe" id="areaDetalhe">
+        <p style="padding: 2rem; text-align: center;">Carregando informações...</p>
     </div>
 </main>
 
 <script>
-    // Lógica simples de LocalStorage
-    document.addEventListener('DOMContentLoaded', () => {
-        const nome = document.getElementById('nomeSalvo');
-        const email = document.getElementById('emailSalvo');
-        const cidade = document.getElementById('cidadeSalva');
+    document.addEventListener('DOMContentLoaded', async () => {
+        // 1. Pega os parâmetros da URL (ex: ?tipo=evento&id=5)
+        const params = new URLSearchParams(window.location.search);
+        const tipo = params.get('tipo'); // 'evento' ou 'estabelecimento'
+        const id = params.get('id');
+        const container = document.getElementById('areaDetalhe');
 
-        // 1. Carregar dados salvos
-        const perfil = JSON.parse(localStorage.getItem('perfil_visitante')) || {};
-        if (perfil.nome) nome.value = perfil.nome;
-        if (perfil.email) email.value = perfil.email;
-        if (perfil.cidade) cidade.value = perfil.cidade;
+        // Validação simples
+        if (!tipo || !id) {
+            container.innerHTML = '<p style="padding:2rem;">Conteúdo não encontrado (Link incompleto).</p>';
+            return;
+        }
 
-        // 2. Salvar dados
-        document.getElementById('formPerfil').addEventListener('submit', (e) => {
-            e.preventDefault();
+        // Define a rota da API (pluraliza o tipo para bater com a rota)
+        // ex: evento -> eventos, estabelecimento -> estabelecimentos
+        const rotaApi = tipo === 'evento' ? 'eventos' : 'estabelecimentos';
+
+        try {
+            // Busca o item específico no backend
+            let response = await fetch(`/api/${rotaApi}/${id}`);
             
-            const dados = {
-                nome: nome.value,
-                email: email.value,
-                cidade: cidade.value
-            };
-
-            localStorage.setItem('perfil_visitante', JSON.stringify(dados));
+            if (!response.ok) throw new Error('Item não encontrado no sistema.');
             
-            // Feedback com SweetAlert (já carregado no header) ou alert simples
-            if (typeof Swal !== 'undefined') {
-                Swal.fire('Salvo!', 'Seus dados foram atualizados.', 'success');
-            } else {
-                alert('Dados salvos no seu navegador!');
-            }
-        });
+            const item = await response.json();
+
+            // Lógica de Exibição (Data ou Categoria / Local ou Endereço)
+            const dataOuCategoria = item.data 
+                ? `📅 ${new Date(item.data).toLocaleDateString('pt-BR')}` 
+                : `🏷️ ${item.categoria}`;
+            
+            const localOuEndereco = item.local 
+                ? `📍 ${item.local}` 
+                : `📍 ${item.endereco || 'Endereço não informado'}`;
+
+            // Renderiza o HTML
+            container.innerHTML = `
+                <img src="${item.imagem || 'https://via.placeholder.com/800x400'}" class="detalhe-img" alt="${item.nome}">
+                
+                <div class="detalhe-conteudo">
+                    <h1 style="margin: 0; color: var(--texto-titulo); font-size: 2rem;">${item.nome}</h1>
+                    
+                    <div class="detalhe-meta">
+                        <span>${dataOuCategoria}</span>
+                        <span>${localOuEndereco}</span>
+                        ${item.telefone ? `<span>📞 ${item.telefone}</span>` : ''}
+                    </div>
+
+                    <div class="detalhe-desc">
+                        ${item.descricao || 'Sem descrição disponível para este item.'}
+                    </div>
+                </div>
+            `;
+
+            // Atualiza o título da aba do navegador
+            document.title = `${item.nome} - Portal Pedro II`;
+
+        } catch (error) {
+            console.error(error);
+            container.innerHTML = `<p style="padding:2rem; color:red; text-align:center;">Erro ao carregar: ${error.message}</p>`;
+        }
     });
+
+    // Função separada para o WhatsApp
+    function compartilharZap() {
+        const url = window.location.href;
+        // Pega o título da página e remove o sufixo do site para não ficar repetitivo
+        const titulo = document.title.replace(' - Portal Pedro II', '');
+        
+        const texto = `Olha que legal esse lugar em Pedro II: *${titulo}*\n\nVeja mais aqui: ${url}`;
+        
+        const linkZap = `https://api.whatsapp.com/send?text=${encodeURIComponent(texto)}`;
+        window.open(linkZap, '_blank');
+    }
 </script>
 
 <%- include('partials/footer') %>
