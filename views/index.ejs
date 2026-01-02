@@ -94,6 +94,26 @@
         gap: 5px;
         margin-bottom: 5px;
     }
+
+    .widget-clima {
+        display: inline-flex;
+        align-items: center;
+        gap: 12px;
+        background: rgba(255, 255, 255, 0.15); /* Vidro translúcido */
+        backdrop-filter: blur(5px);
+        padding: 8px 20px;
+        border-radius: 50px;
+        margin-top: 2rem; /* Separar dos botões */
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        color: white;
+        font-weight: 500;
+        animation: fadeIn 1s ease-in;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
 </style>
 
 <section class="hero-section">
@@ -103,6 +123,13 @@
         <div style="margin-top: 2rem; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
             <a href="/mapa" class="btn" style="background: white; color: var(--cor-primaria);">🗺️ Ver Mapa</a>
             <a href="/estabelecimentos" class="btn" style="border: 2px solid white; color: white;">🏨 Onde Ficar</a>
+        </div>
+        <div class="widget-clima">
+            <span id="climaIcone" style="font-size: 1.5rem;">🌤️</span>
+            <div style="text-align: left; line-height: 1.2;">
+                <span id="climaTemp" style="font-size: 1.2rem; font-weight: bold; display: block;">--°C</span>
+                <span id="climaTexto" style="font-size: 0.8rem; opacity: 0.9;">Carregando clima...</span>
+            </div>
         </div>
     </div>
 </section>
@@ -196,5 +223,7 @@
     </section>
 
 </main>
+
+</main> <script src="/js/clima.js"></script> 
 
 <%- include('partials/footer') %>
