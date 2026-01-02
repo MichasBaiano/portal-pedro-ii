@@ -17,7 +17,7 @@ const router = express.Router();
 router.get("/pontos-mapa", MapaController.getPontosMapa);
 
 // --- SUGESTÕES ---
-router.post("/sugestao", SugestaoController.enviarSugestao); // Já existia (Público)
+router.post("/sugestoes", SugestaoController.enviarSugestao); // Já existia (Público)
 router.get("/sugestoes", SugestaoController.listar);         // Novo (Admin)
 router.delete("/sugestoes/:id", SugestaoController.deletar); // Novo (Admin)
 
