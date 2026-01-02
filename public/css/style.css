@@ -225,3 +225,34 @@ footer a { color: var(--cor-primaria); text-decoration: none; font-weight: 600; 
 
 /* Necessário para posicionar o botão dentro do card */
 .card-evento, .card-local, .card-transporte, .card-menu { position: relative; }
+
+/* --- Botão Carregar Mais --- */
+.container-carregar-mais {
+    text-align: center;
+    margin: 2rem 0;
+    width: 100%;
+    grid-column: 1 / -1; /* Garante que ocupe a largura toda na Grid */
+}
+
+.btn-carregar {
+    background-color: transparent;
+    border: 2px solid var(--cor-primaria);
+    color: var(--cor-primaria);
+    padding: 10px 30px;
+    border-radius: 50px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 1rem;
+}
+
+.btn-carregar:hover {
+    background-color: var(--cor-primaria);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.oculto {
+    display: none !important;
+}
