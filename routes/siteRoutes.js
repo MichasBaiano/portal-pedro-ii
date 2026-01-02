@@ -1,11 +1,12 @@
 import express from "express";
 import { verificarAutenticacao } from "../Middleware/authMiddleware.js";
 import { AuthController } from "../controller/authController.js";
+import { HomeController } from "../controller/homeController.js";
 
 const router = express.Router();
 
 // --- Rotas Públicas (Renderizam EJS) ---
-router.get("/", (req, res) => res.render("index"));
+router.get("/", HomeController.index);
 router.get("/perfil", (req, res) => res.render("perfil"));
 router.get("/mapa", (req, res) => res.render("mapa"));
 router.get("/sugestao", (req, res) => res.render("sugestao"));

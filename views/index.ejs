@@ -1,79 +1,200 @@
 <%- include('partials/header', { titulo: 'Início - Portal Pedro II' }) %>
 
-<link rel="stylesheet" href="/css/home.css">
+<style>
+    /* --- Estilos exclusivos da Home --- */
+    
+    /* Banner Hero (Topo) */
+    .hero-section {
+        background: linear-gradient(135deg, var(--cor-primaria) 0%, #2a4365 100%);
+        color: white;
+        padding: 4rem 1.5rem;
+        text-align: center;
+        margin-bottom: 2rem;
+        border-radius: 0 0 20px 20px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+
+    .hero-section h1 {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+        color: white; /* Força branco mesmo no dark mode */
+    }
+
+    .hero-section p {
+        font-size: 1.2rem;
+        max-width: 600px;
+        margin: 0 auto;
+        opacity: 0.9;
+        color: #e2e8f0;
+    }
+
+    /* Grid Responsivo para Home */
+    .grid-home {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 2rem;
+        margin-top: 1.5rem;
+    }
+
+    /* Ajustes nos Cards da Home */
+    .card-home {
+        background-color: var(--bg-card);
+        border: 1px solid var(--borda-suave);
+        border-radius: 16px;
+        overflow: hidden;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    }
+
+    .card-home:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--sombra-card);
+        border-color: var(--cor-primaria);
+    }
+
+    .card-img-top {
+        height: 200px;
+        background-size: cover;
+        background-position: center;
+        background-color: #eee;
+    }
+
+    .card-body {
+        padding: 1.5rem;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .secao-home {
+        padding: 2rem 0;
+        margin-bottom: 2rem;
+    }
+
+    /* Badges */
+    .badge-data {
+        background: var(--cor-primaria-clara);
+        color: var(--cor-primaria);
+        padding: 4px 10px;
+        border-radius: 6px;
+        font-weight: bold;
+        font-size: 0.85rem;
+        display: inline-block;
+        margin-bottom: 10px;
+    }
+
+    .badge-destaque {
+        color: var(--cor-destaque);
+        font-weight: bold;
+        font-size: 0.85rem;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        margin-bottom: 5px;
+    }
+</style>
+
+<section class="hero-section">
+    <div class="container">
+        <h1>Bem-vindo a Pedro II</h1>
+        <p>A Suíça Piauiense espera por você. Descubra festivais, belezas naturais e a nossa preciosa opala.</p>
+        <div style="margin-top: 2rem; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+            <a href="/mapa" class="btn" style="background: white; color: var(--cor-primaria);">🗺️ Ver Mapa</a>
+            <a href="/estabelecimentos" class="btn" style="border: 2px solid white; color: white;">🏨 Onde Ficar</a>
+        </div>
+    </div>
+</section>
 
 <main>
-    <section class="hero">
-      <h2>Bem-vindo a Pedro II</h2>
-      <p>A Suíça Piauiense: Opala, Serras e Cultura.</p>
-      <h3 id="mensagemBoasVindas"></h3>
-    </section>
 
-    <section id="secao-banners" style="margin-bottom: 2rem; display: none;">
-        <h3 style="font-size: 0.9rem; color: #666; text-transform: uppercase; margin-bottom: 0.5rem;">Parceiros do Portal</h3>
-        <div id="banner-container" style="display: flex; gap: 1rem; overflow-x: auto; padding-bottom: 1rem;">
+    <section class="secao-home">
+        <div style="display: flex; justify-content: space-between; align-items: end; margin-bottom: 1rem;">
+            <div>
+                <h2>📅 Próximos Eventos</h2>
+                <p style="color: var(--texto-leve); margin: 0;">Fique por dentro da agenda cultural.</p>
             </div>
-    </section>
+            <a href="/eventos" style="color: var(--cor-primaria); font-weight: 600; text-decoration: none;">Ver tudo →</a>
+        </div>
 
-    <section>
-        <h3 style="border-bottom: 2px solid #ddd; padding-bottom: 0.5rem;">Explore o Portal</h3>
-        <div class="grid-menu">
-            
-            <a href="/mapa" class="card-menu">
-                <span style="font-size: 2rem;">🗺️</span>
-                <h3>Mapa Turístico</h3>
-                <p>Navegue pelos pontos turísticos.</p>
-            </a>
-
-            <a href="/eventos" class="card-menu">
-                <span style="font-size: 2rem;">📅</span>
-                <h3>Agenda de Eventos</h3>
-                <p>Festivais e datas importantes.</p>
-            </a>
-
-            <a href="/estabelecimentos" class="card-menu">
-                <span style="font-size: 2rem;">🍽️</span>
-                <h3>Onde Comer e Ficar</h3>
-                <p>Restaurantes e Pousadas.</p>
-            </a>
-
-            <a href="/transportes" class="card-menu">
-                <span style="font-size: 2rem;">🚌</span>
-                <h3>Transportes</h3>
-                <p>Ônibus, vans e mototáxis.</p>
-            </a>
-
-            <a href="/sugestao" class="card-menu">
-                <span style="font-size: 2rem;">💡</span>
-                <h3>Sugerir</h3>
-                <p>Envie dicas de novos locais.</p>
-            </a>
-
+        <div class="grid-home">
+            <% if (!eventos || eventos.length === 0) { %>
+                <div style="grid-column: 1/-1; text-align: center; padding: 2rem; background: var(--bg-card); border-radius: 12px; border: 1px dashed var(--borda-suave);">
+                    <p style="color: var(--texto-leve);">Nenhum evento próximo agendado no momento.</p>
+                </div>
+            <% } else { %>
+                <% eventos.forEach(ev => { %>
+                    <article class="card-home">
+                        <div class="card-img-top" style="background-image: url('<%= ev.imagem || '/img/placeholder.jpg' %>');"></div>
+                        
+                        <div class="card-body">
+                            <div>
+                                <span class="badge-data">
+                                    📅 <%= new Date(ev.data).toLocaleDateString('pt-BR', {timeZone: 'UTC'}) %>
+                                </span>
+                            </div>
+                            
+                            <h3 style="margin: 10px 0; font-size: 1.25rem; color: var(--texto-titulo);"><%= ev.nome %></h3>
+                            <p style="color: var(--texto-leve); font-size: 0.95rem; margin-bottom: 1.5rem;">
+                                📍 <%= ev.local %>
+                            </p>
+                            
+                            <a href="/detalhe?tipo=evento&id=<%= ev.id %>" class="btn btn-primary" style="margin-top: auto; text-align: center;">
+                                Detalhes
+                            </a>
+                        </div>
+                    </article>
+                <% }) %>
+            <% } %>
         </div>
     </section>
+
+    <hr style="border: 0; border-top: 1px solid var(--borda-suave); margin: 3rem 0;">
+
+    <section class="secao-home">
+        <div style="display: flex; justify-content: space-between; align-items: end; margin-bottom: 1rem;">
+            <div>
+                <h2>⭐ Destaques da Cidade</h2>
+                <p style="color: var(--texto-leve); margin: 0;">Lugares recomendados para visitar.</p>
+            </div>
+            <a href="/estabelecimentos" style="color: var(--cor-primaria); font-weight: 600; text-decoration: none;">Ver todos →</a>
+        </div>
+
+        <div class="grid-home">
+            <% if (!destaques || destaques.length === 0) { %>
+                <div style="grid-column: 1/-1; text-align: center; padding: 2rem; background: var(--bg-card); border-radius: 12px; border: 1px dashed var(--borda-suave);">
+                    <p style="color: var(--texto-leve);">Nenhum destaque cadastrado ainda.</p>
+                </div>
+            <% } else { %>
+                <% destaques.forEach(local => { %>
+                    <article class="card-home">
+                        <div class="card-img-top" style="background-image: url('<%= local.imagem || '/img/placeholder.jpg' %>');"></div>
+                        
+                        <div class="card-body">
+                            <div class="badge-destaque">
+                                <span>⭐ RECOMENDADO</span>
+                            </div>
+                            
+                            <h3 style="margin: 5px 0; font-size: 1.25rem; color: var(--texto-titulo);"><%= local.nome %></h3>
+                            <span style="background: #eee; color: #555; padding: 2px 8px; border-radius: 4px; font-size: 0.8rem; text-transform: uppercase; font-weight: 600; width: fit-content;">
+                                <%= local.categoria %>
+                            </span>
+                            
+                            <p style="color: var(--texto-corpo); font-size: 0.95rem; margin-top: 1rem; flex-grow: 1;">
+                                <%= local.descricao ? local.descricao.substring(0, 80) + '...' : 'Venha conhecer este local incrível.' %>
+                            </p>
+                            
+                            <a href="/detalhe?tipo=estabelecimento&id=<%= local.id %>" class="btn" style="margin-top: 1rem; text-align: center; border: 1px solid var(--borda-suave); color: var(--texto-corpo);">
+                                Conhecer
+                            </a>
+                        </div>
+                    </article>
+                <% }) %>
+            <% } %>
+        </div>
+    </section>
+
 </main>
-
-<script src="/js/auth.js"></script>
-
-<script>
-    // Carregar Banners
-    fetch('/api/banners')
-        .then(res => res.json())
-        .then(banners => {
-            const container = document.getElementById('banner-container');
-            const secao = document.getElementById('secao-banners');
-
-            if (banners.length > 0) {
-                secao.style.display = 'block'; 
-                banners.forEach(b => {
-                    container.innerHTML += `
-                        <a href="${b.link}" target="_blank" style="flex: 0 0 auto; width: 300px;">
-                            <img src="${b.imagem}" alt="${b.titulo}" style="width: 100%; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); border: 2px solid #fff;">
-                        </a>
-                    `;
-                });
-            }
-        });
-</script>
 
 <%- include('partials/footer') %>
