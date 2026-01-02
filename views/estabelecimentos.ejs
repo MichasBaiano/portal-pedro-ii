@@ -1,0 +1,31 @@
+<%- include('partials/header', { titulo: 'Onde Ficar e Comer - Pedro II' }) %>
+
+<link rel="stylesheet" href="/css/estabelecimentos.css">
+
+<main>
+    <div class="header-servicos">
+        <h2>Serviços e Turismo</h2>
+        <p>Encontre hotéis, pousadas, restaurantes e lojas.</p>
+
+        <div class="filtros-botoes">
+            <button class="btn-filtro ativo" onclick="filtrar('todos', this)">Todos</button>
+            <button class="btn-filtro" onclick="filtrar('gastronomia', this)">🍽️ Gastronomia</button>
+            <button class="btn-filtro" onclick="filtrar('hospedagem', this)">🛏️ Hospedagem</button>
+            <button class="btn-filtro" onclick="filtrar('comercio', this)">🛍️ Comércio</button>
+            <button class="btn-filtro" onclick="filtrar('turismo', this)">📷 Pontos Turísticos</button>
+        </div>
+        
+        <div style="margin-top: 1rem;">
+             <input type="text" id="buscaLocais" placeholder="🔎 Buscar nome do local..." 
+                   style="padding: 10px; width: 100%; max-width: 400px; border: 1px solid #ccc; border-radius: 20px;">
+        </div>
+    </div>
+
+    <div id="gridEstabelecimentos" class="servicos-grid">
+        <p class="carregando">Carregando locais...</p>
+    </div>
+</main>
+
+<script src="/js/estabelecimentos.js"></script>
+
+<%- include('partials/footer') %>

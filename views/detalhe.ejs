@@ -1,0 +1,58 @@
+<%- include('partials/header', { titulo: 'Meu Perfil' }) %>
+
+<main style="max-width: 600px; margin: 4rem auto;">
+    <div style="background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
+        <h2 style="color: var(--cor-primaria); margin-top: 0;">Meu Perfil (Visitante)</h2>
+        <p style="color: #666; margin-bottom: 2rem;">Salve seus dados para preencher formulários automaticamente.</p>
+
+        <form id="formPerfil">
+            <label>Seu Nome:</label>
+            <input type="text" id="nomeSalvo" placeholder="Seu nome">
+
+            <label>Seu E-mail:</label>
+            <input type="email" id="emailSalvo" placeholder="Seu e-mail">
+
+            <label>Cidade:</label>
+            <input type="text" id="cidadeSalva" placeholder="Onde você mora?">
+
+            <button type="submit" class="btn btn-enviar" style="width: 100%; margin-top: 1rem;">Salvar Preferências</button>
+        </form>
+    </div>
+</main>
+
+<script>
+    // Lógica simples de LocalStorage
+    document.addEventListener('DOMContentLoaded', () => {
+        const nome = document.getElementById('nomeSalvo');
+        const email = document.getElementById('emailSalvo');
+        const cidade = document.getElementById('cidadeSalva');
+
+        // 1. Carregar dados salvos
+        const perfil = JSON.parse(localStorage.getItem('perfil_visitante')) || {};
+        if (perfil.nome) nome.value = perfil.nome;
+        if (perfil.email) email.value = perfil.email;
+        if (perfil.cidade) cidade.value = perfil.cidade;
+
+        // 2. Salvar dados
+        document.getElementById('formPerfil').addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const dados = {
+                nome: nome.value,
+                email: email.value,
+                cidade: cidade.value
+            };
+
+            localStorage.setItem('perfil_visitante', JSON.stringify(dados));
+            
+            // Feedback com SweetAlert (já carregado no header) ou alert simples
+            if (typeof Swal !== 'undefined') {
+                Swal.fire('Salvo!', 'Seus dados foram atualizados.', 'success');
+            } else {
+                alert('Dados salvos no seu navegador!');
+            }
+        });
+    });
+</script>
+
+<%- include('partials/footer') %>
