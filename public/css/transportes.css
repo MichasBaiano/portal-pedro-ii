@@ -1,98 +1,105 @@
-.header-transportes {
-    text-align: center;
-    margin-bottom: 2.5rem;
-}
-
-.icones-legenda {
+/* --- CABEÇALHO E FILTROS --- */
+.filtros-transporte {
+    margin-top: 1.5rem;
     display: flex;
     justify-content: center;
-    gap: 1rem;
-    margin-top: 1.5rem;
+    gap: 10px;
     flex-wrap: wrap;
 }
 
-.badge-legenda {
-    background: white;
+/* Botões de filtro idênticos aos de Estabelecimentos */
+.btn-filtro {
+    background-color: var(--bg-card); /* Fundo reativo */
     border: 1px solid var(--borda-suave);
-    padding: 0.5rem 1rem;
-    border-radius: 20px;
+    color: var(--texto-corpo);
+    padding: 0.6rem 1.5rem;
+    border-radius: 50px;
     cursor: pointer;
     font-weight: 600;
-    transition: background 0.2s;
+    transition: all 0.2s;
 }
 
-.badge-legenda:hover {
-    background: var(--fundo-pagina);
+.btn-filtro:hover, .btn-filtro.ativo {
+    background-color: var(--cor-primaria);
+    color: white;
     border-color: var(--cor-primaria);
 }
 
-.transportes-grid {
+/* --- GRID DE CARDS --- */
+.grid-transportes {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 1.5rem;
-    max-width: 1000px;
-    margin: 0 auto;
+    margin-top: 2rem;
 }
 
 .card-transporte {
-    background: white;
-    border-left: 5px solid var(--cor-primaria);
-    border-radius: 8px;
+    background-color: var(--bg-card); /* Fundo muda no dark mode */
+    border: 1px solid var(--borda-suave);
+    border-radius: 16px;
     padding: 1.5rem;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
     display: flex;
     align-items: center;
-    gap: 1rem;
+    gap: 1.5rem;
+    box-shadow: var(--sombra-card);
+    transition: transform 0.2s;
 }
 
+.card-transporte:hover {
+    transform: translateY(-3px);
+    border-color: var(--cor-primaria);
+}
+
+/* Ícone do transporte (ônibus/moto) */
 .icone-grande {
     font-size: 2.5rem;
-    background: var(--fundo-pagina);
-    width: 60px;
-    height: 60px;
+    background-color: var(--cor-primaria-clara);
+    width: 70px;
+    height: 70px;
     display: flex;
     align-items: center;
     justify-content: center;
     border-radius: 50%;
+    flex-shrink: 0;
 }
 
+/* --- TEXTOS E CONTEÚDO --- */
 .info-transporte {
     flex-grow: 1;
 }
 
 .info-transporte h3 {
-    margin: 0;
-    color: var(--cor-primaria);
-    font-size: 1.1rem;
+    margin: 0 0 5px 0;
+    color: var(--texto-titulo); /* Título visível no escuro */
+    font-size: 1.2rem;
 }
 
 .rota {
+    font-weight: 600;
+    color: var(--cor-primaria);
     font-size: 0.9rem;
-    font-weight: 700;
-    color: var(--texto-principal);
-    margin: 0.3rem 0;
+    margin-bottom: 5px;
 }
 
 .horarios {
-    font-size: 0.85rem;
-    color: var(--texto-secundario);
-    margin-bottom: 0.8rem;
+    color: var(--texto-corpo);
+    font-size: 0.9rem;
+    margin-bottom: 10px;
 }
 
+/* Botão de Ligar */
 .btn-ligar {
     display: inline-block;
-    background-color: #28a745; /* Verde telefone */
+    background-color: #25D366; /* Verde estilo WhatsApp/Telefone */
     color: white;
-    padding: 0.4rem 0.8rem;
-    border-radius: 4px;
+    padding: 6px 12px;
+    border-radius: 6px;
     text-decoration: none;
-    font-size: 0.85rem;
-    font-weight: 600;
+    font-size: 0.9rem;
+    font-weight: bold;
     transition: background 0.2s;
 }
 
 .btn-ligar:hover {
-    background-color: #218838;
-    text-decoration: none;
-    color: white;
+    background-color: #1ebc57;
 }

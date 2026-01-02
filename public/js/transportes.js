@@ -1,6 +1,7 @@
 let todosTransportes = [];
 
 document.addEventListener('DOMContentLoaded', () => {
+    // Busca inicial
     fetch('/api/transportes')
         .then(res => res.json())
         .then(data => {
@@ -21,8 +22,8 @@ function renderizar(lista) {
 
     lista.forEach(item => {
         const card = document.createElement('div');
-        card.className = 'card-transporte';
-        
+        card.className = 'card-transporte'; // O CSS controla o visual agora
+
         // Remove caracteres não numéricos para o link tel:
         const numeroLimpo = item.contato.replace(/\D/g, '');
 
@@ -39,8 +40,15 @@ function renderizar(lista) {
     });
 }
 
-// Função global para ser chamada pelo onclick no HTML
-window.filtrar = function(tipo) {
+// Função global de filtro
+window.filtrar = function (tipo, btn) {
+    // 1. Atualiza visual dos botões (troca a classe .ativo)
+    if (btn) {
+        document.querySelectorAll('.btn-filtro').forEach(b => b.classList.remove('ativo'));
+        btn.classList.add('ativo');
+    }
+
+    // 2. Filtra os dados
     if (tipo === 'todos') {
         renderizar(todosTransportes);
     } else {

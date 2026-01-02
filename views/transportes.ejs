@@ -1,25 +1,25 @@
 <%- include('partials/header', { titulo: 'Transportes - Portal Pedro II' }) %>
 
-<link rel="stylesheet" href="/css/transportes.css">
+    <link rel="stylesheet" href="/css/transportes.css">
 
-<main>
-    <div style="text-align: center; margin-bottom: 2rem;">
-        <h2>Horários e Transportes</h2>
-        <p>Como chegar e sair de Pedro II.</p>
-        
-        <div class="filtros-transporte" style="margin-top: 1.5rem; display: flex; justify-content: center; gap: 10px; flex-wrap: wrap;">
-            <button class="btn-filtro" onclick="filtrar('todos')">Todos</button>
-            <button class="btn-filtro" onclick="filtrar('onibus')">🚌 Ônibus</button>
-            <button class="btn-filtro" onclick="filtrar('van')">🚐 Vans</button>
-            <button class="btn-filtro" onclick="filtrar('mototaxi')">🏍️ Moto Táxi</button>
+    <main>
+        <div style="text-align: center; margin-bottom: 2rem;">
+            <h2>Horários e Transportes</h2>
+            <p>Como chegar e sair de Pedro II.</p>
+
+            <div class="filtros-transporte">
+                <button class="btn-filtro ativo" onclick="filtrar('todos', this)">Todos</button>
+                <button class="btn-filtro" onclick="filtrar('onibus', this)">🚌 Ônibus</button>
+                <button class="btn-filtro" onclick="filtrar('van', this)">🚐 Vans</button>
+                <button class="btn-filtro" onclick="filtrar('mototaxi', this)">🏍️ Moto Táxi</button>
+            </div>
         </div>
-    </div>
 
-    <div id="gridTransportes" class="grid-transportes">
-        <p class="carregando">Carregando horários...</p>
-    </div>
-</main>
+        <div id="gridTransportes" class="grid-transportes">
+            <p class="carregando">Carregando horários...</p>
+        </div>
+    </main>
 
-<script src="/js/transportes.js"></script>
+    <script src="/js/transportes.js"></script>
 
-<%- include('partials/footer') %>
+    <%- include('partials/footer') %>
