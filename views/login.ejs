@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Portal Pedro II</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #f0f2f5;
+        }
+
+        .login-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        input {
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="login-card">
+        <h2 style="color: #0f4c81; margin-bottom: 1.5rem;">Acesso Restrito</h2>
+
+        <form id="formLogin">
+            <input type="text" id="login" placeholder="Usuário (ex: admin)" required>
+            <input type="password" id="senha" placeholder="Senha" required>
+            <button type="submit" class="btn btn-enviar" style="width: 100%;">Entrar</button>
+        </form>
+        <p id="msgErro" style="color: red; margin-top: 10px; font-size: 0.9rem; display: none;"></p>
+    </div>
+
+    <script src="/js/login.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,149 @@
+<%- include('partials/admin-header', { page: 'estabelecimentos' }) %>
+
+<main class="admin-container">
+    <div class="form-card">
+        <h3 id="formTitulo">Novo Local</h3>
+        <form id="formLocal">
+            <input type="hidden" id="id">
+            
+            <label>Nome do Local:</label>
+            <input type="text" id="nome" required>
+
+            <label>Categoria:</label>
+            <select id="categoria">
+                <option value="gastronomia">Gastronomia</option>
+                <option value="hospedagem">Hospedagem</option>
+                <option value="comercio">Comércio/Serviço</option>
+                <option value="turismo">Ponto Turístico</option>
+            </select>
+
+            <label>Endereço:</label>
+            <input type="text" id="endereco" required>
+
+            <label>Telefone/Zap:</label>
+            <input type="text" id="telefone" required>
+
+            <label>URL da Imagem:</label>
+            <input type="text" id="imagem" placeholder="https://..." required>
+
+            <label style="margin-top: 15px; display: flex; align-items: center; gap: 10px;">
+                <input type="checkbox" id="destaque" style="width: auto;"> 
+                Marcar como Destaque ⭐
+            </label>
+
+            <label>Descrição:</label>
+            <textarea id="descricao" rows="3"></textarea>
+
+            <button type="submit" class="btn btn-enviar" style="width: 100%; margin-top: 1rem;">Salvar</button>
+            <button type="button" id="btnCancelar" class="btn btn-cancelar" style="width: 100%; margin-top: 0.5rem; display: none;">Cancelar</button>
+        </form>
+    </div>
+
+    <div class="lista-card">
+        <h3>Locais Cadastrados</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Nome</th>
+                    <th>Categoria</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody id="tabelaCorpo"></tbody>
+        </table>
+    </div>
+</main>
+
+<script>
+    const form = document.getElementById('formLocal');
+    const tabela = document.getElementById('tabelaCorpo');
+    const btnCancelar = document.getElementById('btnCancelar');
+
+    async function carregar() {
+        const res = await fetch('/api/estabelecimentos');
+        const lista = await res.json();
+        tabela.innerHTML = '';
+        lista.forEach(l => {
+            tabela.innerHTML += `
+                <tr>
+                    <td>${l.destaque ? '⭐' : ''} ${l.nome}</td>
+                    <td>${l.categoria}</td>
+                    <td>
+                        <button class="btn-editar" onclick='editar(${JSON.stringify(l)})'>✏️</button>
+                        <button class="btn-deletar" onclick="deletar(${l.id})">🗑️</button>
+                    </td>
+                </tr>
+            `;
+        });
+    }
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const id = document.getElementById('id').value;
+        const dados = {
+            nome: document.getElementById('nome').value,
+            categoria: document.getElementById('categoria').value,
+            endereco: document.getElementById('endereco').value,
+            telefone: document.getElementById('telefone').value,
+            imagem: document.getElementById('imagem').value,
+            descricao: document.getElementById('descricao').value,
+            destaque: document.getElementById('destaque').checked ? 1 : 0
+        };
+
+        const metodo = id ? 'PUT' : 'POST';
+        const url = id ? `/api/estabelecimentos/${id}` : '/api/estabelecimentos';
+
+        const res = await fetch(url, {
+            method: metodo,
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(dados)
+        });
+
+        if(res.ok) {
+            Swal.fire('Sucesso!', 'Salvo com sucesso.', 'success');
+            resetar();
+            carregar();
+        }
+    });
+
+    window.deletar = (id) => {
+        Swal.fire({
+            title: 'Apagar local?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Sim',
+            confirmButtonColor: '#d33'
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                await fetch(`/api/estabelecimentos/${id}`, { method: 'DELETE' });
+                carregar();
+            }
+        });
+    };
+
+    window.editar = (l) => {
+        document.getElementById('id').value = l.id;
+        document.getElementById('nome').value = l.nome;
+        document.getElementById('categoria').value = l.categoria;
+        document.getElementById('endereco').value = l.endereco;
+        document.getElementById('telefone').value = l.telefone;
+        document.getElementById('imagem').value = l.imagem;
+        document.getElementById('descricao').value = l.descricao;
+        document.getElementById('destaque').checked = l.destaque == 1;
+        
+        document.getElementById('formTitulo').innerText = 'Editando: ' + l.nome;
+        btnCancelar.style.display = 'block';
+    };
+
+    function resetar() {
+        form.reset();
+        document.getElementById('id').value = '';
+        document.getElementById('formTitulo').innerText = 'Novo Local';
+        btnCancelar.style.display = 'none';
+    }
+    btnCancelar.onclick = resetar;
+
+    carregar();
+</script>
+</body>
+</html>

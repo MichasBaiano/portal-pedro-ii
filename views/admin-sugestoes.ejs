@@ -1,0 +1,72 @@
+<%- include('partials/admin-header', { page: 'sugestoes' }) %>
+
+<style>
+    .card-msg {
+        background: #fff;
+        border: 1px solid #e2e8f0;
+        padding: 1.5rem;
+        margin-bottom: 1rem;
+        border-radius: 8px;
+        border-left: 4px solid var(--cor-primaria);
+    }
+    .card-msg small { color: #666; display: block; margin-bottom: 5px; }
+    .card-msg p { color: #333; font-size: 1rem; margin-top: 0.5rem; }
+    .badge { background: #edf2f7; padding: 2px 8px; border-radius: 4px; font-weight: bold; font-size: 0.8rem; }
+</style>
+
+<main class="admin-container" style="grid-template-columns: 1fr;">
+    <div class="lista-card">
+        <h3 style="padding: 1.5rem; border-bottom: 1px solid #eee;">Caixa de Entrada</h3>
+        <div id="listaSugestoes" style="padding: 1.5rem; background: #f8fafc; min-height: 200px;">
+            <p>Carregando...</p>
+        </div>
+    </div>
+</main>
+
+<script>
+    async function carregar() {
+        const res = await fetch('/api/sugestoes');
+        const lista = await res.json();
+        const container = document.getElementById('listaSugestoes');
+        
+        container.innerHTML = '';
+        if(lista.length === 0) {
+            container.innerHTML = '<p style="text-align:center; color:#666;">Nenhuma sugestão nova.</p>';
+            return;
+        }
+
+        lista.forEach(s => {
+            container.innerHTML += `
+                <div class="card-msg">
+                    <div style="display:flex; justify-content:space-between;">
+                        <small>
+                            <span class="badge">${s.tipo.toUpperCase()}</span> • 
+                            <strong>${s.nome}</strong> (${s.email || 'Sem e-mail'})
+                        </small>
+                        <button class="btn-deletar" style="width: auto; padding: 5px 10px;" onclick="arquivar(${s.id})">Arquivar</button>
+                    </div>
+                    <p>"${s.mensagem}"</p>
+                </div>
+            `;
+        });
+    }
+
+    window.arquivar = (id) => {
+        Swal.fire({
+            title: 'Arquivar mensagem?',
+            text: 'Ela será removida da lista.',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#0f4c81'
+        }).then(async (res) => {
+            if(res.isConfirmed) {
+                await fetch(`/api/sugestoes/${id}`, { method: 'DELETE' });
+                carregar();
+            }
+        });
+    };
+
+    carregar();
+</script>
+</body>
+</html>

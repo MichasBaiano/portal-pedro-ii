@@ -1,0 +1,28 @@
+<%- include('partials/admin-header', { page: 'dashboard' }) %>
+
+<main class="admin-container" style="grid-template-columns: 1fr;">
+    <div class="lista-card" style="text-align: center; padding: 4rem 2rem;">
+        <h2 style="color: var(--cor-primaria);">Bem-vindo ao Painel, Admin! 👋</h2>
+        <p style="color: var(--texto-corpo); margin-bottom: 3rem;">Selecione uma opção acima para começar a gerenciar o portal.</p>
+
+        <div style="display: flex; gap: 2rem; justify-content: center; flex-wrap: wrap;">
+            <a href="/admin/eventos" class="card-menu" style="width: 200px; padding: 2rem; display: block; text-decoration: none;">
+                <span style="font-size: 2.5rem; display: block; margin-bottom: 10px;">📅</span>
+                <h3 style="margin: 0; color: var(--texto-titulo);">Eventos</h3>
+            </a>
+            
+            <a href="/admin/estabelecimentos" class="card-menu" style="width: 200px; padding: 2rem; display: block; text-decoration: none;">
+                <span style="font-size: 2.5rem; display: block; margin-bottom: 10px;">🏨</span>
+                <h3 style="margin: 0; color: var(--texto-titulo);">Locais</h3>
+            </a>
+
+            <a href="/admin/sugestoes" class="card-menu" style="width: 200px; padding: 2rem; display: block; text-decoration: none;">
+                <span style="font-size: 2.5rem; display: block; margin-bottom: 10px;">📩</span>
+                <h3 style="margin: 0; color: var(--texto-titulo);">Sugestões</h3>
+            </a>
+        </div>
+    </div>
+</main>
+
+</body>
+</html>

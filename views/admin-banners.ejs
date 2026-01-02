@@ -1,0 +1,87 @@
+<%- include('partials/admin-header', { page: 'banners' }) %>
+
+<main class="admin-container">
+    <div class="form-card">
+        <h3>Novo Anúncio</h3>
+        <form id="formBanner">
+            <label>Nome do Anunciante:</label>
+            <input type="text" id="titulo" required placeholder="Ex: Pizzaria do João">
+
+            <label>Link de Destino (Instagram/Site):</label>
+            <input type="text" id="link" required placeholder="https://instagram.com/...">
+
+            <label>URL da Imagem:</label>
+            <input type="text" id="imagem" required placeholder="https://...">
+
+            <button type="submit" class="btn btn-enviar" style="width: 100%; margin-top: 1rem;">Publicar Anúncio</button>
+        </form>
+    </div>
+
+    <div class="lista-card">
+        <h3>Anúncios Ativos</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 100px;">Banner</th>
+                    <th>Anunciante</th>
+                    <th>Ação</th>
+                </tr>
+            </thead>
+            <tbody id="tabelaCorpo"></tbody>
+        </table>
+    </div>
+</main>
+
+<script>
+    const form = document.getElementById('formBanner');
+    const tabela = document.getElementById('tabelaCorpo');
+
+    async function carregar() {
+        const res = await fetch('/api/banners');
+        const lista = await res.json();
+        tabela.innerHTML = '';
+        lista.forEach(b => {
+            tabela.innerHTML += `
+                <tr>
+                    <td><img src="${b.imagem}" style="width:80px; height:auto; border-radius:4px;"></td>
+                    <td>${b.titulo}</td>
+                    <td><button class="btn-deletar" onclick="deletar(${b.id})">🗑️</button></td>
+                </tr>`;
+        });
+    }
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const dados = {
+            titulo: document.getElementById('titulo').value,
+            link: document.getElementById('link').value,
+            imagem: document.getElementById('imagem').value
+        };
+
+        const res = await fetch('/api/banners', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(dados)
+        });
+
+        if(res.ok) {
+            Swal.fire('Sucesso!', 'Banner publicado.', 'success');
+            form.reset();
+            carregar();
+        }
+    });
+
+    window.deletar = (id) => {
+        Swal.fire({ title: 'Remover banner?', icon: 'warning', showCancelButton: true, confirmButtonColor: '#d33' })
+        .then(async (res) => {
+            if(res.isConfirmed) {
+                await fetch(`/api/banners/${id}`, { method: 'DELETE' });
+                carregar();
+            }
+        });
+    };
+
+    carregar();
+</script>
+</body>
+</html>

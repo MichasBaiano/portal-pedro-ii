@@ -2,14 +2,21 @@ import { UsuarioModel } from "../model/usuarioModel.js";
 
 export class AuthController {
     static async login(req, res) {
+        // Recebe 'login' (usuário) 
         const { login, senha } = req.body;
 
         try {
+            // Busca no banco pelo campo 'login'
             const usuario = await UsuarioModel.buscarPorLogin(login);
 
+            // Verifica se achou e se a senha bate
             if (usuario && usuario.senha === senha) {
-                // SUCESSO: Salva o usuário na sessão do servidor
-                req.session.usuarioLogado = { id: usuario.id, login: usuario.login };
+                
+                // Salva na sessão
+                req.session.usuarioLogado = { 
+                    id: usuario.id, 
+                    login: usuario.login 
+                };
                 
                 res.json({ sucesso: true, mensagem: "Login realizado!" });
             } else {
@@ -17,13 +24,12 @@ export class AuthController {
             }
         } catch (erro) {
             console.error(erro);
-            res.status(500).json({ erro: "Erro interno." });
+            res.status(500).json({ erro: "Erro interno no servidor." });
         }
     }
 
-    // Função para Sair
     static logout(req, res) {
-        req.session.destroy(); // Apaga a sessão
-        res.redirect('/login'); // Manda de volta pra tela de login
+        req.session.destroy();
+        res.redirect('/login');
     }
 }

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel Admin - Portal Pedro II</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/admin.css">
+    
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+    <div class="cabecalho-admin">
+        <h2>Painel Admin</h2>
+        <nav>
+            <a href="/admin" class="<%= page === 'dashboard' ? 'ativo' : '' %>">Início</a> 
+            <a href="/admin/eventos" class="<%= page === 'eventos' ? 'ativo' : '' %>">Eventos</a>
+            <a href="/admin/estabelecimentos" class="<%= page === 'estabelecimentos' ? 'ativo' : '' %>">Locais</a>
+            <a href="/admin/transportes" class="<%= page === 'transportes' ? 'ativo' : '' %>">Transportes</a>
+            <a href="/admin/sugestoes" class="<%= page === 'sugestoes' ? 'ativo' : '' %>">Sugestões</a>
+            <a href="/admin/banners" class="<%= page === 'banners' ? 'ativo' : '' %>">Banners</a>
+            
+            <a href="/logout" style="margin-left: 20px; color: #ff6b6b; font-weight: bold;">Sair 🚪</a>
+        </nav>
+    </div>
