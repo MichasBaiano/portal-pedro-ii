@@ -1,28 +1,64 @@
 <%- include('partials/admin-header', { page: 'dashboard' }) %>
 
+<style>
+    .badge-count {
+        background: var(--cor-destaque);
+        color: #000;
+        font-weight: bold;
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        margin-left: 10px;
+        display: inline-block;
+    }
+</style>
+
 <main class="admin-container" style="grid-template-columns: 1fr;">
     <div class="lista-card" style="text-align: center; padding: 4rem 2rem;">
-        <h2 style="color: var(--cor-primaria);">Bem-vindo ao Painel, Admin! 👋</h2>
-        <p style="color: var(--texto-corpo); margin-bottom: 3rem;">Selecione uma opção acima para começar a gerenciar o portal.</p>
+        <h2 style="color: var(--cor-primaria);">Bem-vindo, Admin! 👋</h2>
+        <p style="color: var(--texto-corpo); margin-bottom: 3rem;">
+            Aqui está o resumo do seu portal hoje.
+        </p>
 
         <div style="display: flex; gap: 2rem; justify-content: center; flex-wrap: wrap;">
-            <a href="/admin/eventos" class="card-menu" style="width: 200px; padding: 2rem; display: block; text-decoration: none;">
+            
+            <a href="/admin/eventos" class="card-menu" style="width: 220px; padding: 2rem; display: block; text-decoration: none;">
                 <span style="font-size: 2.5rem; display: block; margin-bottom: 10px;">📅</span>
                 <h3 style="margin: 0; color: var(--texto-titulo);">Eventos</h3>
+                <div id="countEventos" class="badge-count">...</div>
             </a>
             
-            <a href="/admin/estabelecimentos" class="card-menu" style="width: 200px; padding: 2rem; display: block; text-decoration: none;">
+            <a href="/admin/estabelecimentos" class="card-menu" style="width: 220px; padding: 2rem; display: block; text-decoration: none;">
                 <span style="font-size: 2.5rem; display: block; margin-bottom: 10px;">🏨</span>
                 <h3 style="margin: 0; color: var(--texto-titulo);">Locais</h3>
+                <div id="countLocais" class="badge-count">...</div>
             </a>
 
-            <a href="/admin/sugestoes" class="card-menu" style="width: 200px; padding: 2rem; display: block; text-decoration: none;">
+            <a href="/admin/sugestoes" class="card-menu" style="width: 220px; padding: 2rem; display: block; text-decoration: none;">
                 <span style="font-size: 2.5rem; display: block; margin-bottom: 10px;">📩</span>
                 <h3 style="margin: 0; color: var(--texto-titulo);">Sugestões</h3>
+                <div id="countSugestoes" class="badge-count">...</div>
             </a>
+
         </div>
     </div>
 </main>
+
+<script>
+    // Busca os números reais ao carregar a página
+    document.addEventListener('DOMContentLoaded', async () => {
+        try {
+            const res = await fetch('/api/dashboard/stats');
+            const dados = await res.json();
+            
+            document.getElementById('countEventos').innerText = dados.eventos;
+            document.getElementById('countLocais').innerText = dados.locais;
+            document.getElementById('countSugestoes').innerText = dados.sugestoes;
+        } catch (error) {
+            console.error("Erro ao carregar stats");
+        }
+    });
+</script>
 
 </body>
 </html>
