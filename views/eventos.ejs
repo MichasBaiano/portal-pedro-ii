@@ -1,0 +1,33 @@
+<%- include('partials/header', { titulo: 'Agenda - Portal Pedro II' }) %>
+
+<link rel="stylesheet" href="/css/eventos.css">
+
+<main>
+    <div class="header-eventos">
+        <h2>Agenda Cultural</h2>
+        <p>Fique por dentro do que acontece na cidade.</p>
+        
+        <div style="margin: 1rem 0;">
+            <input type="text" id="buscaEventos" placeholder="🔎 Pesquisar evento..." 
+                   style="padding: 10px; width: 100%; max-width: 400px; border: 1px solid #ccc; border-radius: 20px;">
+        </div>
+        
+        <div class="filtro-container">
+            <label for="filtroCategoria">Filtrar por:</label>
+            <select id="filtroCategoria">
+                <option value="todos">Todos os eventos</option>
+                <option value="Música">Música / Shows</option>
+                <option value="Feira">Feiras e Artesanato</option>
+                <option value="Religioso">Religioso</option>
+            </select>
+        </div>
+    </div>
+
+    <div id="listaEventos" class="eventos-grid">
+        <p class="carregando">Carregando eventos...</p>
+    </div>
+</main>
+
+<script src="/js/eventos.js"></script>
+
+<%- include('partials/footer') %>
