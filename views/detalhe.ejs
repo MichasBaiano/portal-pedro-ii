@@ -1,124 +1,126 @@
 <%- include('partials/header', { titulo: 'Detalhes' }) %>
 
-<style>
-    .container-detalhe { 
-        max-width: 800px; 
-        margin: 0 auto; 
-        background: var(--bg-card); /* Usa variável para Dark Mode */
-        border-radius: 16px; 
-        overflow: hidden; 
-        box-shadow: var(--sombra-card); 
-        border: 1px solid var(--borda-suave);
-    }
-    
-    .detalhe-img { 
-        width: 100%; 
-        height: 400px; 
-        object-fit: cover; 
-        background-color: #eee; 
-    }
-    
-    .detalhe-conteudo { 
-        padding: 2rem; 
-    }
-    
-    .detalhe-meta { 
-        display: flex; 
-        gap: 15px; 
-        margin: 1rem 0; 
-        color: var(--texto-leve); 
-        font-size: 0.95rem; 
-        flex-wrap: wrap; 
-    }
-    
-    .detalhe-meta span { 
-        display: flex; 
-        align-items: center; 
-        gap: 5px; 
-        background: var(--cor-primaria-clara);
-        padding: 5px 10px;
-        border-radius: 6px;
-        color: var(--cor-primaria);
-        font-weight: 600;
-    }
-    
-    .detalhe-desc { 
-        font-size: 1.1rem; 
-        line-height: 1.8; 
-        color: var(--texto-corpo); 
-        margin-top: 1.5rem; 
-        white-space: pre-wrap; 
-    }
-    
-    .btn-voltar { 
-        display: inline-block; 
-        color: var(--cor-primaria); 
-        text-decoration: none; 
-        font-weight: 600; 
-        font-size: 1.1rem;
-    }
-
-    /* Ajuste para o topo da página */
-    .barra-topo {
-        max-width: 800px; 
-        margin: 0 auto 1rem auto; 
-        display: flex; 
-        justify-content: space-between; 
-        align-items: center;
-    }
-</style>
-
-<main>
-    <div class="barra-topo">
-        <a href="javascript:history.back()" class="btn-voltar">← Voltar</a>
-        
-        <button onclick="compartilharZap()" class="btn" style="background-color: #25D366; color: white; border: none; font-weight: bold; display: flex; align-items: center; gap: 8px; cursor: pointer;">
-            📲 Compartilhar
-        </button>
-    </div>
-
-    <div class="container-detalhe" id="areaDetalhe">
-        <p style="padding: 2rem; text-align: center;">Carregando informações...</p>
-    </div>
-</main>
-
-<script>
-    document.addEventListener('DOMContentLoaded', async () => {
-        // 1. Pega os parâmetros da URL (ex: ?tipo=evento&id=5)
-        const params = new URLSearchParams(window.location.search);
-        const tipo = params.get('tipo'); // 'evento' ou 'estabelecimento'
-        const id = params.get('id');
-        const container = document.getElementById('areaDetalhe');
-
-        // Validação simples
-        if (!tipo || !id) {
-            container.innerHTML = '<p style="padding:2rem;">Conteúdo não encontrado (Link incompleto).</p>';
-            return;
+    <style>
+        .container-detalhe {
+            max-width: 800px;
+            margin: 0 auto;
+            background: var(--bg-card);
+            /* Usa variável para Dark Mode */
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: var(--sombra-card);
+            border: 1px solid var(--borda-suave);
         }
 
-        // Define a rota da API (pluraliza o tipo para bater com a rota)
-        // ex: evento -> eventos, estabelecimento -> estabelecimentos
-        const rotaApi = tipo === 'evento' ? 'eventos' : 'estabelecimentos';
+        .detalhe-img {
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+            background-color: #eee;
+        }
 
-        try {
-            // Busca o item específico no backend
-            let response = await fetch(`/api/${rotaApi}/${id}`);
-            
-            if (!response.ok) throw new Error('Item não encontrado no sistema.');
-            
-            const item = await response.json();
+        .detalhe-conteudo {
+            padding: 2rem;
+        }
 
-            // Lógica de Exibição (Data ou Categoria / Local ou Endereço)
-            const dataOuCategoria = item.data 
-                ? `📅 ${new Date(item.data).toLocaleDateString('pt-BR')}` 
-                : `🏷️ ${item.categoria}`;
-            
-            const localOuEndereco = item.local 
-                ? `📍 ${item.local}` 
-                : `📍 ${item.endereco || 'Endereço não informado'}`;
+        .detalhe-meta {
+            display: flex;
+            gap: 15px;
+            margin: 1rem 0;
+            color: var(--texto-leve);
+            font-size: 0.95rem;
+            flex-wrap: wrap;
+        }
 
-            // Renderiza o HTML
-            container.innerHTML = `
+        .detalhe-meta span {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            background: var(--cor-primaria-clara);
+            padding: 5px 10px;
+            border-radius: 6px;
+            color: var(--cor-primaria);
+            font-weight: 600;
+        }
+
+        .detalhe-desc {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: var(--texto-corpo);
+            margin-top: 1.5rem;
+            white-space: pre-wrap;
+        }
+
+        .btn-voltar {
+            display: inline-block;
+            color: var(--cor-primaria);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        /* Ajuste para o topo da página */
+        .barra-topo {
+            max-width: 800px;
+            margin: 0 auto 1rem auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+    </style>
+
+    <main>
+        <div class="barra-topo">
+            <a href="javascript:history.back()" class="btn-voltar">← Voltar</a>
+
+            <button onclick="compartilharZap()" class="btn"
+                style="background-color: #25D366; color: white; border: none; font-weight: bold; display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                📲 Compartilhar
+            </button>
+        </div>
+
+        <div class="container-detalhe" id="areaDetalhe">
+            <p style="padding: 2rem; text-align: center;">Carregando informações...</p>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            // 1. Pega os parâmetros da URL (ex: ?tipo=evento&id=5)
+            const params = new URLSearchParams(window.location.search);
+            const tipo = params.get('tipo'); // 'evento' ou 'estabelecimento'
+            const id = params.get('id');
+            const container = document.getElementById('areaDetalhe');
+
+            // Validação simples
+            if (!tipo || !id) {
+                container.innerHTML = '<p style="padding:2rem;">Conteúdo não encontrado (Link incompleto).</p>';
+                return;
+            }
+
+            // Define a rota da API (pluraliza o tipo para bater com a rota)
+            // ex: evento -> eventos, estabelecimento -> estabelecimentos
+            const rotaApi = tipo === 'evento' ? 'eventos' : 'estabelecimentos';
+
+            try {
+                // Busca o item específico no backend
+                let response = await fetch(`/api/${rotaApi}/${id}`);
+
+                if (!response.ok) throw new Error('Item não encontrado no sistema.');
+
+                const item = await response.json();
+
+                // Lógica de Exibição (Data ou Categoria / Local ou Endereço)
+                const dataOuCategoria = item.data
+                    ? `📅 ${new Date(item.data).toLocaleDateString('pt-BR')}`
+                    : `🏷️ ${item.categoria}`;
+
+                const localOuEndereco = item.local
+                    ? `📍 ${item.local}`
+                    : `📍 ${item.endereco || 'Endereço não informado'}`;
+
+                // Renderiza o HTML
+                container.innerHTML = `
                 <img src="${item.imagem || 'https://via.placeholder.com/800x400'}" class="detalhe-img" alt="${item.nome}">
                 
                 <div class="detalhe-conteudo">
@@ -127,7 +129,20 @@
                     <div class="detalhe-meta">
                         <span>${dataOuCategoria}</span>
                         <span>${localOuEndereco}</span>
-                        ${item.telefone ? `<span>📞 ${item.telefone}</span>` : ''}
+                        ${(() => {
+                        if (!item.telefone) return '';
+                        const num = item.telefone.replace(/\D/g, '');
+                        let html = `<span>📞 ${item.telefone}</span>`;
+
+                        // Se for celular válido, adiciona o botão do Zap
+                        if (num.length >= 10) {
+                            html += `<a href="https://wa.me/55${num}?text=Olá, vi seu estabelecimento no Portal Pedro II!" target="_blank" 
+                    style="background-color: #25D366; color: white; padding: 4px 10px; border-radius: 50px; text-decoration: none; font-weight: bold; font-size: 0.9rem; display: flex; align-items: center; gap: 5px;">
+                    💬 Chamar no Zap
+                 </a>`;
+                        }
+                        return html;
+                    })()}
                     </div>
 
                     <div class="detalhe-desc">
@@ -136,26 +151,26 @@
                 </div>
             `;
 
-            // Atualiza o título da aba do navegador
-            document.title = `${item.nome} - Portal Pedro II`;
+                // Atualiza o título da aba do navegador
+                document.title = `${item.nome} - Portal Pedro II`;
 
-        } catch (error) {
-            console.error(error);
-            container.innerHTML = `<p style="padding:2rem; color:red; text-align:center;">Erro ao carregar: ${error.message}</p>`;
+            } catch (error) {
+                console.error(error);
+                container.innerHTML = `<p style="padding:2rem; color:red; text-align:center;">Erro ao carregar: ${error.message}</p>`;
+            }
+        });
+
+        // Função separada para o WhatsApp
+        function compartilharZap() {
+            const url = window.location.href;
+            // Pega o título da página e remove o sufixo do site para não ficar repetitivo
+            const titulo = document.title.replace(' - Portal Pedro II', '');
+
+            const texto = `Olha que legal esse lugar em Pedro II: *${titulo}*\n\nVeja mais aqui: ${url}`;
+
+            const linkZap = `https://api.whatsapp.com/send?text=${encodeURIComponent(texto)}`;
+            window.open(linkZap, '_blank');
         }
-    });
+    </script>
 
-    // Função separada para o WhatsApp
-    function compartilharZap() {
-        const url = window.location.href;
-        // Pega o título da página e remove o sufixo do site para não ficar repetitivo
-        const titulo = document.title.replace(' - Portal Pedro II', '');
-        
-        const texto = `Olha que legal esse lugar em Pedro II: *${titulo}*\n\nVeja mais aqui: ${url}`;
-        
-        const linkZap = `https://api.whatsapp.com/send?text=${encodeURIComponent(texto)}`;
-        window.open(linkZap, '_blank');
-    }
-</script>
-
-<%- include('partials/footer') %>
+    <%- include('partials/footer') %>

@@ -84,9 +84,22 @@ document.addEventListener('DOMContentLoaded', () => {
         const proximoIndice = indiceAtual + ITENS_POR_PAGINA;
         const lote = locaisFiltrados.slice(indiceAtual, proximoIndice);
 
-        lote.forEach(l => {
+lote.forEach(l => {
             const linkDetalhe = `/detalhe?tipo=estabelecimento&id=${l.id}`;
             
+            // --- LÓGICA DO WHATSAPP ---
+            // Remove tudo que não for número (parênteses, traços, espaços)
+            const numeroLimpo = l.telefone ? l.telefone.replace(/\D/g, '') : '';
+            let botaoZap = '';
+            
+            // Se tiver pelo menos 10 dígitos (DDD + número), cria o botão
+            if (numeroLimpo.length >= 10) {
+                // Cria o link direto para a API do WhatsApp
+                const linkZap = `https://wa.me/55${numeroLimpo}?text=Olá, vi seu contato no Portal Pedro II!`;
+                botaoZap = `<a href="${linkZap}" target="_blank" class="btn-zap">💬 WhatsApp</a>`;
+            }
+            // ---------------------------
+
             const cardHTML = `
                 <div class="card-local">
                     ${typeof Favoritos !== 'undefined' ? Favoritos.renderizarBotao(l.id, 'estabelecimento', l.nome, l.imagem || '/img/placeholder.jpg', linkDetalhe) : ''}
@@ -96,7 +109,12 @@ document.addEventListener('DOMContentLoaded', () => {
                         ${l.destaque ? '<span class="badge-destaque">⭐ Destaque</span>' : ''}
                         <h3>${l.nome}</h3>
                         <span class="badge-categoria">${l.categoria}</span>
-                        <p>📞 ${l.telefone}</p>
+                        
+                        <div style="margin: 10px 0; display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                            <span style="color: var(--texto-corpo);">📞 ${l.telefone || 'S/ Tel'}</span>
+                            ${botaoZap}
+                        </div>
+
                         <a href="${linkDetalhe}" class="btn btn-primary">
                             Saiba Mais
                         </a>

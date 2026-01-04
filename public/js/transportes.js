@@ -20,24 +20,38 @@ function renderizar(lista) {
         return;
     }
 
-lista.forEach(item => {
-    const card = document.createElement('div');
-    card.className = 'card-transporte';
-    const numeroLimpo = item.contato.replace(/\D/g, '');
-    const linkFake = '#'; // Transporte não tem página de detalhe, usamos '#'
+    lista.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'card-transporte';
 
-    card.innerHTML = `
+        // Limpa o número
+        const numeroLimpo = item.contato.replace(/\D/g, '');
+        const linkFake = '#';
+
+        // Cria os botões de ação
+        let botoesAcao = `<a href="tel:${numeroLimpo}" class="btn-ligar" style="background:#eee; color:#333;">📞 Ligar</a>`;
+
+        if (numeroLimpo.length >= 10) {
+            botoesAcao += `
+            <a href="https://wa.me/55${numeroLimpo}?text=Olá, preciso de transporte (vi no Portal Pedro II)." target="_blank" class="btn-zap">
+                💬 WhatsApp
+            </a>`;
+        }
+
+        card.innerHTML = `
         <div class="icone-grande">${item.icone}</div>
         ${Favoritos.renderizarBotao(item.id, 'transporte', item.nome, '', linkFake)}
         <div class="info-transporte">
             <h3>${item.nome}</h3>
             <div class="rota">${item.rota}</div>
             <div class="horarios">🕒 ${item.horarios}</div>
-            <a href="tel:${numeroLimpo}" class="btn-ligar">📞 Ligar: ${item.contato}</a>
+            <div style="margin-top: 0.5rem; display: flex; gap: 10px; flex-wrap: wrap;">
+                ${botoesAcao}
+            </div>
         </div>
     `;
-    grid.appendChild(card);
-});
+        grid.appendChild(card);
+    });
 }
 
 // Função global de filtro
