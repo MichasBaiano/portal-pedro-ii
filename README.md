@@ -2,10 +2,8 @@
 
 > Um guia turístico e comercial completo, interativo e progressivo (PWA) para a cidade de Pedro II, Piauí.
 
-![Status do Projeto](https://img.shields.io/badge/Status-Concluído-brightgreen)
 ![Node.js](https://img.shields.io/badge/Node.js-v18+-green)
 ![PWA](https://img.shields.io/badge/PWA-Ready-blue)
-![License](https://img.shields.io/badge/License-GPLv3-red)
 
 ## 📖 Sobre o Projeto
 
