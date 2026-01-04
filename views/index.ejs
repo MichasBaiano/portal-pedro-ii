@@ -3,6 +3,270 @@
 <style>
     /* --- Estilos exclusivos da Home --- */
     
+    /* CARROSSEL HERO (Substitui a antiga .hero-section) */
+    .hero-carousel {
+        position: relative;
+        max-width: 100%;
+        margin-bottom: 2rem;
+        border-radius: 0 0 24px 24px;
+        overflow: hidden; /* Garante que nada saia das bordas arredondadas */
+        box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+        background: #1a202c; /* Fundo base para carregamento */
+    }
+
+    /* Os Slides (Têm o mesmo tamanho e estilo) */
+    .carousel-slide {
+        display: none; /* Esconde todos por padrão */
+        padding: 6rem 1.5rem; /* Altura generosa */
+        text-align: center;
+        background-size: cover;
+        background-position: center;
+        /* Efeito de fade suave ao trocar */
+        animation: fadeEffect 1.0s;
+        min-height: 450px; /* Garante altura igual para todos */
+        
+        /* Flexbox para centralizar conteúdo */
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    /* O slide ativo aparece */
+    .carousel-slide.ativo {
+        display: flex; 
+    }
+
+    @keyframes fadeEffect {
+        from {opacity: 0.4}
+        to {opacity: 1}
+    }
+
+    /* --- SLIDE 1: BOAS VINDAS (Estilo Original) --- */
+    .slide-boas-vindas {
+        background: linear-gradient(rgba(15, 76, 129, 0.85), rgba(15, 76, 129, 0.7)), url('https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Morro_do_Gritador.jpg/1200px-Morro_do_Gritador.jpg');
+        background-size: cover;
+        background-position: center;
+    }
+
+    .slide-boas-vindas h1 {
+        font-size: 2.8rem;
+        margin-bottom: 1rem;
+        color: white;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    }
+
+    .slide-boas-vindas p {
+        font-size: 1.25rem;
+        color: rgba(255,255,255, 0.95);
+        max-width: 700px;
+        margin: 0 auto 2rem auto;
+    }
+
+    /* --- SLIDES DE BANNER (Publicidade) --- */
+    .slide-banner {
+        position: relative;
+        text-decoration: none; /* Remove sublinhado se for link */
+    }
+    
+    /* Gradiente escuro embaixo para o texto aparecer */
+    .banner-overlay {
+        background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        padding: 4rem 1.5rem 2rem 1.5rem;
+        text-align: center;
+    }
+
+    .slide-banner h2 {
+        color: white;
+        font-size: 2.5rem;
+        margin: 0;
+        text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+    }
+    
+    .tag-patrocinio {
+        background: var(--cor-destaque);
+        color: #000;
+        padding: 4px 10px;
+        border-radius: 4px;
+        font-size: 0.8rem;
+        font-weight: bold;
+        text-transform: uppercase;
+        margin-bottom: 10px;
+        display: inline-block;
+    }
+
+    /* --- INDICADORES (Bolinhas) --- */
+    .carousel-dots {
+        position: absolute;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        gap: 10px;
+        z-index: 10;
+    }
+
+    .dot {
+        height: 12px;
+        width: 12px;
+        background-color: rgba(255,255,255,0.4);
+        border-radius: 50%;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+
+    .dot.ativo {
+        background-color: white;
+        transform: scale(1.2);
+    }
+
+    /* Widget de Clima (Mantido do original) */
+    .widget-clima {
+        display: inline-flex;
+        align-items: center;
+        gap: 12px;
+        background: rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(5px);
+        padding: 8px 20px;
+        border-radius: 50px;
+        margin-top: 2rem;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        color: white;
+        font-weight: 500;
+    }
+
+    /* --- Resto dos estilos da Grid (Mantidos) --- */
+    .grid-home {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 2rem;
+        margin-top: 1.5rem;
+    }
+
+    .card-home {
+        background-color: var(--bg-card);
+        border: 1px solid var(--borda-suave);
+        border-radius: 16px;
+        overflow: hidden;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    }
+    /* ... (O restante dos estilos da grid pode manter igual) ... */
+</style>
+
+<section class="hero-carousel">
+    
+    <div class="carousel-slide slide-boas-vindas ativo">
+        <div class="container">
+            <h1>Bem-vindo a Pedro II</h1>
+            <p>A Suíça Piauiense espera por você. Descubra festivais, belezas naturais e a nossa preciosa opala.</p>
+            
+            <div style="margin-top: 1rem; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+                <a href="/mapa" class="btn" style="background: white; color: var(--cor-primaria);">🗺️ Ver Mapa</a>
+                <a href="/estabelecimentos" class="btn" style="border: 2px solid white; color: white;">🏨 Onde Ficar</a>
+            </div>
+
+            <div class="widget-clima">
+                <span id="climaIcone" style="font-size: 1.5rem;">🌤️</span>
+                <div style="text-align: left; line-height: 1.2;">
+                    <span id="climaTemp" style="font-size: 1.2rem; font-weight: bold; display: block;">--°C</span>
+                    <span id="climaTexto" style="font-size: 0.8rem; opacity: 0.9;">Carregando...</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <% if (banners && banners.length > 0) { %>
+        <% banners.forEach(banner => { %>
+            <<%= banner.link ? 'a href=' + banner.link + ' target="_blank"' : 'div' %> 
+                class="carousel-slide slide-banner" 
+                style="background-image: url('<%= banner.imagem %>');">
+                
+                <% if(banner.titulo) { %>
+                    <div class="banner-overlay">
+                        <span class="tag-patrocinio">Publicidade</span>
+                        <h2><%= banner.titulo %></h2>
+                    </div>
+                <% } %>
+            </<%= banner.link ? 'a' : 'div' %>>
+        <% }) %>
+    <% } %>
+
+    <div class="carousel-dots" id="carouselDots">
+        </div>
+
+</section>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        let slideIndex = 0;
+        const slides = document.getElementsByClassName("carousel-slide");
+        const dotsContainer = document.getElementById("carouselDots");
+        let timer;
+
+        // 1. Criar as bolinhas dinamicamente
+        if(slides.length > 1) {
+            for(let i=0; i<slides.length; i++) {
+                const dot = document.createElement("span");
+                dot.className = "dot";
+                dot.onclick = () => mudarSlideManual(i);
+                dotsContainer.appendChild(dot);
+            }
+            atualizarDots();
+        }
+
+        // 2. Iniciar rotação automática
+        iniciarTimer();
+
+        function iniciarTimer() {
+            if(slides.length > 1) {
+                timer = setInterval(proximoSlide, 5000); // Muda a cada 5 segundos
+            }
+        }
+
+        function proximoSlide() {
+            slideIndex++;
+            if (slideIndex >= slides.length) { slideIndex = 0; }
+            mostrarSlide(slideIndex);
+        }
+
+        function mudarSlideManual(n) {
+            clearInterval(timer); // Para o timer ao clicar
+            slideIndex = n;
+            mostrarSlide(slideIndex);
+            iniciarTimer(); // Reinicia
+        }
+
+        function mostrarSlide(n) {
+            // Esconde todos
+            for (let i = 0; i < slides.length; i++) {
+                slides[i].classList.remove("ativo");
+            }
+            // Mostra o atual
+            slides[n].classList.add("ativo");
+            atualizarDots();
+        }
+
+        function atualizarDots() {
+            const dots = document.getElementsByClassName("dot");
+            if(dots.length === 0) return;
+            
+            for (let i = 0; i < dots.length; i++) {
+                dots[i].classList.remove("ativo");
+            }
+            dots[slideIndex].classList.add("ativo");
+        }
+    });
+</script>
+
+<style>
+    /* --- Estilos exclusivos da Home --- */
+    
     /* Banner Hero (Topo) */
     .hero-section {
         background: linear-gradient(135deg, var(--cor-primaria) 0%, #2a4365 100%);
@@ -115,24 +379,6 @@
         to { opacity: 1; transform: translateY(0); }
     }
 </style>
-
-<section class="hero-section">
-    <div class="container">
-        <h1>Bem-vindo a Pedro II</h1>
-        <p>A Suíça Piauiense espera por você. Descubra festivais, belezas naturais e a nossa preciosa opala.</p>
-        <div style="margin-top: 2rem; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
-            <a href="/mapa" class="btn" style="background: white; color: var(--cor-primaria);">🗺️ Ver Mapa</a>
-            <a href="/estabelecimentos" class="btn" style="border: 2px solid white; color: white;">🏨 Onde Ficar</a>
-        </div>
-        <div class="widget-clima">
-            <span id="climaIcone" style="font-size: 1.5rem;">🌤️</span>
-            <div style="text-align: left; line-height: 1.2;">
-                <span id="climaTemp" style="font-size: 1.2rem; font-weight: bold; display: block;">--°C</span>
-                <span id="climaTexto" style="font-size: 0.8rem; opacity: 0.9;">Carregando clima...</span>
-            </div>
-        </div>
-    </div>
-</section>
 
 <main>
 
