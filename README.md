@@ -1,77 +1,79 @@
-# 🏛️ Portal Turístico de Pedro II (MVP)
+# 💎 Portal Pedro II - A Suíça Piauiense
 
-> **Status:** MVP Completo (Frontend + Backend + Banco de Dados + Painel Admin).
+> Um guia turístico e comercial completo, interativo e progressivo (PWA) para a cidade de Pedro II, Piauí.
 
-Bem-vindo ao repositório do **Portal de Pedro II**, uma solução digital desenvolvida para fomentar o turismo na "Suíça Piauiense". Este projeto demonstra uma arquitetura de software robusta, saindo de páginas estáticas para uma aplicação web dinâmica.
+![Status do Projeto](https://img.shields.io/badge/Status-Concluído-brightgreen)
+![Node.js](https://img.shields.io/badge/Node.js-v18+-green)
+![PWA](https://img.shields.io/badge/PWA-Ready-blue)
+![License](https://img.shields.io/badge/License-GPLv3-red)
 
-## 🚀 Tecnologias e Arquitetura
+## 📖 Sobre o Projeto
 
-O projeto foi construído utilizando tecnologias modernas e padrões de mercado:
+O **Portal Pedro II** é uma aplicação web desenvolvida para conectar turistas e moradores aos melhores eventos, pontos turísticos (como o Morro do Gritador e as Minas de Opala) e comércios da cidade. 
 
-* **Backend:** Node.js com **Express.js**.
-* **Banco de Dados:** **SQLite** (Relacional), garantindo persistência de dados sem necessidade de configuração complexa de servidores externos.
-* **Frontend:** HTML5, CSS3, JavaScript (ES6+) e **Leaflet.js** (Mapas interativos).
-* **Arquitetura:** **MVC (Model-View-Controller)** com separação clara de responsabilidades.
-* **API:** RESTful API interna servindo dados em JSON para o frontend.
+O projeto foi construído com foco em performance, acessibilidade offline e monetização para comércios locais.
 
-## 📂 Estrutura do Projeto
+## ✨ Funcionalidades Principais
 
-A organização das pastas reflete a arquitetura MVC implementada:
+* **📱 Progressive Web App (PWA):** Instalável no Android/iOS e funciona Offline.
+* **🗺️ Mapa Interativo:** Localização precisa de pontos turísticos e serviços.
+* **⭐ Sistema de Avaliações:** Usuários podem dar notas e comentar (Prova Social).
+* **💰 Monetização (Destaques):** Sistema de "Patrocínio" onde estabelecimentos pagantes ganham destaque visual e prioridade nas listas.
+* **💬 Integração WhatsApp:** Botões de contato direto para hotéis, restaurantes e mototáxis.
+* **🔍 Filtros Inteligentes:** "Rota da Opala", "Ecoturismo" e "Gastronomia".
+* **🔐 Painel Administrativo:** Gestão completa de banners, eventos e locais com segurança criptografada.
+* **🌙 Modo Escuro:** Detecção automática e alternância manual de tema.
 
-| Pasta | Função | Descrição |
-| :--- | :--- | :--- |
-| `Config/` | **Database** | Configuração e conexão com o SQLite (`db.js`). Inclui sistema de "Seed" automático. |
-| `controller/` | **Lógica** | Gerencia as requisições, valida dados e conecta o Model à View. |
-| `model/` | **Dados** | Executa as queries SQL (CRUD) no banco de dados. |
-| `routes/` | **Roteamento** | Separação organizada entre rotas do site (`siteRoutes.js`) e da API (`apiRoutes.js`). |
-| `view/` | **Interface** | Arquivos HTML, CSS e JS do cliente (Front-end desacoplado). |
-| `server.js` | **Servidor** | Ponto de entrada da aplicação. |
+## 🛠️ Tecnologias Utilizadas
 
-## ✨ Funcionalidades
+* **Back-end:** Node.js, Express.
+* **Front-end:** HTML5, CSS3 (Moderno), JavaScript (Vanilla), EJS (View Engine).
+* **Banco de Dados:** SQLite (Leve e eficiente).
+* **Segurança:** Bcrypt (Hash de senhas), Express-Session.
+* **Outros:** Leaflet (Mapas), Multer (Upload de Imagens).
 
-### 🌍 Área Pública (Turista)
-1.  **Home Page:** Dashboard visual com acesso rápido a todas as seções.
-2.  **Mapa Interativo:** Mapa dinâmico (Leaflet) com pinos marcando pontos turísticos reais.
-3.  **Guia de Eventos:** Agenda cultural com listagem de festivais e filtros por categoria.
-4.  **Serviços (Onde Ficar/Comer):** Catálogo de pousadas e restaurantes com sistema de "Destaque".
-5.  **Transportes:** Informações utilitárias de ônibus, vans e mototáxis com botões de "Ligar agora".
-6.  **Sugestões:** Formulário para moradores enviarem dicas, salvas diretamente no banco de dados.
-7.  **Perfil do Usuário:** Funcionalidade *Client-Side* que salva preferências e foto no navegador (`localStorage`).
+## 🚀 Como Rodar o Projeto
 
-### 🔒 Área Administrativa (Gestão)
-O sistema conta com um **Painel de Controle (CRUD Completo)** onde o administrador pode gerenciar o conteúdo do site sem mexer no código:
+### Pré-requisitos
+* Node.js instalado.
 
-* **Gerenciar Eventos:** Adicionar, editar e excluir eventos da agenda.
-* **Gerenciar Estabelecimentos:** Cadastrar novos comércios e definir destaques.
-* **Gerenciar Transportes:** Atualizar horários e contatos.
+### Passo a Passo
 
-> **Acesso ao Admin:** Navegue até o rodapé do site e clique em "Área Admin" ou acesse `/admin/eventos`.
-
-## 🎨 Identidade Visual
-
-O projeto respeita as cores da bandeira e a identidade cultural do município:
-* 🔵 **Azul:** Representando o céu e as águas.
-* 🟡 **Amarelo/Dourado:** Representando as riquezas e a Opala.
-* ⚪ **Interface Limpa:** Design focado na usabilidade e leitura.
-
-## 🛠️ Como Rodar o Projeto Localmente
-
-1.  **Pré-requisitos:** Tenha o [Node.js](https://nodejs.org/) instalado.
-2.  **Clonar o repositório:**
+1.  **Clone o repositório:**
     ```bash
-    git clone [URL_DO_SEU_REPO]
+    git clone [https://github.com/SEU_USUARIO/portal-pedro-ii.git](https://github.com/SEU_USUARIO/portal-pedro-ii.git)
+    cd portal-pedro-ii
     ```
-3.  **Instalar dependências:**
+
+2.  **Instale as dependências:**
     ```bash
     npm install
     ```
-4.  **Rodar o servidor:**
-    ```bash
-    node server.js
+
+3.  **Configure as Variáveis de Ambiente:**
+    Crie um arquivo `.env` na raiz do projeto e adicione:
+    ```ini
+    PORT=3000
+    NODE_ENV=development
+    SESSION_SECRET=sua_chave_secreta_aqui
     ```
-    *(Nota: O banco de dados `database.sqlite` será criado e populado automaticamente na primeira execução).*
-5.  **Acessar:** Abra `http://localhost:3000` no seu navegador.
+
+4.  **Inicie o Servidor:**
+    ```bash
+    npm start
+    ```
+
+5.  **Acesse:**
+    Abra `http://localhost:3000` no seu navegador.
+
+## 👤 Autores
+**Ananias Carlos**
+**Davi Carreiro**
+**Michel Júnior**
+**Sidney Nascimento**
+* Desenvolvedores Fullstacks
+* Estudantes de Análise e Desenvolvimento de Sistemas
 
 ---
-Desenvolvido como projeto acadêmico/MVP para o programa Centelha/IFPI.
-Licença MIT.
+Feito com ❤️ para Pedro II - PI.
+Todos os direitos reservados aos alunos
