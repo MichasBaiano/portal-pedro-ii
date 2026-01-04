@@ -1,7 +1,8 @@
 import express from "express";
-
 import { upload } from "../Config/upload.js";
+import { verificarAutenticacao } from "../Middleware/authMiddleware.js";
 
+// Controllers
 import { MapaController } from "../controller/mapaController.js";
 import { SugestaoController } from "../controller/sugestaoController.js";
 import { EventosController } from "../controller/eventoController.js";
@@ -13,44 +14,61 @@ import { DashboardController } from "../controller/dashboardController.js";
 
 const router = express.Router();
 
-// --- Mapa ---
+// ======================================================
+//      ROTAS PÚBLICAS (Qualquer um pode acessar)
+// ======================================================
+
+// Login e Mapa
+router.post("/login", AuthController.login);
 router.get("/pontos-mapa", MapaController.getPontosMapa);
 
-// --- SUGESTÕES ---
-router.post("/sugestoes", SugestaoController.enviarSugestao); // Já existia (Público)
-router.get("/sugestoes", SugestaoController.listar);         // Novo (Admin)
-router.delete("/sugestoes/:id", SugestaoController.deletar); // Novo (Admin)
+// Sugestões
+router.post("/sugestoes", SugestaoController.enviarSugestao);
 
-// --- CRUD Eventos ---
+// Leitura de Eventos
 router.get("/eventos", EventosController.listarEventos);
-router.post("/eventos", upload.single('imagem'), EventosController.criarEvento);
-router.put("/eventos/:id", upload.single('imagem'), EventosController.editarEvento);
-router.delete("/eventos/:id", EventosController.deletarEvento);
 router.get("/eventos/:id", EventosController.getEvento);
 
-// --- CRUD Estabelecimentos ---
+// Leitura de Estabelecimentos
 router.get("/estabelecimentos", EstabelecimentosController.listar);
-router.post("/estabelecimentos", upload.single('imagem'),  EstabelecimentosController.criar);
-router.put("/estabelecimentos/:id", upload.single('imagem'), EstabelecimentosController.editar);
-router.delete("/estabelecimentos/:id", EstabelecimentosController.deletar);
 router.get("/estabelecimentos/:id", EstabelecimentosController.getEstabelecimento);
 
-// --- CRUD Transportes ---
+// Leitura de Transportes
 router.get("/transportes", TransportesController.listar);
-router.post("/transportes", TransportesController.criar);
-router.put("/transportes/:id", TransportesController.editar);
-router.delete("/transportes/:id", TransportesController.deletar);
 
-// Admin
-router.post("/login", AuthController.login);
-
-// --- PUBLICIDADE (BANNERS) ---
+// Leitura de Banners
 router.get("/banners", BannersController.listar);
-router.post("/banners", upload.single('imagem'), BannersController.criar);
-router.put("/banners/:id", upload.single('imagem'), BannersController.editar);
-router.delete("/banners/:id", BannersController.deletar);
 
-// --- DASHBOARD ---
-router.get("/dashboard/stats", DashboardController.getStats);
+
+// ======================================================
+//       ROTAS RESTRITAS (Só Admin logado acessa)
+// ======================================================
+
+// Dashboard (Estatísticas)
+router.get("/dashboard/stats", verificarAutenticacao, DashboardController.getStats);
+
+// Sugestões (Ler e Deletar)
+router.get("/sugestoes", verificarAutenticacao, SugestaoController.listar);
+router.delete("/sugestoes/:id", verificarAutenticacao, SugestaoController.deletar);
+
+// Eventos (Criar, Editar, Deletar)
+router.post("/eventos", verificarAutenticacao, upload.single('imagem'), EventosController.criarEvento);
+router.put("/eventos/:id", verificarAutenticacao, upload.single('imagem'), EventosController.editarEvento);
+router.delete("/eventos/:id", verificarAutenticacao, EventosController.deletarEvento);
+
+// Estabelecimentos (Criar, Editar, Deletar)
+router.post("/estabelecimentos", verificarAutenticacao, upload.single('imagem'),  EstabelecimentosController.criar);
+router.put("/estabelecimentos/:id", verificarAutenticacao, upload.single('imagem'), EstabelecimentosController.editar);
+router.delete("/estabelecimentos/:id", verificarAutenticacao, EstabelecimentosController.deletar);
+
+// Transportes (Criar, Editar, Deletar)
+router.post("/transportes", verificarAutenticacao, TransportesController.criar);
+router.put("/transportes/:id", verificarAutenticacao, TransportesController.editar);
+router.delete("/transportes/:id", verificarAutenticacao, TransportesController.deletar);
+
+// Banners (Criar, Editar, Deletar)
+router.post("/banners", verificarAutenticacao, upload.single('imagem'), BannersController.criar);
+router.put("/banners/:id", verificarAutenticacao, upload.single('imagem'), BannersController.editar);
+router.delete("/banners/:id", verificarAutenticacao, BannersController.deletar);
 
 export default router;
