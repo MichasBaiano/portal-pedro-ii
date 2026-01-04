@@ -14,7 +14,8 @@
 }
 
 .btn-filtro {
-    background-color: var(--bg-card); /* Fundo reage ao tema */
+    background-color: var(--bg-card);
+    /* Fundo reage ao tema */
     border: 1px solid var(--borda-suave);
     color: var(--texto-corpo);
     padding: 0.6rem 1.5rem;
@@ -24,7 +25,8 @@
     transition: all 0.2s;
 }
 
-.btn-filtro:hover, .btn-filtro.ativo {
+.btn-filtro:hover,
+.btn-filtro.ativo {
     background-color: var(--cor-primaria);
     color: white;
     border-color: var(--cor-primaria);
@@ -39,7 +41,8 @@
 }
 
 .card-local {
-    background-color: var(--bg-card); /* AQUI ESTÁ A CORREÇÃO DO FUNDO */
+    background-color: var(--bg-card);
+    /* AQUI ESTÁ A CORREÇÃO DO FUNDO */
     border: 1px solid var(--borda-suave);
     border-radius: 16px;
     overflow: hidden;
@@ -70,7 +73,8 @@
 
 .card-conteudo h3 {
     margin: 0;
-    color: var(--texto-titulo); /* Título muda de cor no dark mode */
+    color: var(--texto-titulo);
+    /* Título muda de cor no dark mode */
 }
 
 .card-conteudo p {
@@ -79,7 +83,8 @@
 
 /* --- BADGES (Categorias e Destaques) --- */
 .badge-categoria {
-    background-color: var(--cor-primaria-clara); /* Fundo suave */
+    background-color: var(--cor-primaria-clara);
+    /* Fundo suave */
     color: var(--cor-primaria);
     padding: 4px 10px;
     border-radius: 6px;
@@ -99,7 +104,8 @@
 
 /* --- BOTÃO "SAIBA MAIS" --- */
 .card-conteudo .btn {
-    margin-top: auto; /* Empurra para o final do card */
+    margin-top: auto;
+    /* Empurra para o final do card */
     text-align: center;
     background-color: var(--cor-primaria);
     color: white;
@@ -108,7 +114,48 @@
     border-radius: 8px;
     font-weight: 500;
 }
+
 .card-conteudo .btn:hover {
     background-color: var(--cor-destaque);
     color: #000;
+}
+
+/* --- ESTILO PREMIUM (Monetização) --- */
+.card-premium {
+    border: 2px solid #ffd700 !important; /* Borda Dourada */
+    position: relative;
+    box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+    transform: scale(1.02);
+    z-index: 2;
+    overflow: visible !important; /* Permite que o badge saia da caixa */
+    margin-top: 10px; /* Dá um espacinho extra em cima para o badge caber */
+}
+
+.card-premium .card-img {
+    border-radius: 14px 14px 0 0; /* Arredonda só em cima */
+}
+
+/* Faixa de "Patrocinado" */
+.card-premium::before {
+    content: '⭐ Recomendado';
+    position: absolute;
+    top: -14px; /* Sobe um pouquinho mais */
+    left: 50%;
+    transform: translateX(-50%);
+    background: #ffd700;
+    color: #000;
+    font-weight: bold;
+    font-size: 0.75rem;
+    padding: 4px 12px;
+    border-radius: 50px;
+    z-index: 10;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    white-space: nowrap; /* Garante que o texto não quebre linha */
+}
+
+/* No Dark Mode */
+[data-theme="dark"] .card-premium {
+    box-shadow: 0 4px 20px rgba(255, 215, 0, 0.15);
 }

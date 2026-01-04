@@ -1,13 +1,13 @@
 document.addEventListener('DOMContentLoaded', () => {
     const container = document.getElementById('gridEstabelecimentos');
     const inputBusca = document.getElementById('buscaLocais');
-    
+
     // Variáveis de Controle
     let todosLocais = [];
     let locaisFiltrados = [];
     let indiceAtual = 0;
     const ITENS_POR_PAGINA = 6;
-    let filtroCategoriaAtivo = 'todos'; 
+    let filtroCategoriaAtivo = 'todos';
 
     // Captura parâmetros da URL 
     const params = new URLSearchParams(window.location.search);
@@ -19,12 +19,12 @@ document.addEventListener('DOMContentLoaded', () => {
         filtroCategoriaAtivo = filtroURL;
         // Ativa o botão visualmente
         const btnAlvo = document.querySelector(`.btn-filtro[onclick*="'${filtroURL}'"]`);
-        if(btnAlvo) {
+        if (btnAlvo) {
             document.querySelectorAll('.btn-filtro').forEach(b => b.classList.remove('ativo'));
             btnAlvo.classList.add('ativo');
         }
     }
-    
+
     if (buscaURL && inputBusca) {
         inputBusca.value = buscaURL; // Preenche o campo de busca
     }
@@ -40,11 +40,12 @@ document.addEventListener('DOMContentLoaded', () => {
     // 2. Busca Inicial
     function buscarLocais() {
         container.innerHTML = '<p class="carregando">Carregando locais...</p>';
-        
+
         fetch('/api/estabelecimentos')
             .then(res => res.json())
             .then(data => {
                 todosLocais = data;
+                todosLocais.sort((a, b) => b.destaque - a.destaque); // Coloca quem tem destaque=1 primeiro na lista
                 aplicarFiltros(); // Já vai aplicar os filtros da URL aqui
             })
             .catch(err => {
@@ -84,14 +85,14 @@ document.addEventListener('DOMContentLoaded', () => {
         const proximoIndice = indiceAtual + ITENS_POR_PAGINA;
         const lote = locaisFiltrados.slice(indiceAtual, proximoIndice);
 
-lote.forEach(l => {
+        lote.forEach(l => {
             const linkDetalhe = `/detalhe?tipo=estabelecimento&id=${l.id}`;
-            
+
             // --- LÓGICA DO WHATSAPP ---
             // Remove tudo que não for número (parênteses, traços, espaços)
             const numeroLimpo = l.telefone ? l.telefone.replace(/\D/g, '') : '';
             let botaoZap = '';
-            
+
             // Se tiver pelo menos 10 dígitos (DDD + número), cria o botão
             if (numeroLimpo.length >= 10) {
                 // Cria o link direto para a API do WhatsApp
@@ -100,8 +101,10 @@ lote.forEach(l => {
             }
             // ---------------------------
 
+
+            const classePremium = l.destaque ? 'card-premium' : '';
             const cardHTML = `
-                <div class="card-local">
+                <div class="card-local ${classePremium}">
                     ${typeof Favoritos !== 'undefined' ? Favoritos.renderizarBotao(l.id, 'estabelecimento', l.nome, l.imagem || '/img/placeholder.jpg', linkDetalhe) : ''}
 
                     <div class="card-img" style="background-image: url('${l.imagem || '/img/placeholder.jpg'}');"></div>
@@ -134,10 +137,10 @@ lote.forEach(l => {
     }
 
     // 5. Função Global de Filtro (Chamada pelos botões no HTML)
-    window.filtrar = function(categoria, btn) {
+    window.filtrar = function (categoria, btn) {
         // Atualiza visual dos botões
         document.querySelectorAll('.btn-filtro').forEach(b => b.classList.remove('ativo'));
-        if(btn) btn.classList.add('ativo');
+        if (btn) btn.classList.add('ativo');
 
         // Atualiza estado e reaplica
         filtroCategoriaAtivo = categoria;
@@ -145,7 +148,7 @@ lote.forEach(l => {
     };
 
     // Eventos
-    if(inputBusca) inputBusca.addEventListener('input', aplicarFiltros);
+    if (inputBusca) inputBusca.addEventListener('input', aplicarFiltros);
     btnVerMais.addEventListener('click', carregarMais);
 
     // Iniciar

@@ -65,6 +65,8 @@ router.delete("/eventos/:id", verificarAutenticacao, EventosController.deletarEv
 router.post("/estabelecimentos", verificarAutenticacao, upload.single('imagem'),  EstabelecimentosController.criar);
 router.put("/estabelecimentos/:id", verificarAutenticacao, upload.single('imagem'), EstabelecimentosController.editar);
 router.delete("/estabelecimentos/:id", verificarAutenticacao, EstabelecimentosController.deletar);
+// Rota especial para ligar/desligar destaque (PATCH pois é uma atualização parcial)
+router.patch("/estabelecimentos/:id/destaque", verificarAutenticacao, EstabelecimentosController.alternarDestaque);
 
 // Transportes (Criar, Editar, Deletar)
 router.post("/transportes", verificarAutenticacao, TransportesController.criar);

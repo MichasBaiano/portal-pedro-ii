@@ -54,4 +54,10 @@ export class EstabelecimentosModel {
         const db = await openDb();
         return db.all("SELECT id, nome, categoria, latitude, longitude, imagem FROM estabelecimentos WHERE latitude IS NOT NULL");
     }
+
+    // Alternar apenas o status de destaque
+    static async updateDestaque(id, status) {
+        const db = await openDb();
+        await db.run('UPDATE estabelecimentos SET destaque = ? WHERE id = ?', [status, id]);
+    }
 }
