@@ -264,6 +264,79 @@
     });
 </script>
 
+<section style="max-width: 1200px; margin: -2rem auto 3rem auto; padding: 0 1rem; position: relative; z-index: 10;">
+    <h3 style="text-align: center; color: var(--texto-titulo); margin-bottom: 1.5rem; font-size: 1.2rem; opacity: 0.8;">
+        ✨ Escolha sua experiência hoje
+    </h3>
+
+    <div class="grid-vibes" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem;">
+        
+        <a href="/estabelecimentos?busca=joia" class="card-vibe" style="background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.7)), url('https://upload.wikimedia.org/wikipedia/commons/e/e3/Opala_Pedro_II.jpg');">
+            <div class="vibe-content">
+                <span style="font-size: 2rem;">💎</span>
+                <h4>Rota da Opala</h4>
+                <p>Joalherias e Minas</p>
+            </div>
+        </a>
+
+        <a href="/estabelecimentos?filtro=turismo" class="card-vibe" style="background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.7)), url('https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Morro_do_Gritador.jpg/800px-Morro_do_Gritador.jpg');">
+            <div class="vibe-content">
+                <span style="font-size: 2rem;">🌿</span>
+                <h4>Natureza</h4>
+                <p>Cachoeiras e Trilhas</p>
+            </div>
+        </a>
+
+        <a href="/estabelecimentos?filtro=gastronomia" class="card-vibe" style="background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.7)), url('https://dynamic-media-cdn.tripadvisor.com/media/photo-o/13/64/73/0c/fachada.jpg?w=700&h=-1&s=1');">
+            <div class="vibe-content">
+                <span style="font-size: 2rem;">🍷</span>
+                <h4>Gastronomia</h4>
+                <p>Bares e Restaurantes</p>
+            </div>
+        </a>
+
+    </div>
+</section>
+
+<style>
+    /* CSS exclusivo para as Vibes */
+    .card-vibe {
+        height: 180px;
+        border-radius: 16px;
+        background-size: cover;
+        background-position: center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        text-decoration: none;
+        color: white;
+        transition: transform 0.3s, box-shadow 0.3s;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+        border: 2px solid white;
+    }
+    
+    .card-vibe:hover {
+        transform: translateY(-5px) scale(1.02);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.25);
+        border-color: var(--cor-destaque);
+    }
+
+    .vibe-content h4 {
+        margin: 5px 0 0 0;
+        font-size: 1.4rem;
+        font-weight: bold;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+    }
+
+    .vibe-content p {
+        margin: 0;
+        font-size: 0.9rem;
+        opacity: 0.9;
+        text-shadow: 0 1px 2px rgba(0,0,0,0.8);
+    }
+</style>
+
 <style>
     /* --- Estilos exclusivos da Home --- */
     

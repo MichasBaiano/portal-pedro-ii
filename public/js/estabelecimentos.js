@@ -6,8 +6,28 @@ document.addEventListener('DOMContentLoaded', () => {
     let todosLocais = [];
     let locaisFiltrados = [];
     let indiceAtual = 0;
-    const ITENS_POR_PAGINA = 6; // Carrega de 6 em 6
-    let filtroCategoriaAtivo = 'todos'; // Guarda qual botão está clicado
+    const ITENS_POR_PAGINA = 6;
+    let filtroCategoriaAtivo = 'todos'; 
+
+    // Captura parâmetros da URL 
+    const params = new URLSearchParams(window.location.search);
+    const filtroURL = params.get('filtro'); // ex: gastronomia
+    const buscaURL = params.get('busca');   // ex: joia
+
+    // Configura botões iniciais baseado na URL
+    if (filtroURL) {
+        filtroCategoriaAtivo = filtroURL;
+        // Ativa o botão visualmente
+        const btnAlvo = document.querySelector(`.btn-filtro[onclick*="'${filtroURL}'"]`);
+        if(btnAlvo) {
+            document.querySelectorAll('.btn-filtro').forEach(b => b.classList.remove('ativo'));
+            btnAlvo.classList.add('ativo');
+        }
+    }
+    
+    if (buscaURL && inputBusca) {
+        inputBusca.value = buscaURL; // Preenche o campo de busca
+    }
 
     // 1. Criar o Botão "Ver Mais" Dinamicamente
     const divBotao = document.createElement('div');
@@ -25,7 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
             .then(res => res.json())
             .then(data => {
                 todosLocais = data;
-                aplicarFiltros(); // Começa a exibir
+                aplicarFiltros(); // Já vai aplicar os filtros da URL aqui
             })
             .catch(err => {
                 console.error(err);
