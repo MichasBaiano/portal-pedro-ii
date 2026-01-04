@@ -15,6 +15,7 @@ router.get("/estabelecimentos", (req, res) => res.render("estabelecimentos"));
 router.get("/transportes", (req, res) => res.render("transportes"));
 router.get("/detalhe", (req, res) => res.render("detalhe"));
 router.get("/cidade", (req, res) => res.render("cidade"));
+router.get("/offline", (req, res) => res.render("offline"));
 
 // Rotas de Login
 router.get("/login", (req, res) => res.render("login"));
