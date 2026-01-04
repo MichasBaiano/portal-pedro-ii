@@ -2,17 +2,22 @@
 import multer from 'multer';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import fs from 'fs'; // Importe o FS para garantir que a pasta existe
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-// Configuração de Armazenamento
+// Garante que a pasta public/uploads existe
+const uploadDir = path.join(__dirname, '../public/uploads/');
+if (!fs.existsSync(uploadDir)) {
+    fs.mkdirSync(uploadDir, { recursive: true });
+}
+
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        // Salva na pasta view/uploads
-        cb(null, path.join(__dirname, '../view/uploads/'));
+        // CORREÇÃO: Salvar na pasta PUBLIC
+        cb(null, uploadDir);
     },
     filename: function (req, file, cb) {
-        // Gera nome único: timestamp + extensão original (ex: 17300022-foto.jpg)
         const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
         cb(null, uniqueSuffix + path.extname(file.originalname));
     }

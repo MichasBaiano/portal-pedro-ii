@@ -1,51 +1,25 @@
 <%- include('partials/admin-header', { page: 'estabelecimentos' }) %>
 
 <main class="admin-container">
-    <div class="form-card">
-        <h3 id="formTitulo">Novo Local</h3>
-        <form id="formLocal">
-            <input type="hidden" id="id">
-            
-            <label>Nome do Local:</label>
-            <input type="text" id="nome" required>
-
-            <label>Categoria:</label>
-            <select id="categoria">
-                <option value="gastronomia">Gastronomia</option>
-                <option value="hospedagem">Hospedagem</option>
-                <option value="comercio">Comércio/Serviço</option>
-                <option value="turismo">Ponto Turístico</option>
-            </select>
-
-            <label>Endereço:</label>
-            <input type="text" id="endereco" required>
-
-            <label>Telefone/Zap:</label>
-            <input type="text" id="telefone" required>
-
-            <label>URL da Imagem:</label>
-            <input type="text" id="imagem" placeholder="https://..." required>
-
-            <label style="margin-top: 15px; display: flex; align-items: center; gap: 10px;">
-                <input type="checkbox" id="destaque" style="width: auto;"> 
-                Marcar como Destaque ⭐
-            </label>
-
-            <label>Descrição:</label>
-            <textarea id="descricao" rows="3"></textarea>
-
-            <button type="submit" class="btn btn-enviar" style="width: 100%; margin-top: 1rem;">Salvar</button>
-            <button type="button" id="btnCancelar" class="btn btn-cancelar" style="width: 100%; margin-top: 0.5rem; display: none;">Cancelar</button>
-        </form>
+    <div class="admin-header">
+        <h2>Gerenciar Locais</h2>
+        <button onclick="abrirModal()" class="btn btn-enviar">+ Novo Local</button>
     </div>
 
-    <div class="lista-card">
-        <h3>Locais Cadastrados</h3>
+    <div style="margin-bottom: 1rem;">
+        <input type="text" id="buscaAdmin" placeholder="🔍 Buscar local..." 
+               style="padding: 10px; width: 100%; border: 1px solid #ddd; border-radius: 6px;">
+    </div>
+
+    <div class="tabela-container">
         <table>
             <thead>
                 <tr>
+                    <th>ID</th>
+                    <th>Foto</th>
                     <th>Nome</th>
                     <th>Categoria</th>
+                    <th>Destaque</th>
                     <th>Ações</th>
                 </tr>
             </thead>
@@ -54,23 +28,79 @@
     </div>
 </main>
 
+<div id="modalLocal" class="modal">
+    <div class="modal-content">
+        <h3 id="modalTitulo">Novo Local</h3>
+        
+        <form id="formLocal" enctype="multipart/form-data">
+            <input type="hidden" id="localId" name="id">
+            
+            <label>Nome:</label>
+            <input type="text" id="nome" name="nome" required>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                <div>
+                    <label>Categoria:</label>
+                    <select id="categoria" name="categoria">
+                        <option value="Gastronomia">Gastronomia</option>
+                        <option value="Hospedagem">Hospedagem</option>
+                        <option value="Comércio">Comércio</option>
+                        <option value="Turismo">Ponto Turístico</option>
+                    </select>
+                </div>
+                <div>
+                    <label>Telefone:</label>
+                    <input type="text" id="telefone" name="telefone" placeholder="(86) 9999-9999">
+                </div>
+            </div>
+
+            <label>Endereço:</label>
+            <input type="text" id="endereco" name="endereco">
+
+            <div style="margin: 15px 0; display: flex; align-items: center; gap: 10px;">
+                <input type="checkbox" id="destaque" name="destaque" style="width: auto;">
+                <label for="destaque" style="margin:0;">⭐ Marcar como Destaque (Aparece na Home)</label>
+            </div>
+
+            <label>Imagem:</label>
+            <div style="background: #f9f9f9; padding: 10px; border-radius: 8px; margin-bottom: 10px;">
+                <input type="file" id="imagemInput" name="imagem" accept="image/*" style="width: 100%;">
+                <input type="hidden" id="imagemUrl" name="imagemUrl">
+                <img id="previewImagem" src="" style="max-height: 150px; display: none; margin-top: 10px;">
+            </div>
+
+            <label>Descrição:</label>
+            <textarea id="descricao" name="descricao" rows="4"></textarea>
+
+            <div class="modal-buttons">
+                <button type="button" onclick="fecharModal()" class="btn btn-cancelar">Cancelar</button>
+                <button type="submit" class="btn btn-enviar">Salvar</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 <script>
+    const modal = document.getElementById('modalLocal');
     const form = document.getElementById('formLocal');
-    const tabela = document.getElementById('tabelaCorpo');
-    const btnCancelar = document.getElementById('btnCancelar');
 
     async function carregar() {
         const res = await fetch('/api/estabelecimentos');
-        const lista = await res.json();
-        tabela.innerHTML = '';
-        lista.forEach(l => {
-            tabela.innerHTML += `
+        const locais = await res.json();
+        const tbody = document.getElementById('tabelaCorpo');
+        tbody.innerHTML = '';
+
+        locais.forEach(l => {
+            tbody.innerHTML += `
                 <tr>
-                    <td>${l.destaque ? '⭐' : ''} ${l.nome}</td>
+                    <td>${l.id}</td>
+                    <td><img src="${l.imagem || '/img/placeholder.jpg'}" style="width:50px; height:50px; object-fit:cover; border-radius:4px;"></td>
+                    <td>${l.nome}</td>
                     <td>${l.categoria}</td>
+                    <td>${l.destaque ? '⭐' : '-'}</td>
                     <td>
-                        <button class="btn-editar" onclick='editar(${JSON.stringify(l)})'>✏️</button>
-                        <button class="btn-deletar" onclick="deletar(${l.id})">🗑️</button>
+                        <button onclick='editar(${JSON.stringify(l)})' class="btn-acao editar">✏️</button>
+                        <button onclick="deletar(${l.id})" class="btn-acao deletar">🗑️</button>
                     </td>
                 </tr>
             `;
@@ -79,69 +109,73 @@
 
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
-        const id = document.getElementById('id').value;
-        const dados = {
-            nome: document.getElementById('nome').value,
-            categoria: document.getElementById('categoria').value,
-            endereco: document.getElementById('endereco').value,
-            telefone: document.getElementById('telefone').value,
-            imagem: document.getElementById('imagem').value,
-            descricao: document.getElementById('descricao').value,
-            destaque: document.getElementById('destaque').checked ? 1 : 0
-        };
-
+        
+        const id = document.getElementById('localId').value;
         const metodo = id ? 'PUT' : 'POST';
         const url = id ? `/api/estabelecimentos/${id}` : '/api/estabelecimentos';
 
-        const res = await fetch(url, {
-            method: metodo,
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify(dados)
-        });
+        const formData = new FormData(form);
+        
+        // Correção para Checkbox: Se não estiver marcado, envia 0
+        const isDestaque = document.getElementById('destaque').checked;
+        formData.set('destaque', isDestaque ? 1 : 0);
 
-        if(res.ok) {
-            Swal.fire('Sucesso!', 'Salvo com sucesso.', 'success');
-            resetar();
-            carregar();
-        }
+        const res = await fetch(url, { method: metodo, body: formData });
+
+        if (res.ok) { fecharModal(); carregar(); } 
+        else { alert('Erro ao salvar.'); }
     });
 
-    window.deletar = (id) => {
-        Swal.fire({
-            title: 'Apagar local?',
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonText: 'Sim',
-            confirmButtonColor: '#d33'
-        }).then(async (result) => {
-            if (result.isConfirmed) {
-                await fetch(`/api/estabelecimentos/${id}`, { method: 'DELETE' });
-                carregar();
-            }
-        });
-    };
-
-    window.editar = (l) => {
-        document.getElementById('id').value = l.id;
+    window.editar = function(l) {
+        document.getElementById('modalTitulo').innerText = 'Editar Local';
+        document.getElementById('localId').value = l.id;
         document.getElementById('nome').value = l.nome;
         document.getElementById('categoria').value = l.categoria;
-        document.getElementById('endereco').value = l.endereco;
         document.getElementById('telefone').value = l.telefone;
-        document.getElementById('imagem').value = l.imagem;
+        document.getElementById('endereco').value = l.endereco;
         document.getElementById('descricao').value = l.descricao;
-        document.getElementById('destaque').checked = l.destaque == 1;
+        document.getElementById('destaque').checked = (l.destaque == 1);
         
-        document.getElementById('formTitulo').innerText = 'Editando: ' + l.nome;
-        btnCancelar.style.display = 'block';
+        document.getElementById('imagemUrl').value = l.imagem;
+        const preview = document.getElementById('previewImagem');
+        if(l.imagem) { preview.src = l.imagem; preview.style.display = 'block'; }
+        else { preview.style.display = 'none'; }
+        
+        document.getElementById('imagemInput').value = '';
+        modal.style.display = 'flex';
     };
 
-    function resetar() {
+    window.deletar = async function(id) {
+        if(confirm('Tem certeza?')) {
+            await fetch(`/api/estabelecimentos/${id}`, { method: 'DELETE' });
+            carregar();
+        }
+    };
+
+    document.getElementById('imagemInput').onchange = evt => {
+        const [file] = evt.target.files;
+        if (file) {
+            const preview = document.getElementById('previewImagem');
+            preview.src = URL.createObjectURL(file);
+            preview.style.display = 'block';
+        }
+    };
+
+    // Busca Rápida
+    document.getElementById('buscaAdmin').addEventListener('input', function() {
+        const termo = this.value.toLowerCase();
+        document.querySelectorAll('#tabelaCorpo tr').forEach(linha => {
+            linha.style.display = linha.innerText.toLowerCase().includes(termo) ? '' : 'none';
+        });
+    });
+
+    window.abrirModal = () => {
         form.reset();
-        document.getElementById('id').value = '';
-        document.getElementById('formTitulo').innerText = 'Novo Local';
-        btnCancelar.style.display = 'none';
-    }
-    btnCancelar.onclick = resetar;
+        document.getElementById('localId').value = '';
+        document.getElementById('previewImagem').style.display = 'none';
+        modal.style.display = 'flex';
+    };
+    window.fecharModal = () => modal.style.display = 'none';
 
     carregar();
 </script>

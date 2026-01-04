@@ -1,177 +1,198 @@
 <%- include('partials/admin-header', { page: 'eventos' }) %>
 
-    <main class="admin-container">
-        <div class="form-card">
-            <h3 id="formTitulo">Novo Evento</h3>
-            <form id="formEvento">
-                <input type="hidden" id="id">
-
-                <label>Nome do Evento:</label>
-                <input type="text" id="nome" required>
-
-                <label>Data:</label>
-                <input type="date" id="data" required>
-
-                <label>Local:</label>
-                <input type="text" id="local" required>
-
-                <label>Categoria:</label>
-                <select id="categoria">
-                    <option value="Música">Música</option>
-                    <option value="Feira">Feira</option>
-                    <option value="Religioso">Religioso</option>
-                    <option value="Esporte">Esporte</option>
-                    <option value="Outros">Outros</option>
-                </select>
-
-                <label>URL da Imagem:</label>
-                <input type="text" id="imagem" placeholder="https://..." required>
-
-                <label>Descrição:</label>
-                <textarea id="descricao" rows="4"></textarea>
-
-                <button type="submit" class="btn btn-enviar" style="width: 100%; margin-top: 1rem;">Salvar</button>
-                <button type="button" id="btnCancelar" class="btn btn-cancelar"
-                    style="width: 100%; margin-top: 0.5rem; display: none;">Cancelar</button>
-            </form>
+<main class="admin-container">
+    <div class="admin-header">
+        <h2>Gerenciar Eventos</h2>
+        
+        <div class="header-actions">
+            <input type="text" id="buscaAdmin" class="header-busca" placeholder="🔍 Buscar evento...">
+            <button onclick="abrirModal()" class="btn btn-enviar">+ Novo Evento</button>
         </div>
+    </div>
 
-        <div class="lista-card">
-            <h3>Eventos Cadastrados</h3>
-            <div style="margin-bottom: 1rem;">
-                <input type="text" id="buscaAdmin" placeholder="🔍 Filtrar lista..."
-                    style="padding: 10px; width: 100%; border: 1px solid #ddd; border-radius: 6px;">
-            </div>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Nome</th>
-                        <th>Data</th>
-                        <th>Ações</th>
-                    </tr>
-                </thead>
-                <tbody id="tabelaCorpo"></tbody>
-            </table>
-        </div>
-    </main>
-
-    <script>
-        const form = document.getElementById('formEvento');
-        const tabela = document.getElementById('tabelaCorpo');
-        const btnCancelar = document.getElementById('btnCancelar');
-
-        // 1. Listar
-        async function carregar() {
-            const res = await fetch('/api/eventos');
-            const lista = await res.json();
-            tabela.innerHTML = '';
-
-            lista.forEach(ev => {
-                const dataF = new Date(ev.data).toLocaleDateString('pt-BR', { timeZone: 'UTC' });
-                tabela.innerHTML += `
+    <div class="tabela-container">
+        <table>
+            <thead>
                 <tr>
-                    <td>${ev.nome}</td>
-                    <td>${dataF}</td>
-                    <td>
-                        <button class="btn-editar" onclick='editar(${JSON.stringify(ev)})'>✏️</button>
-                        <button class="btn-deletar" onclick="deletar(${ev.id})">🗑️</button>
-                    </td>
+                    <th>ID</th>
+                    <th>Foto</th>
+                    <th>Nome</th>
+                    <th>Data</th>
+                    <th>Local</th>
+                    <th>Ações</th>
                 </tr>
-            `;
+            </thead>
+            <tbody id="tabelaCorpo">
+                </tbody>
+        </table>
+    </div>
+</main>
+
+<div id="modalEvento" class="modal">
+    <div class="modal-content">
+        <h3 id="modalTitulo">Novo Evento</h3>
+        
+        <form id="formEvento" enctype="multipart/form-data">
+            <input type="hidden" id="eventoId" name="id">
+            
+            <label>Nome do Evento:</label>
+            <input type="text" id="nome" name="nome" required>
+
+            <label>Data:</label>
+            <input type="date" id="data" name="data" required>
+
+            <label>Local:</label>
+            <input type="text" id="local" name="local" required>
+
+            <label>Categoria:</label>
+            <select id="categoria" name="categoria">
+                <option value="Música">Música / Show</option>
+                <option value="Feira">Feira / Exposição</option>
+                <option value="Religioso">Religioso</option>
+                <option value="Esporte">Esporte</option>
+                <option value="Outro">Outro</option>
+            </select>
+
+            <label>Imagem:</label>
+            <div style="background: #f9f9f9; padding: 10px; border-radius: 8px; margin-bottom: 10px;">
+                <input type="file" id="imagemInput" name="imagem" accept="image/*" style="width: 100%;">
+                
+                <input type="hidden" id="imagemUrl" name="imagemUrl">
+                
+                <img id="previewImagem" src="" style="max-height: 150px; display: none; margin-top: 10px; border-radius: 8px; border: 1px solid #ddd;">
+            </div>
+
+            <label>Descrição:</label>
+            <textarea id="descricao" name="descricao" rows="4"></textarea>
+
+            <div class="modal-buttons">
+                <button type="button" onclick="fecharModal()" class="btn btn-cancelar">Cancelar</button>
+                <button type="submit" class="btn btn-enviar">Salvar</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    const modal = document.getElementById('modalEvento');
+    const form = document.getElementById('formEvento');
+    const inputBusca = document.getElementById('buscaAdmin');
+
+    // 1. Carregar Dados
+    async function carregar() {
+        try {
+            const res = await fetch('/api/eventos');
+            const eventos = await res.json();
+            const tbody = document.getElementById('tabelaCorpo');
+            tbody.innerHTML = '';
+
+            eventos.forEach(ev => {
+                // Formata data para exibir bonitinho (DD/MM/AAAA)
+                const dataFormatada = new Date(ev.data).toLocaleDateString('pt-BR', {timeZone: 'UTC'});
+                
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${ev.id}</td>
+                        <td><img src="${ev.imagem || '/img/placeholder.jpg'}" style="width:50px; height:50px; object-fit:cover; border-radius:4px;"></td>
+                        <td>${ev.nome}</td>
+                        <td>${dataFormatada}</td>
+                        <td>${ev.local}</td>
+                        <td>
+                            <button onclick='editar(${JSON.stringify(ev)})' class="btn-acao editar">✏️</button>
+                            <button onclick="deletar(${ev.id})" class="btn-acao deletar">🗑️</button>
+                        </td>
+                    </tr>
+                `;
             });
+        } catch (erro) {
+            console.error("Erro ao carregar eventos:", erro);
+        }
+    }
+
+    // 2. Salvar (Com Upload - usa FormData)
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const id = document.getElementById('eventoId').value;
+        const metodo = id ? 'PUT' : 'POST';
+        const url = id ? `/api/eventos/${id}` : '/api/eventos';
+
+        const formData = new FormData(form);
+
+        const res = await fetch(url, {
+            method: metodo,
+            body: formData
+        });
+
+        if (res.ok) {
+            fecharModal();
+            carregar();
+        } else {
+            alert('Erro ao salvar evento.');
+        }
+    });
+
+    // 3. Editar
+    window.editar = function(ev) {
+        document.getElementById('modalTitulo').innerText = 'Editar Evento';
+        document.getElementById('eventoId').value = ev.id;
+        document.getElementById('nome').value = ev.nome;
+        document.getElementById('data').value = ev.data; 
+        document.getElementById('local').value = ev.local;
+        document.getElementById('categoria').value = ev.categoria;
+        document.getElementById('descricao').value = ev.descricao;
+        
+        // Configura imagem antiga
+        document.getElementById('imagemUrl').value = ev.imagem;
+        const preview = document.getElementById('previewImagem');
+        if(ev.imagem) {
+            preview.src = ev.imagem;
+            preview.style.display = 'block';
+        } else {
+            preview.style.display = 'none';
         }
 
-        // 2. Salvar (Criar ou Editar)
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const id = document.getElementById('id').value;
-            const dados = {
-                nome: document.getElementById('nome').value,
-                data: document.getElementById('data').value,
-                local: document.getElementById('local').value,
-                categoria: document.getElementById('categoria').value,
-                imagem: document.getElementById('imagem').value,
-                descricao: document.getElementById('descricao').value
-            };
+        document.getElementById('imagemInput').value = ''; // Limpa input de arquivo
+        modal.style.display = 'flex';
+    };
 
-            const metodo = id ? 'PUT' : 'POST';
-            const url = id ? `/api/eventos/${id}` : '/api/eventos';
+    // 4. Deletar
+    window.deletar = async function(id) {
+        if(confirm('Tem certeza?')) {
+            await fetch(`/api/eventos/${id}`, { method: 'DELETE' });
+            carregar();
+        }
+    };
 
-            const res = await fetch(url, {
-                method: metodo,
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(dados)
-            });
+    // 5. Preview de Imagem
+    document.getElementById('imagemInput').onchange = evt => {
+        const [file] = evt.target.files;
+        if (file) {
+            const preview = document.getElementById('previewImagem');
+            preview.src = URL.createObjectURL(file);
+            preview.style.display = 'block';
+        }
+    };
 
-            if (res.ok) {
-                Swal.fire('Sucesso!', 'Dados salvos.', 'success');
-                form.reset();
-                document.getElementById('id').value = '';
-                document.getElementById('formTitulo').innerText = 'Novo Evento';
-                btnCancelar.style.display = 'none';
-                carregar();
-            } else {
-                Swal.fire('Erro', 'Erro ao salvar.', 'error');
-            }
+    // 6. Busca Rápida (Filtro na tabela)
+    inputBusca.addEventListener('input', function() {
+        const termo = this.value.toLowerCase();
+        const linhas = document.querySelectorAll('#tabelaCorpo tr');
+        linhas.forEach(linha => {
+            linha.style.display = linha.innerText.toLowerCase().includes(termo) ? '' : 'none';
         });
+    });
 
-        // 3. Deletar
-        window.deletar = (id) => {
-            Swal.fire({
-                title: 'Tem certeza?',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Sim, apagar',
-                confirmButtonColor: '#d33'
-            }).then(async (result) => {
-                if (result.isConfirmed) {
-                    await fetch(`/api/eventos/${id}`, { method: 'DELETE' });
-                    Swal.fire('Deletado!', '', 'success');
-                    carregar();
-                }
-            });
-        };
+    // Funções do Modal
+    window.abrirModal = () => {
+        form.reset();
+        document.getElementById('eventoId').value = '';
+        document.getElementById('modalTitulo').innerText = 'Novo Evento';
+        document.getElementById('previewImagem').style.display = 'none';
+        modal.style.display = 'flex';
+    };
+    window.fecharModal = () => modal.style.display = 'none';
 
-        // 4. Preparar Edição
-        window.editar = (ev) => {
-            document.getElementById('id').value = ev.id;
-            document.getElementById('nome').value = ev.nome;
-            document.getElementById('data').value = ev.data;
-            document.getElementById('local').value = ev.local;
-            document.getElementById('categoria').value = ev.categoria;
-            document.getElementById('imagem').value = ev.imagem;
-            document.getElementById('descricao').value = ev.descricao;
-
-            document.getElementById('formTitulo').innerText = 'Editando: ' + ev.nome;
-            btnCancelar.style.display = 'block';
-        };
-
-        btnCancelar.onclick = () => {
-            form.reset();
-            document.getElementById('id').value = '';
-            document.getElementById('formTitulo').innerText = 'Novo Evento';
-            btnCancelar.style.display = 'none';
-        };
-
-        carregar();
-
-        // LÓGICA DE FILTRO
-        const inputBusca = document.getElementById('buscaAdmin');
-
-        inputBusca.addEventListener('input', function () {
-            const termo = this.value.toLowerCase();
-            const linhas = document.querySelectorAll('#tabelaCorpo tr');
-
-            linhas.forEach(linha => {
-                const textoDaLinha = linha.innerText.toLowerCase();
-                if (textoDaLinha.includes(termo)) {
-                    linha.style.display = '';
-                } else {
-                    linha.style.display = 'none';
-                }
-            });
-        });
-    </script>
-    </body>
-
-    </html>
+    // Iniciar
+    carregar();
+</script>

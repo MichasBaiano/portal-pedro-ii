@@ -1,84 +1,115 @@
 <%- include('partials/admin-header', { page: 'transportes' }) %>
 
 <main class="admin-container">
-    <div class="form-card">
-        <h3 id="formTitulo">Novo Transporte</h3>
-        <form id="formTransporte">
-            <input type="hidden" id="id">
-            
-            <label>Nome da Empresa/Motorista:</label>
-            <input type="text" id="nome" required>
-
-            <label>Tipo:</label>
-            <select id="tipo">
-                <option value="onibus">Ônibus</option>
-                <option value="van">Van</option>
-                <option value="mototaxi">Moto Táxi</option>
-            </select>
-
-            <label>Rota (Ex: Teresina -> Pedro II):</label>
-            <input type="text" id="rota" required>
-
-            <label>Horários:</label>
-            <input type="text" id="horarios" placeholder="Ex: 07:00, 14:00" required>
-
-            <label>Contato:</label>
-            <input type="text" id="contato" required>
-
-            <button type="submit" class="btn btn-enviar" style="width: 100%; margin-top: 1rem;">Salvar</button>
-            <button type="button" id="btnCancelar" class="btn btn-cancelar" style="width: 100%; margin-top: 0.5rem; display: none;">Cancelar</button>
-        </form>
+    <div class="admin-header">
+        <h2>Gerenciar Transportes</h2>
+        
+        <div class="header-actions">
+            <input type="text" id="buscaAdmin" class="header-busca" placeholder="🔍 Buscar transporte...">
+            <button onclick="abrirModal()" class="btn btn-enviar">+ Novo Transporte</button>
+        </div>
     </div>
 
-    <div class="lista-card">
-        <h3>Transportes Cadastrados</h3>
+    <div class="tabela-container">
         <table>
             <thead>
                 <tr>
-                    <th>Nome</th>
+                    <th>Ícone</th>
+                    <th>Nome / Empresa</th>
                     <th>Rota</th>
+                    <th>Horários</th>
                     <th>Ações</th>
                 </tr>
             </thead>
-            <tbody id="tabelaCorpo"></tbody>
+            <tbody id="tabelaCorpo">
+                </tbody>
         </table>
     </div>
 </main>
 
-<script>
-    const form = document.getElementById('formTransporte');
-    const tabela = document.getElementById('tabelaCorpo');
-    const btnCancelar = document.getElementById('btnCancelar');
+<div id="modalTransporte" class="modal">
+    <div class="modal-content">
+        <h3 id="modalTitulo">Novo Transporte</h3>
+        
+        <form id="formTransporte">
+            <input type="hidden" id="transporteId">
+            
+            <label>Nome da Empresa ou Motorista:</label>
+            <input type="text" id="nome" required placeholder="Ex: Viação Real">
 
+            <label>Tipo de Veículo:</label>
+            <select id="tipo">
+                <option value="onibus">🚌 Ônibus</option>
+                <option value="van">🚐 Van</option>
+                <option value="mototaxi">🏍️ Moto Táxi</option>
+            </select>
+
+            <label>Rota:</label>
+            <input type="text" id="rota" required placeholder="Ex: Pedro II -> Teresina">
+
+            <label>Horários:</label>
+            <input type="text" id="horarios" required placeholder="Ex: 06:00, 14:30">
+
+            <label>Contato / Telefone:</label>
+            <input type="text" id="contato" required placeholder="(86) 9...">
+
+            <div class="modal-buttons">
+                <button type="button" onclick="fecharModal()" class="btn btn-cancelar">Cancelar</button>
+                <button type="submit" class="btn btn-enviar">Salvar</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    const modal = document.getElementById('modalTransporte');
+    const form = document.getElementById('formTransporte');
+    const inputBusca = document.getElementById('buscaAdmin');
+
+    // 1. Carregar Dados
     async function carregar() {
-        const res = await fetch('/api/transportes');
-        const lista = await res.json();
-        tabela.innerHTML = '';
-        lista.forEach(t => {
-            let icone = t.tipo === 'onibus' ? '🚌' : (t.tipo === 'mototaxi' ? '🏍️' : '🚐');
-            tabela.innerHTML += `
-                <tr>
-                    <td>${icone} ${t.nome}</td>
-                    <td>${t.rota}</td>
-                    <td>
-                        <button class="btn-editar" onclick='editar(${JSON.stringify(t)})'>✏️</button>
-                        <button class="btn-deletar" onclick="deletar(${t.id})">🗑️</button>
-                    </td>
-                </tr>
-            `;
-        });
+        try {
+            const res = await fetch('/api/transportes');
+            const lista = await res.json();
+            const tbody = document.getElementById('tabelaCorpo');
+            tbody.innerHTML = '';
+
+            lista.forEach(t => {
+                // Define o emoji baseado no tipo
+                let icone = t.tipo === 'onibus' ? '🚌' : (t.tipo === 'mototaxi' ? '🏍️' : '🚐');
+                
+                tbody.innerHTML += `
+                    <tr>
+                        <td style="font-size: 1.5rem; text-align: center;">${icone}</td>
+                        <td><strong>${t.nome}</strong><br><small style="color:#666;">${t.contato}</small></td>
+                        <td>${t.rota}</td>
+                        <td>${t.horarios}</td>
+                        <td>
+                            <button onclick='editar(${JSON.stringify(t)})' class="btn-acao editar">✏️</button>
+                            <button onclick="deletar(${t.id})" class="btn-acao deletar">🗑️</button>
+                        </td>
+                    </tr>
+                `;
+            });
+        } catch (error) {
+            console.error("Erro ao carregar transportes:", error);
+        }
     }
 
+    // 2. Salvar (Usa JSON, pois não tem upload de foto aqui)
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
-        const id = document.getElementById('id').value;
+        
+        const id = document.getElementById('transporteId').value;
         const tipo = document.getElementById('tipo').value;
+        
         const dados = {
             nome: document.getElementById('nome').value,
             tipo: tipo,
             rota: document.getElementById('rota').value,
             horarios: document.getElementById('horarios').value,
             contato: document.getElementById('contato').value,
+            // Envia o ícone para salvar no banco
             icone: tipo === 'onibus' ? '🚌' : (tipo === 'mototaxi' ? '🏍️' : '🚐')
         };
 
@@ -91,44 +122,53 @@
             body: JSON.stringify(dados)
         });
 
-        if(res.ok) {
-            Swal.fire('Sucesso!', 'Transporte salvo.', 'success');
-            resetar();
+        if (res.ok) {
+            fecharModal();
             carregar();
+        } else {
+            alert('Erro ao salvar transporte.');
         }
     });
 
-    window.deletar = (id) => {
-        Swal.fire({ title: 'Apagar?', icon: 'warning', showCancelButton: true, confirmButtonColor: '#d33' })
-        .then(async (res) => {
-            if(res.isConfirmed) {
-                await fetch(`/api/transportes/${id}`, { method: 'DELETE' });
-                carregar();
-            }
-        });
-    };
-
-    window.editar = (t) => {
-        document.getElementById('id').value = t.id;
+    // 3. Editar
+    window.editar = function(t) {
+        document.getElementById('modalTitulo').innerText = 'Editar Transporte';
+        document.getElementById('transporteId').value = t.id;
         document.getElementById('nome').value = t.nome;
         document.getElementById('tipo').value = t.tipo;
         document.getElementById('rota').value = t.rota;
         document.getElementById('horarios').value = t.horarios;
         document.getElementById('contato').value = t.contato;
         
-        document.getElementById('formTitulo').innerText = 'Editando Transporte';
-        btnCancelar.style.display = 'block';
+        modal.style.display = 'flex';
     };
 
-    function resetar() {
-        form.reset();
-        document.getElementById('id').value = '';
-        document.getElementById('formTitulo').innerText = 'Novo Transporte';
-        btnCancelar.style.display = 'none';
-    }
-    btnCancelar.onclick = resetar;
+    // 4. Deletar
+    window.deletar = async function(id) {
+        if(confirm('Tem certeza?')) {
+            await fetch(`/api/transportes/${id}`, { method: 'DELETE' });
+            carregar();
+        }
+    };
 
+    // 5. Busca Rápida
+    inputBusca.addEventListener('input', function() {
+        const termo = this.value.toLowerCase();
+        const linhas = document.querySelectorAll('#tabelaCorpo tr');
+        linhas.forEach(linha => {
+            linha.style.display = linha.innerText.toLowerCase().includes(termo) ? '' : 'none';
+        });
+    });
+
+    // Funções do Modal
+    window.abrirModal = () => {
+        form.reset();
+        document.getElementById('transporteId').value = '';
+        document.getElementById('modalTitulo').innerText = 'Novo Transporte';
+        modal.style.display = 'flex';
+    };
+    window.fecharModal = () => modal.style.display = 'none';
+
+    // Iniciar
     carregar();
 </script>
-</body>
-</html>
