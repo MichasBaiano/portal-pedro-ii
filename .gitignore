@@ -10,3 +10,6 @@ database.sqlite
 # Arquivos de sistema/IDE
 .DS_Store
 .vscode/
+
+# Segredos
+.env
