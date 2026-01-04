@@ -1,16 +1,16 @@
 import { UsuarioModel } from "../model/usuarioModel.js";
+import bcrypt from 'bcrypt';
 
 export class AuthController {
     static async login(req, res) {
-        // Recebe 'login' (usuário) 
         const { login, senha } = req.body;
 
         try {
-            // Busca no banco pelo campo 'login'
+            // Busca o usuário pelo login
             const usuario = await UsuarioModel.buscarPorLogin(login);
 
-            // Verifica se achou e se a senha bate
-            if (usuario && usuario.senha === senha) {
+            // CORREÇÃO: Compara a senha enviada com o Hash criptografado do banco
+            if (usuario && await bcrypt.compare(senha, usuario.senha)) {
                 
                 // Salva na sessão
                 req.session.usuarioLogado = { 

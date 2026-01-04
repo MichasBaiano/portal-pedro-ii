@@ -1,20 +1,12 @@
-import { openDb } from "../Config/db.js";
+import { DashboardModel } from "../model/dashboardModel.js";
 
 export class DashboardController {
     static async getStats(req, res) {
         try {
-            const db = await openDb();
+            // Busca todas as contagens de uma vez só
+            const stats = await DashboardModel.getStats();
             
-            // Fazemos 3 contagens rápidas no banco
-            const eventos = await db.get("SELECT count(*) as total FROM eventos");
-            const locais = await db.get("SELECT count(*) as total FROM estabelecimentos");
-            const sugestoes = await db.get("SELECT count(*) as total FROM sugestoes");
-            
-            res.json({
-                eventos: eventos.total || 0,
-                locais: locais.total || 0,
-                sugestoes: sugestoes.total || 0
-            });
+            res.json(stats);
         } catch (error) {
             console.error(error);
             res.status(500).json({ error: "Erro ao buscar estatísticas" });
