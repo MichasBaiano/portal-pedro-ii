@@ -98,7 +98,20 @@ export async function inicializarBanco() {
         `);
     }
 
-    // --- 5. TABELA USUÁRIOS (Corrigido) ---
+    // --- 7. TABELA AVALIAÇÕES ---
+    await db.exec(`
+        CREATE TABLE IF NOT EXISTS avaliacoes (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            item_id INTEGER,
+            tipo TEXT,
+            nota INTEGER,
+            comentario TEXT,
+            autor TEXT,
+            data TEXT
+        )
+    `);
+
+    // --- 5. TABELA USUÁRIOS---
     await db.exec(`
         CREATE TABLE IF NOT EXISTS usuarios (
             id INTEGER PRIMARY KEY AUTOINCREMENT,

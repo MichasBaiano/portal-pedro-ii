@@ -11,6 +11,7 @@ import { TransportesController } from "../controller/transporteController.js";
 import { AuthController } from "../controller/authController.js";
 import { BannersController } from "../controller/bannersController.js";
 import { DashboardController } from "../controller/dashboardController.js";
+import { AvaliacaoController } from "../controller/avaliacaoController.js";
 
 const router = express.Router();
 
@@ -38,6 +39,10 @@ router.get("/transportes", TransportesController.listar);
 
 // Leitura de Banners
 router.get("/banners", BannersController.listar);
+
+// --- AVALIAÇÕES ---
+router.get("/avaliacoes/:tipo/:id", AvaliacaoController.listar);
+router.post("/avaliacoes", AvaliacaoController.adicionar);
 
 
 // ======================================================

@@ -67,6 +67,51 @@
             justify-content: space-between;
             align-items: center;
         }
+
+        /* --- Estrelas --- */
+        .area-avaliacoes {
+            margin-top: 3rem;
+            border-top: 1px solid var(--borda-suave);
+            padding-top: 2rem;
+        }
+
+        .star-rating {
+            display: flex;
+            gap: 5px;
+            font-size: 2rem;
+            cursor: pointer;
+            flex-direction: row-reverse;
+            justify-content: flex-end;
+        }
+
+        .star-rating input {
+            display: none;
+        }
+
+        .star-rating label {
+            color: #ccc;
+            transition: color 0.2s;
+        }
+
+        /* Mágica do CSS: Ao passar o mouse, pinta as anteriores */
+        .star-rating label:hover,
+        .star-rating label:hover~label,
+        .star-rating input:checked~label {
+            color: gold;
+        }
+
+        .card-avaliacao {
+            background: var(--bg-card);
+            border: 1px solid var(--borda-suave);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+
+        .nota-badge {
+            color: gold;
+            font-weight: bold;
+        }
     </style>
 
     <main>
@@ -81,6 +126,33 @@
 
         <div class="container-detalhe" id="areaDetalhe">
             <p style="padding: 2rem; text-align: center;">Carregando informações...</p>
+        </div>
+
+        <div class="container-detalhe area-avaliacoes" style="margin-top: 2rem;">
+            <h2 style="color: var(--cor-primaria);">Avaliações <span id="mediaGeral"
+                    style="font-size:1rem; color:#666;">(0.0 ⭐)</span></h2>
+
+            <div style="background: rgba(0,0,0,0.03); padding: 1.5rem; border-radius: 12px; margin-bottom: 2rem;">
+                <h4 style="margin-top:0;">Deixe sua opinião</h4>
+                <form id="formAvaliacao">
+                    <div class="star-rating" style="margin-bottom: 10px;">
+                        <input type="radio" id="s5" name="nota" value="5"><label for="s5">★</label>
+                        <input type="radio" id="s4" name="nota" value="4"><label for="s4">★</label>
+                        <input type="radio" id="s3" name="nota" value="3"><label for="s3">★</label>
+                        <input type="radio" id="s2" name="nota" value="2"><label for="s2">★</label>
+                        <input type="radio" id="s1" name="nota" value="1"><label for="s1">★</label>
+                    </div>
+
+                    <input type="text" id="autorNome" placeholder="Seu Nome" required style="margin-bottom: 10px;">
+                    <textarea id="comentarioTexto" rows="3" placeholder="O que achou deste lugar?"
+                        style="width:100%; padding:10px; border-radius:8px; border:1px solid #ccc;"></textarea>
+                    <button type="submit" class="btn btn-enviar" style="margin-top: 10px;">Enviar Avaliação</button>
+                </form>
+            </div>
+
+            <div id="listaAvaliacoes">
+                <p>Carregando opiniões...</p>
+            </div>
         </div>
     </main>
 
@@ -171,6 +243,89 @@
             const linkZap = `https://api.whatsapp.com/send?text=${encodeURIComponent(texto)}`;
             window.open(linkZap, '_blank');
         }
+
+        // --- LÓGICA DE AVALIAÇÕES ---
+        const formAvaliacao = document.getElementById('formAvaliacao');
+        const listaAvaliacoes = document.getElementById('listaAvaliacoes');
+
+        // 1. Tenta pegar o nome salvo no perfil
+        const perfilSalvo = JSON.parse(localStorage.getItem('perfil_visitante'));
+        if (perfilSalvo && perfilSalvo.nome) {
+            document.getElementById('autorNome').value = perfilSalvo.nome;
+        }
+
+        // 2. Carregar Avaliações
+        async function carregarAvaliacoes() {
+            // Pega ID e Tipo da URL (que já pegamos lá em cima no script original)
+            const params = new URLSearchParams(window.location.search);
+            const tipo = params.get('tipo');
+            const id = params.get('id');
+
+            const res = await fetch(`/api/avaliacoes/${tipo}/${id}`);
+            const dados = await res.json();
+
+            // Atualiza média
+            const mediaArredondada = parseFloat(dados.media).toFixed(1);
+            document.getElementById('mediaGeral').innerText = `(${mediaArredondada} ⭐ • ${dados.total} opiniões)`;
+
+            // Renderiza Lista
+            listaAvaliacoes.innerHTML = '';
+            if (dados.lista.length === 0) {
+                listaAvaliacoes.innerHTML = '<p style="color:#777;">Seja o primeiro a avaliar!</p>';
+                return;
+            }
+
+            dados.lista.forEach(av => {
+                // Gera estrelas visuais
+                const estrelas = '⭐'.repeat(av.nota);
+                listaAvaliacoes.innerHTML += `
+                <div class="card-avaliacao">
+                    <div style="display:flex; justify-content:space-between;">
+                        <strong>${av.autor}</strong>
+                        <span class="nota-badge">${estrelas}</span>
+                    </div>
+                    <p style="margin: 5px 0; color: var(--texto-corpo);">${av.comentario || ''}</p>
+                    <small style="color:#999;">${new Date(av.data).toLocaleDateString('pt-BR')}</small>
+                </div>
+            `;
+            });
+        }
+
+        // 3. Enviar Avaliação
+        formAvaliacao.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const params = new URLSearchParams(window.location.search);
+
+            // Pega qual estrela está marcada
+            const notaSelecionada = document.querySelector('input[name="nota"]:checked');
+            if (!notaSelecionada) {
+                alert('Por favor, selecione as estrelas!');
+                return;
+            }
+
+            const dados = {
+                item_id: params.get('id'),
+                tipo: params.get('tipo'),
+                nota: notaSelecionada.value,
+                autor: document.getElementById('autorNome').value,
+                comentario: document.getElementById('comentarioTexto').value
+            };
+
+            // Salva o nome para a próxima (UX)
+            localStorage.setItem('perfil_visitante', JSON.stringify({ nome: dados.autor }));
+
+            await fetch('/api/avaliacoes', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(dados)
+            });
+
+            formAvaliacao.reset();
+            carregarAvaliacoes(); // Recarrega a lista
+        });
+
+        // Inicia carregando
+        carregarAvaliacoes();
     </script>
 
     <%- include('partials/footer') %>
