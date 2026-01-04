@@ -1,10 +1,11 @@
+import 'dotenv/config'; // 1. Lê as variáveis do arquivo .env
 import express from "express";
 import path from "path";
 import { fileURLToPath } from "url";
 import { inicializarBanco } from "./Config/db.js";
 import session from "express-session";
 
-// Importando as rotas
+// Rotas
 import siteRoutes from "./routes/siteRoutes.js";
 import apiRoutes from "./routes/apiRoutes.js";
 
@@ -12,33 +13,54 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// 1. Configurar EJS (O NOVO MOTOR)
+// --- Configurações do Express ---
+
+// 1. View Engine (EJS)
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
 // 2. Arquivos Estáticos (CSS, JS, Imagens)
-// Agora apontamos para a pasta 'public'
 app.use(express.static(path.join(__dirname, "public")));
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+// 3. Processamento de Dados (IMPORTANTE para Login e Formulários)
+app.use(express.json()); // Lê JSON (usado pelos seus fetchs no front)
+app.use(express.urlencoded({ extended: true })); // Lê dados de formulário tradicional
+
+// 4. Sessão de Usuário (Login)
 app.use(session({
-    secret: 'segredo-super-secreto-pedro-ii',
+    secret: process.env.SESSION_SECRET, // Lê do .env
     resave: false,
     saveUninitialized: false,
-    cookie: { secure: false }
+    cookie: { 
+        secure: false, // Em produção (HTTPS), mude para true
+        httpOnly: true, // Segurança contra roubo de cookie via JS
+        maxAge: 1000 * 60 * 60 * 24 // Sessão expira em 1 dia
+    }
 }));
 
-// 3. Rotas
-app.use("/", siteRoutes);
-app.use("/api", apiRoutes);
+// --- Rotas ---
+app.use("/", siteRoutes); // Páginas HTML (Home, Mapa, Admin...)
+app.use("/api", apiRoutes); // Dados e Ações (Salvar, Deletar...)
 
-// Rota de Erro 404 (Renderizando EJS se existir, senão texto simples)
+// Rota 404 (Para qualquer link que não exista)
 app.use((req, res) => {
-    res.status(404).send("<h1>404 - Página não encontrada</h1>"); 
+    // Tenta renderizar uma página 404.ejs se existir, senão manda texto
+    res.status(404).send(`
+        <div style="text-align:center; padding:50px; font-family:sans-serif;">
+            <h1>404 - Página não encontrada</h1>
+            <p>O caminho que você procurou não existe.</p>
+            <a href="/">Voltar para o Início</a>
+        </div>
+    `);
 });
 
-// 4. Inicialização
+// --- Inicialização ---
 inicializarBanco().then(() => {
-    app.listen(PORT, () => console.log(`🚀 Servidor rodando em http://localhost:${PORT}`));
+    app.listen(PORT, () => {
+        console.log(`---------------------------------------------`);
+        console.log(`Servidor rodando em: http://localhost:${PORT}`);
+        console.log(`---------------------------------------------`);
+    });
+}).catch(erro => {
+    console.error("Erro fatal ao iniciar o banco de dados:", erro);
 });
