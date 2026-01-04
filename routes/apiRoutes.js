@@ -47,6 +47,7 @@ router.post("/login", AuthController.login);
 // --- PUBLICIDADE (BANNERS) ---
 router.get("/banners", BannersController.listar);
 router.post("/banners", upload.single('imagem'), BannersController.criar);
+router.put("/banners/:id", upload.single('imagem'), BannersController.editar);
 router.delete("/banners/:id", BannersController.deletar);
 
 // --- DASHBOARD ---

@@ -1,30 +1,24 @@
 <%- include('partials/admin-header', { page: 'banners' }) %>
 
 <main class="admin-container">
-    <div class="form-card">
-        <h3>Novo Anúncio</h3>
-        <form id="formBanner">
-            <label>Nome do Anunciante:</label>
-            <input type="text" id="titulo" required placeholder="Ex: Pizzaria do João">
-
-            <label>Link de Destino (Instagram/Site):</label>
-            <input type="text" id="link" required placeholder="https://instagram.com/...">
-
-            <label>URL da Imagem:</label>
-            <input type="text" id="imagem" required placeholder="https://...">
-
-            <button type="submit" class="btn btn-enviar" style="width: 100%; margin-top: 1rem;">Publicar Anúncio</button>
-        </form>
+    <div class="admin-header">
+        <h2>Gerenciar Banners</h2>
+        
+        <div class="header-actions">
+            <input type="text" id="buscaAdmin" class="header-busca" placeholder="🔍 Buscar banner...">
+            <button onclick="abrirModal()" class="btn btn-enviar">+ Novo Banner</button>
+        </div>
     </div>
 
-    <div class="lista-card">
-        <h3>Anúncios Ativos</h3>
+    <div class="tabela-container">
         <table>
             <thead>
                 <tr>
-                    <th style="width: 100px;">Banner</th>
-                    <th>Anunciante</th>
-                    <th>Ação</th>
+                    <th>ID</th>
+                    <th>Imagem</th>
+                    <th>Título / Cliente</th>
+                    <th>Link</th>
+                    <th>Ações</th>
                 </tr>
             </thead>
             <tbody id="tabelaCorpo"></tbody>
@@ -32,56 +26,124 @@
     </div>
 </main>
 
+<div id="modalBanner" class="modal">
+    <div class="modal-content">
+        <h3 id="modalTitulo">Novo Banner</h3>
+        
+        <form id="formBanner" enctype="multipart/form-data">
+            <input type="hidden" id="bannerId" name="id">
+            
+            <label>Título / Cliente:</label>
+            <input type="text" id="titulo" name="titulo" required placeholder="Ex: Promoção Pizzaria">
+
+            <label>Link de Destino:</label>
+            <input type="text" id="link" name="link" placeholder="https://...">
+
+            <label>Imagem:</label>
+            <div style="background: #f9f9f9; padding: 10px; border-radius: 8px; margin-bottom: 10px;">
+                <input type="file" id="imagemInput" name="imagem" accept="image/*" style="width: 100%;">
+                
+                <input type="hidden" id="imagemUrl" name="imagemUrl">
+                
+                <img id="previewImagem" src="" style="max-height: 100px; display: none; margin-top: 10px; border-radius: 4px;">
+            </div>
+
+            <div class="modal-buttons">
+                <button type="button" onclick="fecharModal()" class="btn btn-cancelar">Cancelar</button>
+                <button type="submit" class="btn btn-enviar">Salvar</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 <script>
+    const modal = document.getElementById('modalBanner');
     const form = document.getElementById('formBanner');
-    const tabela = document.getElementById('tabelaCorpo');
+    const inputBusca = document.getElementById('buscaAdmin');
 
     async function carregar() {
         const res = await fetch('/api/banners');
-        const lista = await res.json();
-        tabela.innerHTML = '';
-        lista.forEach(b => {
-            tabela.innerHTML += `
+        const banners = await res.json();
+        const tbody = document.getElementById('tabelaCorpo');
+        tbody.innerHTML = '';
+
+        banners.forEach(b => {
+            tbody.innerHTML += `
                 <tr>
+                    <td>${b.id}</td>
                     <td><img src="${b.imagem}" style="width:80px; height:auto; border-radius:4px;"></td>
                     <td>${b.titulo}</td>
-                    <td><button class="btn-deletar" onclick="deletar(${b.id})">🗑️</button></td>
-                </tr>`;
+                    <td><a href="${b.link}" target="_blank" style="color:var(--cor-primaria);">Link 🔗</a></td>
+                    <td>
+                        <button onclick='editar(${JSON.stringify(b)})' class="btn-acao editar">✏️</button>
+                        <button onclick="deletar(${b.id})" class="btn-acao deletar">🗑️</button>
+                    </td>
+                </tr>
+            `;
         });
     }
 
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
-        const dados = {
-            titulo: document.getElementById('titulo').value,
-            link: document.getElementById('link').value,
-            imagem: document.getElementById('imagem').value
-        };
+        
+        const id = document.getElementById('bannerId').value;
+        const metodo = id ? 'PUT' : 'POST'; // Define se cria ou edita
+        const url = id ? `/api/banners/${id}` : '/api/banners';
 
-        const res = await fetch('/api/banners', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify(dados)
-        });
+        const formData = new FormData(form);
+        const res = await fetch(url, { method: metodo, body: formData });
 
-        if(res.ok) {
-            Swal.fire('Sucesso!', 'Banner publicado.', 'success');
-            form.reset();
-            carregar();
-        }
+        if (res.ok) { fecharModal(); carregar(); } 
+        else { alert('Erro ao salvar.'); }
     });
 
-    window.deletar = (id) => {
-        Swal.fire({ title: 'Remover banner?', icon: 'warning', showCancelButton: true, confirmButtonColor: '#d33' })
-        .then(async (res) => {
-            if(res.isConfirmed) {
-                await fetch(`/api/banners/${id}`, { method: 'DELETE' });
-                carregar();
-            }
-        });
+    // Função de Editar (Preenche o modal)
+    window.editar = function(b) {
+        document.getElementById('modalTitulo').innerText = 'Editar Banner';
+        document.getElementById('bannerId').value = b.id;
+        document.getElementById('titulo').value = b.titulo;
+        document.getElementById('link').value = b.link;
+        
+        document.getElementById('imagemUrl').value = b.imagem;
+        const preview = document.getElementById('previewImagem');
+        if(b.imagem) { preview.src = b.imagem; preview.style.display = 'block'; }
+        
+        document.getElementById('imagemInput').value = ''; // Limpa seleção de arquivo novo
+        modal.style.display = 'flex';
     };
+
+    window.deletar = async function(id) {
+        if(confirm('Apagar banner?')) {
+            await fetch(`/api/banners/${id}`, { method: 'DELETE' });
+            carregar();
+        }
+    };
+
+    // Busca Rápida
+    inputBusca.addEventListener('input', function() {
+        const termo = this.value.toLowerCase();
+        document.querySelectorAll('#tabelaCorpo tr').forEach(linha => {
+            linha.style.display = linha.innerText.toLowerCase().includes(termo) ? '' : 'none';
+        });
+    });
+
+    document.getElementById('imagemInput').onchange = evt => {
+        const [file] = evt.target.files;
+        if (file) {
+            const preview = document.getElementById('previewImagem');
+            preview.src = URL.createObjectURL(file);
+            preview.style.display = 'block';
+        }
+    };
+
+    window.abrirModal = () => {
+        form.reset();
+        document.getElementById('bannerId').value = '';
+        document.getElementById('modalTitulo').innerText = 'Novo Banner';
+        document.getElementById('previewImagem').style.display = 'none';
+        modal.style.display = 'flex';
+    };
+    window.fecharModal = () => modal.style.display = 'none';
 
     carregar();
 </script>
-</body>
-</html>

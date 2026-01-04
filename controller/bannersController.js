@@ -39,4 +39,26 @@ export class BannersController {
             res.status(500).json({ erro: "Erro ao deletar banner." });
         }
     }
+
+    static async editar(req, res) {
+        const { id } = req.params;
+        const { titulo, link, imagemUrl } = req.body; // imagemUrl vem do hidden input
+        
+        try {
+            const db = await openDb();
+            
+            // Se fez upload, usa a nova. Se não, usa a antiga (URL)
+            let imagemFinal = req.file ? `/uploads/${req.file.filename}` : imagemUrl;
+
+            await db.run(
+                `UPDATE banners SET titulo=?, link=?, imagem=? WHERE id=?`,
+                [titulo, link, imagemFinal, id]
+            );
+
+            res.json({ message: 'Banner atualizado!' });
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ error: error.message });
+        }
+    }
 }
