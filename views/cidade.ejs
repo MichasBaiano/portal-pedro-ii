@@ -1,0 +1,130 @@
+<%- include('partials/header', { titulo: 'A Cidade - Portal Pedro II' }) %>
+
+<style>
+    /* Hero Section Exclusiva desta página */
+    .cidade-hero {
+        background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Morro_do_Gritador.jpg/1200px-Morro_do_Gritador.jpg');
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed; /* Efeito Parallax bonito */
+        height: 60vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        color: white;
+        margin-bottom: 3rem;
+    }
+
+    .cidade-hero h1 {
+        font-size: 3.5rem;
+        margin-bottom: 1rem;
+        text-shadow: 2px 2px 10px rgba(0,0,0,0.5);
+    }
+
+    .secao-texto {
+        max-width: 800px;
+        margin: 0 auto 4rem auto;
+        font-size: 1.1rem;
+        line-height: 1.8;
+        color: var(--texto-corpo);
+    }
+
+    .secao-texto h2 {
+        color: var(--cor-primaria);
+        font-size: 2rem;
+        margin-top: 2rem;
+        border-left: 5px solid var(--cor-destaque);
+        padding-left: 15px;
+    }
+
+    .grid-info {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 2rem;
+        margin: 3rem 0;
+    }
+
+    .card-info {
+        background: var(--bg-card);
+        padding: 2rem;
+        border-radius: 12px;
+        box-shadow: var(--sombra-card);
+        text-align: center;
+        border: 1px solid var(--borda-suave);
+    }
+    
+    .card-info h3 { color: var(--cor-primaria); margin-bottom: 0.5rem; }
+    .card-info .icone { font-size: 2.5rem; margin-bottom: 1rem; display: block; }
+
+    /* Galeriazinha de Opalas */
+    .opala-box {
+        background: linear-gradient(135deg, #fff, #f0f8ff);
+        border-radius: 20px;
+        padding: 3rem;
+        display: flex;
+        align-items: center;
+        gap: 2rem;
+        flex-wrap: wrap;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    }
+    [data-theme="dark"] .opala-box { background: #1e1e1e; }
+</style>
+
+<div class="cidade-hero">
+    <div class="container">
+        <h1>A Suíça Piauiense</h1>
+        <p style="font-size: 1.3rem;">História, cultura e natureza exuberante no coração do Piauí.</p>
+    </div>
+</div>
+
+<main>
+    
+    <article class="secao-texto">
+        <h2>Um Pouco de História</h2>
+        <p>
+            Fundada no século XIX, Pedro II destaca-se no cenário nordestino não apenas por sua beleza natural, mas por seu clima ameno e serrano, raro na região.
+            Conhecida carinhosamente como a "Suíça Piauiense", a cidade abriga um casario colonial preservado que conta a história de um povo acolhedor e talentoso.
+        </p>
+        <p>
+            A cidade é palco anualmente do <strong>Festival de Inverno de Pedro II</strong>, um dos maiores eventos culturais do Nordeste, que une música de alta qualidade (Jazz e Blues), ecoturismo e artesanato.
+        </p>
+    </article>
+
+    <div class="grid-info">
+        <div class="card-info">
+            <span class="icone">🌡️</span>
+            <h3>Clima</h3>
+            <p>Ameno e agradável, com médias de 20°C a 28°C, podendo chegar a 15°C nas noites de inverno.</p>
+        </div>
+        <div class="card-info">
+            <span class="icone">⛰️</span>
+            <h3>Altitude</h3>
+            <p>Aproximadamente 600m acima do nível do mar, garantindo vistas espetaculares na Serra dos Matões.</p>
+        </div>
+        <div class="card-info">
+            <span class="icone">💎</span>
+            <h3>Riqueza</h3>
+            <p>Única cidade do Brasil com minas de Opala de alta qualidade, atraindo compradores do mundo todo.</p>
+        </div>
+    </div>
+
+    <section class="opala-box" style="margin-top: 4rem;">
+        <div style="flex: 1; min-width: 300px;">
+            <h2 style="color: var(--cor-primaria); margin-top: 0;">A Terra da Opala</h2>
+            <p style="font-size: 1.1rem; color: var(--texto-corpo);">
+                Pedro II possui as únicas minas de opala nobre do Brasil e é a segunda maior reserva do mundo, perdendo apenas para a Austrália. 
+                A pedra, conhecida por seu jogo de cores fascinante, movimenta a economia local através de joalherias artesanais que produzem peças únicas.
+            </p>
+            <a href="/estabelecimentos" class="btn btn-primary" style="margin-top: 1rem;">Ver Joalherias e Lojas</a>
+        </div>
+        <div style="flex: 1; min-width: 300px;">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/e/e3/Opala_Pedro_II.jpg" 
+                 alt="Opala de Pedro II" 
+                 style="width: 100%; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.2);">
+        </div>
+    </section>
+
+</main>
+
+<%- include('partials/footer') %>
