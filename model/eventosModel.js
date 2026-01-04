@@ -1,13 +1,13 @@
 import { openDb } from "../Config/db.js";
 
 export class EventosModel {
-    // LEITURA (Já existia)
+    // LEITURA 
     static async getAll() {
         const db = await openDb();
         return db.all('SELECT * FROM eventos');
     }
 
-    // CRIAÇÃO (Novo)
+    // CRIAÇÃO 
     static async create(dados) {
         const db = await openDb();
         const resultado = await db.run(
@@ -17,7 +17,7 @@ export class EventosModel {
         return { id: resultado.lastID, ...dados };
     }
 
-    // ATUALIZAÇÃO (Novo)
+    // ATUALIZAÇÃO 
     static async update(id, dados) {
         const db = await openDb();
         await db.run(
@@ -27,7 +27,7 @@ export class EventosModel {
         return { id, ...dados };
     }
 
-    // EXCLUSÃO (Novo)
+    // EXCLUSÃO
     static async delete(id) {
         const db = await openDb();
         await db.run('DELETE FROM eventos WHERE id=?', [id]);
@@ -44,5 +44,11 @@ export class EventosModel {
         const db = await openDb();
         // O símbolo % significa "qualquer coisa antes ou depois"
         return db.all('SELECT * FROM eventos WHERE nome LIKE ? OR descricao LIKE ?', [`%${termo}%`, `%${termo}%`]);
+    }
+
+    // Puxa os próximos
+    static async getProximos(limite) {
+        const db = await openDb();
+        return db.all(`SELECT * FROM eventos WHERE data >= date('now') ORDER BY data ASC LIMIT ?`, [limite]);
     }
 }

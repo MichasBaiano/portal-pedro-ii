@@ -1,16 +1,14 @@
 import { openDb } from "../Config/db.js";
 
 export class DashboardModel {
-    static async getTotais() {
+    static async getStats() {
         const db = await openDb();
-        // Faz várias contagens numa única consulta SQL
+        // Query otimizada: conta tudo de uma vez
         return db.get(`
             SELECT 
-                (SELECT COUNT(*) FROM eventos) AS eventos,
-                (SELECT COUNT(*) FROM estabelecimentos) AS estabelecimentos,
-                (SELECT COUNT(*) FROM transportes) AS transportes,
-                (SELECT COUNT(*) FROM sugestoes) AS sugestoes,
-                (SELECT COUNT(*) FROM banners) AS banners
+                (SELECT COUNT(*) FROM eventos) as eventos,
+                (SELECT COUNT(*) FROM estabelecimentos) as locais,
+                (SELECT COUNT(*) FROM sugestoes) as sugestoes
         `);
     }
 }

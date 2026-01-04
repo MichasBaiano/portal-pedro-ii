@@ -42,4 +42,16 @@ export class EstabelecimentosModel {
         const db = await openDb();
         return db.all('SELECT * FROM estabelecimentos WHERE nome LIKE ? OR descricao LIKE ?', [`%${termo}%`, `%${termo}%`]);
     }
+
+    // Busca aleatória de destaques para a Home
+    static async getDestaques(limite) {
+        const db = await openDb();
+        return db.all(`SELECT * FROM estabelecimentos WHERE destaque = 1 ORDER BY RANDOM() LIMIT ?`, [limite]);
+    }
+
+    // Busca apenas quem tem latitude/longitude para o Mapa
+    static async getComCoordenadas() {
+        const db = await openDb();
+        return db.all("SELECT id, nome, categoria, latitude, longitude, imagem FROM estabelecimentos WHERE latitude IS NOT NULL");
+    }
 }
