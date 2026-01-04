@@ -1,5 +1,6 @@
 import sqlite3 from 'sqlite3';
 import { open } from 'sqlite';
+import bcrypt from 'bcrypt'; // Adicionamos a criptografia
 
 // Função para abrir a conexão com o banco
 export async function openDb() {
@@ -97,7 +98,7 @@ export async function inicializarBanco() {
         `);
     }
 
-    // 5. NOVA TABELA: USUÁRIOS
+    // --- 5. TABELA USUÁRIOS (Corrigido) ---
     await db.exec(`
         CREATE TABLE IF NOT EXISTS usuarios (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -106,15 +107,16 @@ export async function inicializarBanco() {
         )
     `);
 
-    // 6. SEED ADMIN (Cria o admin se não existir)
+    // Seed Admin Seguro
     const adminExiste = await db.get("SELECT * FROM usuarios WHERE login = ?", ['admin']);
     if (!adminExiste) {
-        // ATENÇÃO: Em produção, nunca salve senhas em texto puro. Usaremos assim apenas para o MVP didático.
-        await db.run("INSERT INTO usuarios (login, senha) VALUES (?, ?)", ['admin', '123456']);
-        console.log("Usuário ADMIN criado: login 'admin', senha '123456'");
+        // AQUI ESTÁ A MUDANÇA: Criptografamos a senha antes de salvar
+        const hash = await bcrypt.hash('123456', 10);
+        await db.run("INSERT INTO usuarios (login, senha) VALUES (?, ?)", ['admin', hash]);
+        console.log("Usuário ADMIN criado com senha criptografada (hash).");
     }
 
-    // --- 7. TABELA BANNERS (NOVO) ---
+    // --- 6. TABELA BANNERS ---
     await db.exec(`
         CREATE TABLE IF NOT EXISTS banners (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
