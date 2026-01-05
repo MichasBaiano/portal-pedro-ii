@@ -56,12 +56,14 @@ app.use(express.json()); // Lê JSON (usado pelos seus fetchs no front)
 app.use(express.urlencoded({ extended: true })); // Lê dados de formulário tradicional
 
 // 4. Sessão de Usuário (Login)
+// Verifica se estamos em produção (na internet)
+const isProduction = process.env.NODE_ENV === 'production';
 app.use(session({
     secret: process.env.SESSION_SECRET, // Lê do .env
     resave: false,
     saveUninitialized: false,
     cookie: {
-        secure: false, // Em produção (HTTPS), mude para true
+        secure: isProduction,
         httpOnly: true, // Segurança contra roubo de cookie via JS
         maxAge: 1000 * 60 * 60 * 24 // Sessão expira em 1 dia
     }
