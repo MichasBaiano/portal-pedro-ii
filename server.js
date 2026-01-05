@@ -6,6 +6,7 @@ import { inicializarBanco } from "./Config/db.js";
 import session from "express-session";
 import rateLimit from 'express-rate-limit';
 import helmet from "helmet";
+import hpp from "hpp";
 
 // Rotas
 import siteRoutes from "./routes/siteRoutes.js";
@@ -54,6 +55,7 @@ app.use(express.static(path.join(__dirname, "public")));
 // 3. Processamento de Dados (IMPORTANTE para Login e Formulários)
 app.use(express.json()); // Lê JSON (usado pelos seus fetchs no front)
 app.use(express.urlencoded({ extended: true })); // Lê dados de formulário tradicional
+app.use(hpp()); // Evita bugs com parâmetros duplicados
 
 // 4. Sessão de Usuário (Login)
 // Verifica se estamos em produção (na internet)
