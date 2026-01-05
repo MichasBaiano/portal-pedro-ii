@@ -53,8 +53,8 @@ app.set('views', path.join(__dirname, 'views'));
 app.use(express.static(path.join(__dirname, "public")));
 
 // 3. Processamento de Dados (IMPORTANTE para Login e Formulários)
-app.use(express.json()); // Lê JSON (usado pelos seus fetchs no front)
-app.use(express.urlencoded({ extended: true })); // Lê dados de formulário tradicional
+app.use(express.json({ limit: '100kb' })); // Lê JSON até 100kb (usado pelos seus fetchs no front)
+app.use(express.urlencoded({ extended: true, limit: '100kb' })); // Lê dados de formulário tradicional até 100kb
 app.use(hpp()); // Evita bugs com parâmetros duplicados
 
 // 4. Sessão de Usuário (Login)
