@@ -39,6 +39,16 @@ app.use(session({
     }
 }));
 
+// Configura o limitador de tentativas
+const limitadorLogin = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutos
+    max: 5, // Bloqueia após 5 tentativas erradas
+    message: "Muitas tentativas de login. Tente novamente em 15 minutos."
+});
+
+// Aplica APENAS na rota de login da API
+app.use("/api/login", limitadorLogin);
+
 // --- Rotas ---
 app.use("/", siteRoutes); // Páginas HTML (Home, Mapa, Admin...)
 app.use("/api", apiRoutes); // Dados e Ações (Salvar, Deletar...)
