@@ -9,7 +9,6 @@
   },
   "keywords": [],
   "author": "Michel Ferreira da Silva Júnior",
-  "license": "MIT",
   "dependencies": {
     "bcrypt": "^6.0.0",
     "dotenv": "^17.2.3",
