@@ -35,6 +35,8 @@ self.addEventListener('activate', (event) => {
 
 // 3. Interceptação (Fetch): A mágica do Offline
 self.addEventListener('fetch', (event) => {
+    // IGNORA requisições que não sejam http ou https
+    if (!event.request.url.startsWith('http')) return;
     // Apenas requisições GET
     if (event.request.method !== 'GET') return;
 

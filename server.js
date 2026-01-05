@@ -14,32 +14,34 @@ import apiRoutes from "./routes/apiRoutes.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
-// Configuração do Helmet (Permite imagens externas e scripts inline)
+// Configuração do Helmet (Blindagem de Segurança)
 app.use(helmet({
     contentSecurityPolicy: {
         directives: {
             // Padrão: só confia no próprio site
             defaultSrc: ["'self'"], 
             
-            // Scripts: Permite 'unsafe-inline' (necessário para scripts no EJS funcionarem)
-            scriptSrc: ["'self'", "'unsafe-inline'"], 
+            // Scripts: Permite scripts do próprio site, inline, E DE SITES EXTERNOS (HTTPS)
+            // Isso conserta o Leaflet/Mapas que vem de fora
+            scriptSrc: ["'self'", "'unsafe-inline'", "https:"], 
             
-            // Estilos: Permite CSS inline e Google Fonts
-            styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"], 
+            // Estilos: Permite CSS do próprio site, inline, Google Fonts E EXTERNOS (HTTPS)
+            // Isso conserta o CSS do Leaflet
+            styleSrc: ["'self'", "'unsafe-inline'", "https:", "https://fonts.googleapis.com"], 
             
-            // Fontes: Permite carregar do Google Fonts
-            fontSrc: ["'self'", "https://fonts.gstatic.com"], 
+            // Fontes: Permite carregar do Google Fonts e outros https
+            fontSrc: ["'self'", "https:", "data:", "https://fonts.gstatic.com"], 
             
-            // Imagens: Permite carregar de qualquer site HTTPS (Wikipédia, TripAdvisor, etc.) e Base64
+            // Imagens: Permite carregar de qualquer site HTTPS e Base64
             imgSrc: ["'self'", "data:", "https:"], 
             
-            // Conexões: Permite o site falar com a própria API
-            connectSrc: ["'self'"], 
+            // Conexões: Permite o site falar com a própria API e serviços externos seguros
+            connectSrc: ["'self'", "https:"], 
             
             // Permite abrir frames se necessário
             frameSrc: ["'self'"],
 
-            // Isso impede que outros sites coloquem em um iframe
+            // Impede que outros sites coloquem o seu em um iframe (Clickjacking)
             frameAncestors: ["'self'"]
         },
     },
@@ -88,19 +90,24 @@ const limitadorLogin = rateLimit({
 app.use("/api/login", limitadorLogin);
 
 // --- Rotas ---
-app.use("/", siteRoutes); // Páginas HTML (Home, Mapa, Admin...)
+// A ordem de chamadas deve sempre ser essa
 app.use("/api", apiRoutes); // Dados e Ações (Salvar, Deletar...)
+app.use("/", siteRoutes); // Páginas HTML (Home, Mapa, Admin...)
 
-// Rota 404 (Para qualquer link que não exista)
-app.use((req, res) => {
-    // Tenta renderizar uma página 404.ejs se existir, senão manda texto
-    res.status(404).send(`
-        <div style="text-align:center; padding:50px; font-family:sans-serif;">
-            <h1>404 - Página não encontrada</h1>
-            <p>O caminho que você procurou não existe.</p>
-            <a href="/">Voltar para o Início</a>
-        </div>
-    `);
+
+// Middleware de Tratamento de Erros (Erro 500)
+app.use((err, req, res, next) => {
+    console.error("ERRO CRÍTICO:", err.stack); // Mostra o erro real no terminal
+
+    // VERIFICAÇÃO INTELIGENTE:
+    // Se a URL começa com "/api", OU se o navegador pediu JSON...
+    if (req.url.startsWith('/api') || req.headers.accept.indexOf('json') > -1) {
+        // ...então responda com JSON para não quebrar o front-end
+        return res.status(500).json({ error: 'Erro interno do servidor.' });
+    }
+
+    // Se for acesso normal (página inteira), mostra a view bonita
+    res.status(500).render("500");
 });
 
 // --- Inicialização ---

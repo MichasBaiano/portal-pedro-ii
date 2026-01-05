@@ -1,0 +1,21 @@
+<%- include('partials/header', { titulo: 'Página Não Encontrada - Portal Pedro II' }) %>
+
+<main style="text-align: center; padding: 4rem 1rem; min-height: 60vh; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+    
+    <div style="font-size: 5rem; margin-bottom: 1rem;">🧭</div>
+    
+    <h1 style="color: var(--cor-primaria); margin-bottom: 0.5rem;">404 - Você se perdeu?</h1>
+    
+    <p style="color: var(--texto-corpo); max-width: 500px; font-size: 1.1rem; line-height: 1.6;">
+        Ops! Parece que a página que você está procurando não existe ou mudou de lugar.<br>
+        Mas não se preocupe, em Pedro II todos os caminhos levam a lugares incríveis.
+    </p>
+
+    <div style="margin-top: 2rem; display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center;">
+        <a href="/" class="btn btn-primary">🏠 Voltar para o Início</a>
+        <a href="/mapa" class="btn" style="background: var(--bg-card); border: 1px solid var(--borda-suave); color: var(--texto-titulo);">🗺️ Ver o Mapa</a>
+    </div>
+
+</main>
+
+<%- include('partials/footer') %>

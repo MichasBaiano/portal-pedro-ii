@@ -29,4 +29,9 @@ router.get("/admin/transportes", verificarAutenticacao, (req, res) => res.render
 router.get("/admin/sugestoes", verificarAutenticacao, (req, res) => res.render("admin-sugestoes"));
 router.get("/admin/banners", verificarAutenticacao, (req, res) => res.render("admin-banners"));
 
+
+// Rota 404 (CATCH-ALL)
+router.use((req, res) => {res.status(404).render("404");});
+
+
 export default router;
