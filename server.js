@@ -5,6 +5,7 @@ import { fileURLToPath } from "url";
 import { inicializarBanco } from "./Config/db.js";
 import session from "express-session";
 import rateLimit from 'express-rate-limit';
+import helmet from "helmet";
 
 // Rotas
 import siteRoutes from "./routes/siteRoutes.js";
@@ -12,6 +13,33 @@ import apiRoutes from "./routes/apiRoutes.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
+// Configuração do Helmet (Permite imagens externas e scripts inline)
+app.use(helmet({
+    contentSecurityPolicy: {
+        directives: {
+            // Padrão: só confia no próprio site
+            defaultSrc: ["'self'"], 
+            
+            // Scripts: Permite 'unsafe-inline' (necessário para scripts no EJS funcionarem)
+            scriptSrc: ["'self'", "'unsafe-inline'"], 
+            
+            // Estilos: Permite CSS inline e Google Fonts
+            styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"], 
+            
+            // Fontes: Permite carregar do Google Fonts
+            fontSrc: ["'self'", "https://fonts.gstatic.com"], 
+            
+            // Imagens: Permite carregar de qualquer site HTTPS (Wikipédia, TripAdvisor, etc.) e Base64
+            imgSrc: ["'self'", "data:", "https:"], 
+            
+            // Conexões: Permite o site falar com a própria API
+            connectSrc: ["'self'"], 
+            
+            // Permite abrir frames se necessário
+            frameSrc: ["'self'"]
+        },
+    },
+}));
 const PORT = process.env.PORT || 3000;
 
 // --- Configurações do Express ---
