@@ -67,7 +67,8 @@ app.use(session({
     cookie: {
         secure: isProduction,
         httpOnly: true, // Segurança contra roubo de cookie via JS
-        maxAge: 1000 * 60 * 60 * 24 // Sessão expira em 1 dia
+        maxAge: 1000 * 60 * 60 * 24, // Sessão expira em 1 dia
+        sameSite: 'strict' // Evita Cross-Site Request Forgery
     }
 }));
 
