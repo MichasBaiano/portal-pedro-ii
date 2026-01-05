@@ -37,9 +37,14 @@ app.use(helmet({
             connectSrc: ["'self'"], 
             
             // Permite abrir frames se necessário
-            frameSrc: ["'self'"]
+            frameSrc: ["'self'"],
+
+            // Isso impede que outros sites coloquem em um iframe
+            frameAncestors: ["'self'"]
         },
     },
+    // Garante o header antigo X-Frame-Options também
+    xFrameOptions: { action: "deny" }
 }));
 const PORT = process.env.PORT || 3000;
 
