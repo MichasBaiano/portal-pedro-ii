@@ -14,13 +14,28 @@ if (!fs.existsSync(uploadDir)) {
 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        // CORREÇÃO: Salvar na pasta PUBLIC
-        cb(null, uploadDir);
+        cb(null, 'public/uploads/');
     },
     filename: function (req, file, cb) {
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-        cb(null, uniqueSuffix + path.extname(file.originalname));
+        // Garante nome único com data + extensão original
+        cb(null, Date.now() + path.extname(file.originalname));
     }
 });
 
-export const upload = multer({ storage: storage });
+// Filtro para aceitar APENAS imagens
+const fileFilter = (req, file, cb) => {
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+    if (allowedTypes.includes(file.mimetype)) {
+        cb(null, true);
+    } else {
+        cb(new Error('Tipo de arquivo inválido. Apenas JPG, PNG e WEBP são permitidos.'), false);
+    }
+}
+
+export const upload = multer({ 
+    storage: storage,
+    limits: {
+        fileSize: 5 * 1024 * 1024 // Limite de 5MB
+    },
+    fileFilter: fileFilter
+});
