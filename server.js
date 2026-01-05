@@ -4,6 +4,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import { inicializarBanco } from "./Config/db.js";
 import session from "express-session";
+import rateLimit from 'express-rate-limit';
 
 // Rotas
 import siteRoutes from "./routes/siteRoutes.js";
@@ -31,7 +32,7 @@ app.use(session({
     secret: process.env.SESSION_SECRET, // Lê do .env
     resave: false,
     saveUninitialized: false,
-    cookie: { 
+    cookie: {
         secure: false, // Em produção (HTTPS), mude para true
         httpOnly: true, // Segurança contra roubo de cookie via JS
         maxAge: 1000 * 60 * 60 * 24 // Sessão expira em 1 dia

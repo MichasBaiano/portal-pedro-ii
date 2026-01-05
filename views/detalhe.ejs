@@ -157,6 +157,17 @@
     </main>
 
     <script>
+        // Função para evitar XSS (Limpa o HTML malicioso)
+        function escaparHTML(texto) {
+            if (!texto) return "";
+            return texto
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
         document.addEventListener('DOMContentLoaded', async () => {
             // 1. Pega os parâmetros da URL (ex: ?tipo=evento&id=5)
             const params = new URLSearchParams(window.location.search);
@@ -284,7 +295,7 @@
                         <strong>${av.autor}</strong>
                         <span class="nota-badge">${estrelas}</span>
                     </div>
-                    <p style="margin: 5px 0; color: var(--texto-corpo);">${av.comentario || ''}</p>
+                    <p style="margin: 5px 0; color: var(--texto-corpo);">${escaparHTML(av.comentario)}</p>
                     <small style="color:#999;">${new Date(av.data).toLocaleDateString('pt-BR')}</small>
                 </div>
             `;
