@@ -2,7 +2,7 @@ import 'dotenv/config'; // 1. Lê as variáveis do arquivo .env
 import express from "express";
 import path from "path";
 import { fileURLToPath } from "url";
-import { inicializarBanco } from "./Config/db.js";
+import { inicializarBanco } from "./config/db.js";
 import session from "express-session";
 import rateLimit from 'express-rate-limit';
 import helmet from "helmet";
@@ -14,6 +14,7 @@ import apiRoutes from "./routes/apiRoutes.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
+app.set('trust proxy', 1);
 // Configuração do Helmet (Blindagem de Segurança)
 app.use(helmet({
     contentSecurityPolicy: {

@@ -1,7 +1,7 @@
 import express from "express";
-import { verificarAutenticacao } from "../Middleware/authMiddleware.js";
-import { AuthController } from "../controller/authController.js";
-import { HomeController } from "../controller/homeController.js";
+import { verificarAutenticacao } from "../middlewares/authMiddleware.js";
+import { AuthController } from "../controllers/authController.js";
+import { HomeController } from "../controllers/homeController.js";
 
 const router = express.Router();
 

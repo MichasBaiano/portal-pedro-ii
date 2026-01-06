@@ -1,17 +1,17 @@
 import express from "express";
-import { upload } from "../Config/upload.js";
-import { verificarAutenticacao } from "../Middleware/authMiddleware.js";
+import { upload } from "../config/upload.js";
+import { verificarAutenticacao } from "../middlewares/authMiddleware.js";
 
 // Controllers
-import { MapaController } from "../controller/mapaController.js";
-import { SugestaoController } from "../controller/sugestaoController.js";
-import { EventosController } from "../controller/eventoController.js";
-import { EstabelecimentosController } from "../controller/estabelecimentoController.js";
-import { TransportesController } from "../controller/transporteController.js";
-import { AuthController } from "../controller/authController.js";
-import { BannersController } from "../controller/bannersController.js";
-import { DashboardController } from "../controller/dashboardController.js";
-import { AvaliacaoController } from "../controller/avaliacaoController.js";
+import { MapaController } from "../controllers/mapaController.js";
+import { SugestaoController } from "../controllers/sugestaoController.js";
+import { EventosController } from "../controllers/eventoController.js";
+import { EstabelecimentosController } from "../controllers/estabelecimentoController.js";
+import { TransportesController } from "../controllers/transporteController.js";
+import { AuthController } from "../controllers/authController.js";
+import { BannersController } from "../controllers/bannersController.js";
+import { DashboardController } from "../controllers/dashboardController.js";
+import { AvaliacaoController } from "../controllers/avaliacaoController.js";
 
 const router = express.Router();
 
