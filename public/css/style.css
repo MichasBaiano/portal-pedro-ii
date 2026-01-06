@@ -1,19 +1,20 @@
 :root {
   /* --- TEMA CLARO (Padrão) --- */
   --bg-body: #f7f9fc;
-  --bg-card: #ffffff; /* Fundo dos cards e footer no claro */
+  --bg-card: #ffffff;
+  /* Fundo dos cards e footer no claro */
   --bg-header: #ffffff;
-  
+
   --texto-titulo: #1a202c;
   --texto-corpo: #4a5568;
   --texto-leve: #718096;
-  
+
   --borda-suave: #e2e8f0;
-  --sombra-card: 0 4px 6px rgba(0,0,0,0.05);
-  
-  --cor-primaria: #0f4c81;       
-  --cor-primaria-clara: #ebf2f8; 
-  --cor-destaque: #e0a800;       
+  --sombra-card: 0 4px 6px rgba(0, 0, 0, 0.05);
+
+  --cor-primaria: #0f4c81;
+  --cor-primaria-clara: #ebf2f8;
+  --cor-destaque: #e0a800;
 
   --radius: 12px;
   --fonte-titulo: 'Merriweather', serif;
@@ -22,23 +23,27 @@
 
 /* --- TEMA ESCURO (Correções) --- */
 [data-theme="dark"] {
-  --bg-body: #121212;          
-  --bg-card: #1e1e1e;          /* Cinza chumbo para cards e footer */
+  --bg-body: #121212;
+  --bg-card: #1e1e1e;
+  /* Cinza chumbo para cards e footer */
   --bg-header: #1e1e1e;
-  
-  --texto-titulo: #e2e8f0;     
-  --texto-corpo: #cbd5e0;      
+
+  --texto-titulo: #e2e8f0;
+  --texto-corpo: #cbd5e0;
   --texto-leve: #a0aec0;
-  
-  --borda-suave: #2d3748;      
-  --sombra-card: 0 4px 20px rgba(0,0,0,0.4); 
-  
-  --cor-primaria: #63b3ed;     /* Azul claro neon */
-  --cor-primaria-clara: #2a4365; 
-  --cor-destaque: #f6e05e;     
+
+  --borda-suave: #2d3748;
+  --sombra-card: 0 4px 20px rgba(0, 0, 0, 0.4);
+
+  --cor-primaria: #63b3ed;
+  /* Azul claro neon */
+  --cor-primaria-clara: #2a4365;
+  --cor-destaque: #f6e05e;
 }
 
-* { box-sizing: border-box; }
+* {
+  box-sizing: border-box;
+}
 
 body {
   font-family: var(--fonte-corpo);
@@ -46,12 +51,13 @@ body {
   color: var(--texto-corpo);
   margin: 0;
   line-height: 1.7;
-  transition: background-color 0.3s ease, color 0.3s ease; /* Transição Suave */
+  transition: background-color 0.3s ease, color 0.3s ease;
+  /* Transição Suave */
 }
 
 /* --- HEADER MINIMALISTA --- */
 header {
-  background-color: var(--bg-header); 
+  background-color: var(--bg-header);
   padding: 1rem 2rem;
   box-shadow: var(--sombra-p);
   position: sticky;
@@ -94,7 +100,8 @@ nav a {
   border-bottom: 2px solid transparent;
 }
 
-nav a:hover, nav a.ativo {
+nav a:hover,
+nav a.ativo {
   color: var(--cor-primaria);
   border-bottom-color: var(--cor-destaque);
 }
@@ -118,7 +125,8 @@ h2 {
 .btn {
   display: inline-block;
   padding: 0.75rem 1.5rem;
-  border-radius: 8px; /* Cantos arredondados modernos */
+  border-radius: 8px;
+  /* Cantos arredondados modernos */
   font-weight: 600;
   text-decoration: none;
   transition: all 0.2s ease;
@@ -128,24 +136,32 @@ h2 {
   text-align: center;
 }
 
-.btn-enviar, .btn-primary {
+.btn-enviar,
+.btn-primary {
   background-color: var(--cor-primaria);
   color: white;
 }
+
 .btn-enviar:hover {
   background-color: #0b3d6b;
   transform: translateY(-1px);
   box-shadow: var(--sombra-m);
 }
 
-.btn-cancelar, .btn-danger {
+.btn-cancelar,
+.btn-danger {
   background-color: #fee2e2;
   color: #991b1b;
 }
-.btn-cancelar:hover { background-color: #fecaca; }
+
+.btn-cancelar:hover {
+  background-color: #fecaca;
+}
 
 /* --- INPUTS --- */
-input, select, textarea {
+input,
+select,
+textarea {
   width: 100%;
   padding: 12px 16px;
   border: 1px solid var(--borda-suave);
@@ -157,125 +173,308 @@ input, select, textarea {
   color: var(--texto-titulo);
 }
 
-input:focus, select:focus, textarea:focus {
+input:focus,
+select:focus,
+textarea:focus {
   outline: none;
   border-color: var(--cor-primaria);
-  box-shadow: 0 0 0 3px rgba(15, 76, 129, 0.1); /* Anel de foco suave */
+  box-shadow: 0 0 0 3px rgba(15, 76, 129, 0.1);
+  /* Anel de foco suave */
 }
 
 /* --- FOOTER --- */
 footer {
-  background-color: var(--bg-card); /* Agora usa a variável! */
+  background-color: var(--bg-card);
+  /* Agora usa a variável! */
   border-top: 1px solid var(--borda-suave);
   color: var(--texto-leve);
   padding: 3rem;
   text-align: center;
   margin-top: 4rem;
-  transition: background-color 0.3s ease; /* Suaviza a troca */
+  transition: background-color 0.3s ease;
+  /* Suaviza a troca */
 }
-footer a { color: var(--cor-primaria); text-decoration: none; font-weight: 600; }
+
+footer a {
+  color: var(--cor-primaria);
+  text-decoration: none;
+  font-weight: 600;
+}
 
 
 
 /* Correção Global para Formulários e Cards no Dark Mode */
-.login-card, 
-.form-card, 
-.lista-card, 
-.card-evento, 
+.login-card,
+.form-card,
+.lista-card,
+.card-evento,
 .card-local,
 .container-sugestao {
-    background-color: var(--bg-card) !important; /* Força o uso da variável */
-    border: 1px solid var(--borda-suave);
-    color: var(--texto-corpo);
+  background-color: var(--bg-card) !important;
+  /* Força o uso da variável */
+  border: 1px solid var(--borda-suave);
+  color: var(--texto-corpo);
 }
 
 /* Garante que inputs não fiquem brancos cegantes no modo escuro */
-[data-theme="dark"] input, 
-[data-theme="dark"] select, 
+[data-theme="dark"] input,
+[data-theme="dark"] select,
 [data-theme="dark"] textarea {
-    background-color: #2d3748;
-    color: #e2e8f0;
-    border-color: #4a5568;
+  background-color: #2d3748;
+  color: #e2e8f0;
+  border-color: #4a5568;
 }
 
 /* --- Botão Favorito --- */
 .btn-favorito {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    z-index: 10;
-    background: rgba(255, 255, 255, 0.9);
-    border: none;
-    font-size: 1.4rem;
-    cursor: pointer;
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-    filter: grayscale(100%); /* Cinza quando desligado */
-    opacity: 0.8;
-    transition: all 0.2s;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 10;
+  background: rgba(255, 255, 255, 0.9);
+  border: none;
+  font-size: 1.4rem;
+  cursor: pointer;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  filter: grayscale(100%);
+  /* Cinza quando desligado */
+  opacity: 0.8;
+  transition: all 0.2s;
 }
 
-.btn-favorito:hover { transform: scale(1.1); opacity: 1; }
-.btn-favorito.ativo { filter: grayscale(0%); opacity: 1; background: #fff; }
+.btn-favorito:hover {
+  transform: scale(1.1);
+  opacity: 1;
+}
+
+.btn-favorito.ativo {
+  filter: grayscale(0%);
+  opacity: 1;
+  background: #fff;
+}
 
 /* Necessário para posicionar o botão dentro do card */
-.card-evento, .card-local, .card-transporte, .card-menu { position: relative; }
+.card-evento,
+.card-local,
+.card-transporte,
+.card-menu {
+  position: relative;
+}
 
 /* --- Botão Carregar Mais --- */
 .container-carregar-mais {
-    text-align: center;
-    margin: 2rem 0;
-    width: 100%;
-    grid-column: 1 / -1; /* Garante que ocupe a largura toda na Grid */
+  text-align: center;
+  margin: 2rem 0;
+  width: 100%;
+  grid-column: 1 / -1;
+  /* Garante que ocupe a largura toda na Grid */
 }
 
 .btn-carregar {
-    background-color: transparent;
-    border: 2px solid var(--cor-primaria);
-    color: var(--cor-primaria);
-    padding: 10px 30px;
-    border-radius: 50px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    font-size: 1rem;
+  background-color: transparent;
+  border: 2px solid var(--cor-primaria);
+  color: var(--cor-primaria);
+  padding: 10px 30px;
+  border-radius: 50px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 1rem;
 }
 
 .btn-carregar:hover {
-    background-color: var(--cor-primaria);
-    color: white;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  background-color: var(--cor-primaria);
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
 .oculto {
-    display: none !important;
+  display: none !important;
 }
 
 /* --- Botão WhatsApp Global --- */
 .btn-zap {
-    background-color: #25D366; /* Verde oficial do WhatsApp */
-    color: white !important;
-    padding: 6px 12px;
-    border-radius: 50px;
-    text-decoration: none;
-    font-size: 0.85rem;
-    font-weight: bold;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    transition: transform 0.2s, background-color 0.2s;
-    border: none;
-    cursor: pointer;
-    box-shadow: 0 2px 5px rgba(37, 211, 102, 0.3);
+  background-color: #25D366;
+  /* Verde oficial do WhatsApp */
+  color: white !important;
+  padding: 6px 12px;
+  border-radius: 50px;
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: bold;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: transform 0.2s, background-color 0.2s;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(37, 211, 102, 0.3);
 }
 
 .btn-zap:hover {
-    background-color: #128C7E; /* Verde mais escuro ao passar o mouse */
-    transform: translateY(-2px);
+  background-color: #128C7E;
+  /* Verde mais escuro ao passar o mouse */
+  transform: translateY(-2px);
+}
+
+/* ========================================= */
+/*      RESPONSIVIDADE (MEDIA QUERIES)       */
+/* ========================================= */
+
+/* --- TABLETS E CELULARES (Abaixo de 1024px) --- */
+@media (max-width: 1024px) {
+  .container {
+    padding: 0 1.5rem;
+    /* Mais margem nas laterais */
+    width: 100%;
+  }
+}
+
+/* --- CELULARES (Abaixo de 768px) --- */
+@media (max-width: 768px) {
+
+  body {
+    padding-top: 0 !important;
+  }
+  
+  /* Header e Navegação */
+  header {
+    position: relative !important;
+    /* Força ele a não ser mais 'fixed' */
+    top: auto !important;
+    width: 100%;
+  }
+
+  header .container {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    flex-direction: column;
+    /* Empilha Logo em cima, Menu embaixo */
+    gap: 1rem;
+  }
+
+  nav ul {
+    position: relative;
+    background: var(--bg-card); /* Garante que o fundo não seja transparente se encavalar */
+    gap: 15px;
+    justify-content: center;
+    flex-wrap: wrap;
+    z-index: 10;
+    /* Se tiver muitos itens, quebra linha */
+  }
+
+  nav a {
+    font-size: 0.9rem;
+    padding: 8px 12px;
+    background: rgba(255, 255, 255, 0.1);
+    /* Fundo leve para parecer botão touch */
+    border-radius: 50px;
+  }
+
+  /* 2. Banner / Carrossel */
+  .hero-carousel {
+    border-radius: 0 0 16px 16px;
+    /* Arredondamento menor */
+  }
+
+  .carousel-slide {
+    min-height: 350px;
+    /* Altura menor no celular */
+    padding: 4rem 1rem;
+  }
+
+  .slide-boas-vindas h1 {
+    font-size: 2rem !important;
+    /* Texto menor */
+  }
+
+  .slide-boas-vindas p {
+    font-size: 1rem !important;
+  }
+
+  /* 3. Ajuste nos Cards de Vibes (Opala, Natureza...) */
+  .grid-vibes {
+    grid-template-columns: 1fr;
+    /* Um card por linha */
+  }
+
+  .card-vibe {
+    height: 140px;
+    /* Card mais baixinho */
+  }
+
+  /* 4. Títulos e Seções */
+  h2 {
+    font-size: 1.8rem;
+  }
+
+  h3 {
+    font-size: 1.3rem;
+  }
+
+  /* 5. Tabelas do Admin (Importante!) */
+  table,
+  thead,
+  tbody,
+  th,
+  td,
+  tr {
+    display: block;
+    /* Transforma tabela em blocos para não estourar a tela */
+  }
+
+  thead tr {
+    position: absolute;
+    top: -9999px;
+    left: -9999px;
+  }
+
+  tr {
+    border: 1px solid #ccc;
+    margin-bottom: 1rem;
+    border-radius: 8px;
+  }
+
+  td {
+    border: none;
+    border-bottom: 1px solid #eee;
+    position: relative;
+    padding-left: 50%;
+    text-align: right;
+  }
+
+  td:before {
+    /* Cria "labels" falsos para saber o que é o dado */
+    position: absolute;
+    top: 6px;
+    left: 6px;
+    width: 45%;
+    padding-right: 10px;
+    white-space: nowrap;
+    text-align: left;
+    font-weight: bold;
+  }
+}
+
+/* CLASSE MESTRA DE ALINHAMENTO */
+.container {
+  width: 100%;
+
+  /* A Mágica para telas grandes: */
+  max-width: 1200px;
+  /* O conteúdo nunca passa de 1200px */
+
+  /* Centraliza o bloco no meio da tela */
+  margin-left: auto;
+  margin-right: auto;
+
+  padding-left: 1rem;
+  padding-right: 1rem;
 }
