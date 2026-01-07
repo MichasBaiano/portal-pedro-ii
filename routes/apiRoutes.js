@@ -12,6 +12,7 @@ import { AuthController } from "../controllers/authController.js";
 import { BannersController } from "../controllers/bannersController.js";
 import { DashboardController } from "../controllers/dashboardController.js";
 import { AvaliacaoController } from "../controllers/avaliacaoController.js";
+import { eventoValidator } from "../validators/eventoValidator.js";
 
 const router = express.Router();
 
@@ -57,8 +58,8 @@ router.get("/sugestoes", verificarAutenticacao, SugestaoController.listar);
 router.delete("/sugestoes/:id", verificarAutenticacao, SugestaoController.deletar);
 
 // Eventos (Criar, Editar, Deletar)
-router.post("/eventos", verificarAutenticacao, upload.single('imagem'), EventosController.criarEvento);
-router.put("/eventos/:id", verificarAutenticacao, upload.single('imagem'), EventosController.editarEvento);
+router.post("/eventos", verificarAutenticacao, upload.single('imagem'), eventoValidator, EventosController.criarEvento);
+router.put("/eventos/:id", verificarAutenticacao, upload.single('imagem'), eventoValidator, EventosController.editarEvento);
 router.delete("/eventos/:id", verificarAutenticacao, EventosController.deletarEvento);
 
 // Estabelecimentos (Criar, Editar, Deletar)

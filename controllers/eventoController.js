@@ -38,11 +38,12 @@ export class EventosController {
 
             if (!eventoAntigo) return res.status(404).json({ erro: "Evento não encontrado" });
 
-            // Mescla dados do body com a lógica de imagem
-            const dados = {
-                ...req.body,
-                imagem: FileHelper.processarImagem(req, eventoAntigo)
-            };
+            let dados = { ...req.body };
+            // Processa a imagem: Se o usuário mandou nova, o Helper apaga a antiga automaticamente
+            dados.imagem = FileHelper.processarImagem(req, eventoAntigo);
+            // Conversão numérica
+            dados.latitude = dados.latitude ? parseFloat(dados.latitude) : null;
+            dados.longitude = dados.longitude ? parseFloat(dados.longitude) : null;
 
             const eventoAtualizado = await EventosModel.update(id, dados);
             res.json(eventoAtualizado);
