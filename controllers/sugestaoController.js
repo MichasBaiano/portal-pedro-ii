@@ -2,11 +2,7 @@ import { SugestaoModel } from "../models/sugestaoModel.js";
 
 export class SugestaoController {
     static async enviarSugestao(req, res) {
-        // ... (Mantenha o código de enviarSugestao igual estava) ...
         const dados = req.body;
-        if (!dados.nome || !dados.mensagem) {
-            return res.status(400).json({ erro: "Nome e mensagem são obrigatórios." });
-        }
         try {
             const salva = await SugestaoModel.salvar(dados);
             res.status(201).json({ mensagem: "Sugestão salva!", id: salva.id });

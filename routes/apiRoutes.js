@@ -45,7 +45,6 @@ router.get("/banners", BannersController.listar);
 
 // --- AVALIAÇÕES ---
 router.get("/avaliacoes/:tipo/:id", AvaliacaoController.listar);
-router.post("/avaliacoes", AvaliacaoController.adicionar);
 router.post("/avaliacoes", avaliacaoValidator, AvaliacaoController.adicionar);
 
 
