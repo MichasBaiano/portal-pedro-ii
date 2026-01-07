@@ -14,6 +14,7 @@ import { DashboardController } from "../controllers/dashboardController.js";
 import { AvaliacaoController } from "../controllers/avaliacaoController.js";
 import { eventoValidator } from "../validators/eventoValidator.js";
 import { sugestaoValidator } from "../validators/sugestaoValidator.js";
+import { avaliacaoValidator } from "../validators/avaliacaoValidator.js";
 
 const router = express.Router();
 
@@ -45,6 +46,7 @@ router.get("/banners", BannersController.listar);
 // --- AVALIAÇÕES ---
 router.get("/avaliacoes/:tipo/:id", AvaliacaoController.listar);
 router.post("/avaliacoes", AvaliacaoController.adicionar);
+router.post("/avaliacoes", avaliacaoValidator, AvaliacaoController.adicionar);
 
 
 // ======================================================

@@ -14,9 +14,7 @@ export class AvaliacaoController {
 
     static async adicionar(req, res) {
         const { item_id, tipo, nota, comentario, autor } = req.body;
-        try {
-            if (!nota || !autor) return res.status(400).json({ error: "Nota e nome são obrigatórios" });
-            
+        try {            
             await AvaliacaoModel.create({ itemId: item_id, tipo, nota, comentario, autor });
             res.json({ sucesso: true });
         } catch (erro) {
