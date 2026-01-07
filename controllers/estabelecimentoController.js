@@ -6,21 +6,54 @@ export class EstabelecimentosController {
     static async listar(req, res) {
         try {
             const busca = req.query.q;
-            const resultados = busca ? await EstabelecimentosModel.search(busca) : await EstabelecimentosModel.getAll();
-            res.json(resultados);
+
+            // Se for busca, retorna estrutura simples
+            if (busca) {
+                const resultados = await EstabelecimentosModel.search(busca);
+                return res.json({
+                    dados: resultados,
+                    meta: { total: resultados.length, pagina: 1, totalPaginas: 1 }
+                });
+            }
+
+            // Paginação
+            const pagina = parseInt(req.query.pagina) || 1;
+            const limite = parseInt(req.query.limite) || 6; // Padrão 6 itens por vez
+            const offset = (pagina - 1) * limite;
+
+            const locais = await EstabelecimentosModel.getAll(limite, offset);
+            const totalItens = await EstabelecimentosModel.countTotal();
+            const totalPaginas = Math.ceil(totalItens / limite);
+
+            res.json({
+                dados: locais,
+                meta: {
+                    totalItens,
+                    totalPaginas,
+                    paginaAtual: pagina,
+                    itensPorPagina: limite
+                }
+            });
+
         } catch (erro) {
+            console.error(erro);
             res.status(500).json({ erro: "Erro ao buscar locais." });
         }
     }
 
     static async criar(req, res) {
         try {
-            let dados = req.body;
+            let dados = { ...req.body };
             dados.imagem = FileHelper.processarImagem(req, null);
+
+            // Tratamento numérico
+            dados.latitude = dados.latitude ? parseFloat(dados.latitude) : null;
+            dados.longitude = dados.longitude ? parseFloat(dados.longitude) : null;
 
             const novo = await EstabelecimentosModel.create(dados);
             res.status(201).json(novo);
         } catch (erro) {
+            console.error(erro);
             res.status(500).json({ erro: "Erro ao criar local." });
         }
     }
@@ -32,14 +65,16 @@ export class EstabelecimentosController {
 
             if (!localAntigo) return res.status(404).json({ erro: "Local não encontrado" });
 
-            const dados = {
-                ...req.body,
-                imagem: FileHelper.processarImagem(req, localAntigo)
-            };
+            let dados = { ...req.body };
+            dados.imagem = FileHelper.processarImagem(req, localAntigo);
+
+            dados.latitude = dados.latitude ? parseFloat(dados.latitude) : null;
+            dados.longitude = dados.longitude ? parseFloat(dados.longitude) : null;
 
             const atualizado = await EstabelecimentosModel.update(id, dados);
             res.json(atualizado);
         } catch (erro) {
+            console.error(erro);
             res.status(500).json({ erro: "Erro ao atualizar local." });
         }
     }
