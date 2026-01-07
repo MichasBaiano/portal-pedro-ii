@@ -1,9 +1,19 @@
 import { openDb } from "../Config/db.js";
 
 export class TransportesModel {
-    static async getAll() {
+    static async getAll(limite = null, offset = 0) {
         const db = await openDb();
-        return db.all('SELECT * FROM transportes');
+        if (limite) {
+            return db.all('SELECT * FROM transportes LIMIT ? OFFSET ?', [limite, offset]);
+        } else {
+            return db.all('SELECT * FROM transportes');
+        }
+    }
+
+    static async countTotal() {
+        const db = await openDb();
+        const resultado = await db.get('SELECT COUNT(*) as total FROM transportes');
+        return resultado.total;
     }
 
     static async create(dados) {
