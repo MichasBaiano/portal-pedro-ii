@@ -4,10 +4,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const selectFiltro = document.getElementById('filtroCategoria');
 
     // Variáveis de Controle da Paginação
-    let todosEventos = [];      // Guarda tudo que veio do banco
-    let eventosFiltrados = [];  // Guarda o que está sendo exibido na busca atual
-    let indiceAtual = 0;        // Quantos já mostramos
-    const ITENS_POR_PAGINA = 6; // Quantos mostrar por vez
+    let paginaAtual = 1;        // Qual página o servidor deve mandar
+    let totalPaginas = 1;       // O servidor vai nos dizer quantas existem
+    let carregando = false;     // Para evitar cliques duplos
+    const ITENS_POR_PAGINA = 6; // Deve bater com o "limit" do backend
 
     // Cria o botão "Ver Mais" dinamicamente
     const divBotao = document.createElement('div');
@@ -18,64 +18,94 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const btnVerMais = document.getElementById('btnVerMais');
 
-    // 1. Busca Inicial
-    function buscarEventos() {
-        container.innerHTML = '<p class="carregando">Carregando eventos...</p>';
+    // 1. Função Principal de Busca 
+    // O parâmetro 'reset' diz se é uma nova pesquisa (limpa tudo) ou se é paginação (adiciona embaixo)
+    function buscarEventos(reset = false) {
+        if (carregando) return;
+        carregando = true;
+
+        // Se for uma nova busca (digitou algo ou mudou filtro), volta pra página 1
+        if (reset) {
+            paginaAtual = 1;
+            container.innerHTML = '<p class="carregando">Carregando eventos...</p>';
+            divBotao.classList.add('oculto'); // Esconde botão enquanto carrega
+        }
+
+        // Pega os valores dos filtros
+        const termo = inputBusca.value;
+        // Se tiver select de categoria, usa, se não, ignora
         
-        fetch('/api/eventos')
-            .then(res => res.json())
-            .then(data => {
-                todosEventos = data;
-                aplicarFiltros(); // Começa a exibir
+        // Monta a URL da API com Paginação
+        const url = `/api/eventos?pagina=${paginaAtual}&limite=${ITENS_POR_PAGINA}&q=${termo}`;
+
+        fetch(url)
+            .then(res => {
+                if (!res.ok) throw new Error("Erro na API");
+                return res.json();
+            })
+            .then(resposta => {
+                // O Backend agora retorna: { dados: [...], meta: {...} }
+                const listaEventos = resposta.dados;
+                const meta = resposta.meta;
+
+                totalPaginas = meta.totalPaginas;
+
+                // Se for reset, limpa a mensagem de "carregando"
+                if (reset) container.innerHTML = '';
+
+                // Verifica se não veio nada
+                if (listaEventos.length === 0 && paginaAtual === 1) {
+                    container.innerHTML = '<p style="grid-column: 1/-1; text-align: center;">Nenhum evento encontrado.</p>';
+                    divBotao.classList.add('oculto');
+                    carregando = false;
+                    return;
+                }
+
+                // Renderiza os cards recebidos
+                renderizarLote(listaEventos);
+
+                // Lógica do Botão: Se a página atual for menor que o total, mostra o botão
+                if (paginaAtual < totalPaginas) {
+                    divBotao.classList.remove('oculto');
+                    paginaAtual++; // Prepara o contador para a próxima vez que clicar
+                } else {
+                    divBotao.classList.add('oculto'); // Acabou
+                }
             })
             .catch(err => {
                 console.error(err);
-                container.innerHTML = '<p>Erro ao carregar eventos.</p>';
+                if (reset) container.innerHTML = '<p>Erro ao carregar eventos.</p>';
+            })
+            .finally(() => {
+                carregando = false;
             });
     }
 
-    // 2. Filtra (Busca + Categoria) e Reinicia a Lista
+    // 2. Filtra (Busca + Categoria) - Agora dispara uma NOVA busca no servidor
     function aplicarFiltros() {
-        const termo = inputBusca.value.toLowerCase();
-        const categoria = selectFiltro ? selectFiltro.value : 'todos';
-
-        // Filtra a lista completa
-        eventosFiltrados = todosEventos.filter(ev => {
-            const matchNome = ev.nome.toLowerCase().includes(termo);
-            const matchCat = categoria === 'todos' || ev.categoria === categoria;
-            return matchNome && matchCat;
-        });
-
-        // Reseta a paginação
-        container.innerHTML = '';
-        indiceAtual = 0;
-        divBotao.classList.add('oculto');
-
-        if (eventosFiltrados.length === 0) {
-            container.innerHTML = '<p style="grid-column: 1/-1; text-align: center;">Nenhum evento encontrado.</p>';
-            return;
-        }
-
-        // Carrega a primeira leva
-        carregarMais();
+        buscarEventos(true); // TRUE = Reseta a lista e começa do zero
     }
 
-    // 3. Função que renderiza o próximo lote (Paginação)
-    function carregarMais() {
-        const proximoIndice = indiceAtual + ITENS_POR_PAGINA;
-        // Pega uma fatia da lista (ex: do 0 ao 6)
-        const lote = eventosFiltrados.slice(indiceAtual, proximoIndice);
-
-        lote.forEach(ev => {
+    // 3. Função que renderiza o lote (HTML)
+    function renderizarLote(eventos) {
+        eventos.forEach(ev => {
             // Cria as variáveis necessárias
             const linkDetalhe = `/detalhe?tipo=evento&id=${ev.id}`;
+            // Ajuste de Data para UTC (evita erro de dia anterior)
             const dataFormatada = new Date(ev.data).toLocaleDateString('pt-BR', { timeZone: 'UTC' });
             
-            // Renderiza o Card
+            // TRATAMENTO DE IMAGEM (Segurança para links externos vs uploads locais)
+            let imagemSrc = ev.imagem;
+            if (imagemSrc && !imagemSrc.startsWith('http')) {
+                imagemSrc = `/uploads/${imagemSrc}`;
+            }
+            if (!imagemSrc) imagemSrc = 'https://via.placeholder.com/400';
+
+            // Renderiza o Card (Mantive seu HTML exato)
             const cardHTML = `
                 <div class="card-evento">
-                    ${Favoritos.renderizarBotao(ev.id, 'evento', ev.nome, ev.imagem, linkDetalhe)}
-                    <div class="card-img" style="background-image: url('${ev.imagem || 'https://via.placeholder.com/400'}');"></div>
+                    ${typeof Favoritos !== 'undefined' ? Favoritos.renderizarBotao(ev.id, 'evento', ev.nome, ev.imagem, linkDetalhe) : ''}
+                    <div class="card-img" style="background-image: url('${imagemSrc}');"></div>
                     <div class="card-conteudo">
                         <span class="data-badge">${dataFormatada}</span>
                         <h3>${ev.nome}</h3>
@@ -86,25 +116,26 @@ document.addEventListener('DOMContentLoaded', () => {
                         </a>
                     </div>
                 </div>`;
-            container.innerHTML += cardHTML;
+            
+            // Usa insertAdjacentHTML para não quebrar eventos de itens anteriores
+            container.insertAdjacentHTML('beforeend', cardHTML);
         });
-
-        // Atualiza o índice
-        indiceAtual = proximoIndice;
-
-        // Verifica se ainda tem coisas pra mostrar. Se não tiver, esconde o botão.
-        if (indiceAtual >= eventosFiltrados.length) {
-            divBotao.classList.add('oculto');
-        } else {
-            divBotao.classList.remove('oculto');
-        }
     }
 
-    // Eventos de interação
-    inputBusca.addEventListener('input', aplicarFiltros);
-    if(selectFiltro) selectFiltro.addEventListener('change', aplicarFiltros);
-    btnVerMais.addEventListener('click', carregarMais);
+    // Eventos de interação 
+    let timeoutBusca;
+    inputBusca.addEventListener('input', () => {
+        clearTimeout(timeoutBusca);
+        timeoutBusca = setTimeout(() => aplicarFiltros(), 500);
+    });
 
-    // Iniciar
-    buscarEventos();
+    if(selectFiltro) selectFiltro.addEventListener('change', aplicarFiltros);
+    
+    // Botão "Ver Mais" agora pede a PRÓXIMA página (reset = false)
+    btnVerMais.addEventListener('click', () => {
+        buscarEventos(false); 
+    });
+
+    // Iniciar (Busca a página 1)
+    buscarEventos(true);
 });

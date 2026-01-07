@@ -3,13 +3,49 @@ import { FileHelper } from "../utils/fileHelper.js";
 
 
 export class EventosController {
-    // GET: Listar todos
+    // GET: Listar por páginas
     static async listarEventos(req, res) {
         try {
             const busca = req.query.q;
-            const resultados = busca ? await EventosModel.search(busca) : await EventosModel.getAll();
-            res.json(resultados);
+
+            // Se for busca, mantém simples por enquanto
+            if (busca) {
+                const resultados = await EventosModel.search(busca);
+                // Retorna no mesmo formato padronizado para não confundir o front
+                return res.json({
+                    dados: resultados,
+                    meta: { total: resultados.length, pagina: 1, totalPaginas: 1 }
+                });
+            }
+
+            // PAGINAÇÃO INTELIGENTE
+            // Se a URL for /api/eventos?pagina=2, ele pega a página 2
+            const pagina = parseInt(req.query.pagina) || 1;
+
+            // Define o limite como 6 (para combinar com seu layout de "ver mais")
+            // Mas aceita se o front quiser mudar (?limite=10)
+            const limite = parseInt(req.query.limite) || 6;
+
+            const offset = (pagina - 1) * limite; // Cálculo do pulo
+
+            // Busca os dados e o total
+            const eventos = await EventosModel.getAll(limite, offset);
+            const totalItens = await EventosModel.countTotal();
+            const totalPaginas = Math.ceil(totalItens / limite);
+
+            // Resposta Estruturada
+            res.json({
+                dados: eventos,       // Array com os 6 eventos da vez
+                meta: {
+                    totalItens,       // Ex: 50
+                    totalPaginas,     // Ex: 9 páginas (50 / 6)
+                    paginaAtual: pagina,
+                    itensPorPagina: limite
+                }
+            });
+
         } catch (erro) {
+            console.error(erro);
             res.status(500).json({ erro: "Erro ao buscar eventos." });
         }
     }

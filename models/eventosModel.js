@@ -2,9 +2,21 @@ import { openDb } from "../Config/db.js";
 
 export class EventosModel {
     // LEITURA 
-    static async getAll() {
+    static async getAll(limite = null, offset = 0) {
         const db = await openDb();
-        return db.all('SELECT * FROM eventos');
+        // Adiciona um limite para não travar em uma requisição
+        if (limite) {
+            return db.all('SELECT * FROM eventos ORDER BY data DESC LIMIT ? OFFSET ?', [limite, offset]);
+        } else {
+            return db.all('SELECT * FROM eventos ORDER BY data DESC');
+        }
+    }
+
+    // Contar total de páginas
+    static async countTotal() {
+        const db = await openDb();
+        const resultado = await db.get('SELECT COUNT(*) as total FROM eventos');
+        return resultado.total;
     }
 
     // CRIAÇÃO 
