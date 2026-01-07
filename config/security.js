@@ -6,7 +6,10 @@ export const securityConfig = {
             defaultSrc: ["'self'"], 
             
             // Scripts: Permite scripts do próprio site, inline, e HTTPS (para mapas/APIs externas)
-            scriptSrc: ["'self'", "'unsafe-inline'", "https:"], 
+            scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https:"], 
+
+            // Scripts: permite botões com onclick="..."
+            scriptSrcAttr: ["'unsafe-inline'"],
             
             // Estilos: Permite CSS do próprio site, inline, Google Fonts e HTTPS
             styleSrc: ["'self'", "'unsafe-inline'", "https:", "https://fonts.googleapis.com"], 
@@ -15,10 +18,10 @@ export const securityConfig = {
             fontSrc: ["'self'", "https:", "data:", "https://fonts.gstatic.com"], 
             
             // Imagens: Permite carregar de qualquer site HTTPS e Base64
-            imgSrc: ["'self'", "data:", "https:"], 
+            imgSrc: ["'self'", "data:", "https:", "blob:"], 
             
             // Conexões: Permite o site falar com a própria API e serviços externos seguros
-            connectSrc: ["'self'", "https:"], 
+            connectSrc: ["'self'", "https:", "data:"], 
             
             // Permite abrir frames se necessário
             frameSrc: ["'self'"],
