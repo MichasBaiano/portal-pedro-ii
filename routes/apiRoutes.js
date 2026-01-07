@@ -14,6 +14,9 @@ import { DashboardController } from "../controllers/dashboardController.js";
 import { AvaliacaoController } from "../controllers/avaliacaoController.js";
 import { eventoValidator } from "../validators/eventoValidator.js";
 import { sugestaoValidator } from "../validators/sugestaoValidator.js";
+import { estabelecimentoValidator } from "../validators/estabelecimentoValidator.js";
+import { transporteValidator } from "../validators/transporteValidator.js";
+import { bannerValidator } from "../validators/bannerValidator.js";
 import { avaliacaoValidator } from "../validators/avaliacaoValidator.js";
 
 const router = express.Router();
@@ -65,20 +68,20 @@ router.put("/eventos/:id", verificarAutenticacao, upload.single('imagem'), event
 router.delete("/eventos/:id", verificarAutenticacao, EventosController.deletarEvento);
 
 // Estabelecimentos (Criar, Editar, Deletar)
-router.post("/estabelecimentos", verificarAutenticacao, upload.single('imagem'),  EstabelecimentosController.criar);
-router.put("/estabelecimentos/:id", verificarAutenticacao, upload.single('imagem'), EstabelecimentosController.editar);
+router.post("/estabelecimentos", verificarAutenticacao, upload.single('imagem'), estabelecimentoValidator, EstabelecimentosController.criar);
+router.put("/estabelecimentos/:id", verificarAutenticacao, upload.single('imagem'), estabelecimentoValidator, EstabelecimentosController.editar);
 router.delete("/estabelecimentos/:id", verificarAutenticacao, EstabelecimentosController.deletar);
 // Rota especial para ligar/desligar destaque (PATCH pois é uma atualização parcial)
 router.patch("/estabelecimentos/:id/destaque", verificarAutenticacao, EstabelecimentosController.alternarDestaque);
 
 // Transportes (Criar, Editar, Deletar)
-router.post("/transportes", verificarAutenticacao, TransportesController.criar);
-router.put("/transportes/:id", verificarAutenticacao, TransportesController.editar);
+router.post("/transportes", verificarAutenticacao, transporteValidator, TransportesController.criar);
+router.put("/transportes/:id", verificarAutenticacao, transporteValidator, TransportesController.editar);
 router.delete("/transportes/:id", verificarAutenticacao, TransportesController.deletar);
 
 // Banners (Criar, Editar, Deletar)
-router.post("/banners", verificarAutenticacao, upload.single('imagem'), BannersController.criar);
-router.put("/banners/:id", verificarAutenticacao, upload.single('imagem'), BannersController.editar);
+router.post("/banners", verificarAutenticacao, upload.single('imagem'), bannerValidator, BannersController.criar);
+router.put("/banners/:id", verificarAutenticacao, upload.single('imagem'), bannerValidator, BannersController.editar);
 router.delete("/banners/:id", verificarAutenticacao, BannersController.deletar);
 
 export default router;
