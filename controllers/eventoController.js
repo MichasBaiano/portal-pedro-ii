@@ -1,53 +1,48 @@
 import { EventosModel } from "../models/eventosModel.js";
+import { FileHelper } from "../utils/fileHelper.js";
+
 
 export class EventosController {
     // GET: Listar todos
     static async listarEventos(req, res) {
         try {
-            const busca = req.query.q; // Pega o ?q= da URL
-            
-            if (busca) {
-                const resultados = await EventosModel.search(busca);
-                res.json(resultados);
-            } else {
-                const eventos = await EventosModel.getAll();
-                res.json(eventos);
-            }
+            const busca = req.query.q;
+            const resultados = busca ? await EventosModel.search(busca) : await EventosModel.getAll();
+            res.json(resultados);
         } catch (erro) {
-            console.error(erro);
             res.status(500).json({ erro: "Erro ao buscar eventos." });
         }
     }
 
     // POST: Criar novo
-static async criarEvento(req, res) {
+    static async criarEvento(req, res) {
         try {
             let dados = req.body;
-            
-            // Lógica de Imagem: Se veio arquivo, cria o caminho relativo
-            if (req.file) {
-                dados.imagem = '/uploads/' + req.file.filename;
-            }
+            dados.imagem = FileHelper.processarImagem(req, null);
+            // a ser corrigido
+            dados.latitude = dados.latitude ? parseFloat(dados.latitude) : null;
+            dados.longitude = dados.longitude ? parseFloat(dados.longitude) : null;
 
             const novoEvento = await EventosModel.create(dados);
             res.status(201).json(novoEvento);
         } catch (erro) {
-            console.error(erro);
             res.status(500).json({ erro: "Erro ao criar evento." });
         }
     }
 
     // PUT: Editar existente
-static async editarEvento(req, res) {
+    static async editarEvento(req, res) {
         try {
             const id = req.params.id;
-            let dados = req.body;
+            const eventoAntigo = await EventosModel.getById(id);
 
-            // Se o usuário enviou uma nova foto, atualiza.
-            if (req.file) {
-                dados.imagem = '/uploads/' + req.file.filename;
-            }
-            // Se não enviou arquivo, o 'dados.imagem' continua sendo a URL antiga que virá do form hidden
+            if (!eventoAntigo) return res.status(404).json({ erro: "Evento não encontrado" });
+
+            // Mescla dados do body com a lógica de imagem
+            const dados = {
+                ...req.body,
+                imagem: FileHelper.processarImagem(req, eventoAntigo)
+            };
 
             const eventoAtualizado = await EventosModel.update(id, dados);
             res.json(eventoAtualizado);
@@ -61,10 +56,13 @@ static async editarEvento(req, res) {
     static async deletarEvento(req, res) {
         try {
             const id = req.params.id;
-            await EventosModel.delete(id);
+            const item = await EventosModel.getById(id);
+            if (item) {
+                FileHelper.deletarArquivo(item.imagem); // Limpa disco
+                await EventosModel.delete(id); // Limpa banco
+            }
             res.json({ mensagem: "Evento deletado!" });
         } catch (erro) {
-            console.error(erro);
             res.status(500).json({ erro: "Erro ao deletar evento." });
         }
     }
@@ -72,8 +70,8 @@ static async editarEvento(req, res) {
     static async getEvento(req, res) {
         try {
             const evento = await EventosModel.getById(req.params.id);
-            if(evento) res.json(evento);
-            else res.status(404).json({erro: "Não encontrado"});
+            if (evento) res.json(evento);
+            else res.status(404).json({ erro: "Não encontrado" });
         } catch (erro) {
             res.status(500).json({ erro: "Erro ao buscar evento." });
         }

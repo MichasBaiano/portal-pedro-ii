@@ -1,19 +1,14 @@
 import { EstabelecimentosModel } from "../models/estabelecimentoModel.js";
+import { FileHelper } from "../utils/fileHelper.js";
+
 
 export class EstabelecimentosController {
     static async listar(req, res) {
         try {
             const busca = req.query.q;
-
-            if (busca) {
-                const resultados = await EstabelecimentosModel.search(busca);
-                res.json(resultados);
-            } else {
-                const locais = await EstabelecimentosModel.getAll();
-                res.json(locais);
-            }
+            const resultados = busca ? await EstabelecimentosModel.search(busca) : await EstabelecimentosModel.getAll();
+            res.json(resultados);
         } catch (erro) {
-            console.error(erro);
             res.status(500).json({ erro: "Erro ao buscar locais." });
         }
     }
@@ -21,13 +16,11 @@ export class EstabelecimentosController {
     static async criar(req, res) {
         try {
             let dados = req.body;
-            if (req.file) {
-                dados.imagem = '/uploads/' + req.file.filename;
-            }
+            dados.imagem = FileHelper.processarImagem(req, null);
+
             const novo = await EstabelecimentosModel.create(dados);
             res.status(201).json(novo);
         } catch (erro) {
-            console.error(erro);
             res.status(500).json({ erro: "Erro ao criar local." });
         }
     }
@@ -35,14 +28,18 @@ export class EstabelecimentosController {
     static async editar(req, res) {
         try {
             const id = req.params.id;
-            let dados = req.body;
-            if (req.file) {
-                dados.imagem = '/uploads/' + req.file.filename;
-            }
+            const localAntigo = await EstabelecimentosModel.getById(id);
+
+            if (!localAntigo) return res.status(404).json({ erro: "Local não encontrado" });
+
+            const dados = {
+                ...req.body,
+                imagem: FileHelper.processarImagem(req, localAntigo)
+            };
+
             const atualizado = await EstabelecimentosModel.update(id, dados);
             res.json(atualizado);
         } catch (erro) {
-            console.error(erro);
             res.status(500).json({ erro: "Erro ao atualizar local." });
         }
     }
@@ -50,10 +47,13 @@ export class EstabelecimentosController {
     static async deletar(req, res) {
         try {
             const id = req.params.id;
-            await EstabelecimentosModel.delete(id);
+            const item = await EstabelecimentosModel.getById(id);
+            if (item) {
+                FileHelper.deletarArquivo(item.imagem); // Limpa disco
+                await EstabelecimentosModel.delete(id); // Limpa banco
+            }
             res.json({ mensagem: "Local deletado!" });
         } catch (erro) {
-            console.error(erro);
             res.status(500).json({ erro: "Erro ao deletar local." });
         }
     }
