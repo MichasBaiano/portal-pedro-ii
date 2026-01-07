@@ -1,16 +1,13 @@
-import { EstabelecimentosModel } from "../model/estabelecimentoModel.js";
-import { openDb } from "../Config/db.js";
+import { EstabelecimentosModel } from "../models/estabelecimentoModel.js";
+import { EventosModel } from "../models/eventosModel.js";
 
 export class MapaController {
     static async getPontosMapa(req, res) {
         try {
             // 1. Busca Locais via Model
             const locais = await EstabelecimentosModel.getComCoordenadas();
+            const eventos = await EventosModel.getComCoordenadas();
             
-            // 2. Busca Eventos (Como é simples, mantive o SQL aqui, mas idealmente iria pro EventosModel)
-            const db = await openDb();
-            const eventos = await db.all("SELECT id, nome, categoria, latitude, longitude, imagem FROM eventos WHERE latitude IS NOT NULL");
-
             // Padroniza os dados
             const pontosLocais = locais.map(l => ({
                 id: l.id,
@@ -32,6 +29,7 @@ export class MapaController {
                 img: e.imagem
             }));
 
+            // Junta tudo num array só
             res.json([...pontosLocais, ...pontosEventos]);
 
         } catch (error) {

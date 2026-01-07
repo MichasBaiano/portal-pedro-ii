@@ -1,6 +1,6 @@
-import { EventosModel } from "../model/eventosModel.js";
-import { EstabelecimentosModel } from "../model/estabelecimentoModel.js";
-import { BannersModel } from "../model/bannersModel.js";
+import { EventosModel } from "../models/eventosModel.js";
+import { EstabelecimentosModel } from "../models/estabelecimentoModel.js";
+import { BannersModel } from "../models/bannersModel.js";
 
 export class HomeController {
     static async index(req, res) {

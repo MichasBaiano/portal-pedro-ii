@@ -1,4 +1,4 @@
-import { EventosModel } from "../model/eventosModel.js";
+import { EventosModel } from "../models/eventosModel.js";
 
 export class EventosController {
     // GET: Listar todos

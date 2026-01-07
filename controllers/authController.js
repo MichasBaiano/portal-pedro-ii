@@ -1,4 +1,4 @@
-import { UsuarioModel } from "../model/usuarioModel.js";
+import { UsuarioModel } from "../models/usuarioModel.js";
 import bcrypt from 'bcrypt';
 
 export class AuthController {

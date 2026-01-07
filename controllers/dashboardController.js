@@ -1,4 +1,4 @@
-import { DashboardModel } from "../model/dashboardModel.js";
+import { DashboardModel } from "../models/dashboardModel.js";
 
 export class DashboardController {
     static async getStats(req, res) {

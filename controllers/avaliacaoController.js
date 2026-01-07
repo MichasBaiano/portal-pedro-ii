@@ -1,4 +1,4 @@
-import { AvaliacaoModel } from "../model/avaliacaoModel.js";
+import { AvaliacaoModel } from "../models/avaliacaoModel.js";
 
 export class AvaliacaoController {
     static async listar(req, res) {

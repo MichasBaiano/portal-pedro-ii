@@ -1,4 +1,4 @@
-import { SugestaoModel } from "../model/sugestaoModel.js";
+import { SugestaoModel } from "../models/sugestaoModel.js";
 
 export class SugestaoController {
     static async enviarSugestao(req, res) {

@@ -1,4 +1,4 @@
-import { TransportesModel } from "../model/transporteModel.js";
+import { TransportesModel } from "../models/transporteModel.js";
 
 export class TransportesController {
     static async listar(req, res) {
