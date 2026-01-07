@@ -51,4 +51,10 @@ export class EventosModel {
         const db = await openDb();
         return db.all(`SELECT * FROM eventos WHERE data >= date('now') ORDER BY data ASC LIMIT ?`, [limite]);
     }
+
+    // Busca específica para o MAPA
+    static async getComCoordenadas() {
+        const db = await openDb();
+        return db.all("SELECT id, nome, categoria, latitude, longitude, imagem FROM eventos WHERE latitude IS NOT NULL");
+    }
 }

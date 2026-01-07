@@ -8,20 +8,18 @@ export class EstabelecimentosModel {
 
     static async create(dados) {
         const db = await openDb();
-        const destaque = dados.destaque ? 1 : 0; // Converte true/false para 1/0
         const resultado = await db.run(
-            `INSERT INTO estabelecimentos (nome, categoria, endereco, telefone, descricao, imagem, destaque) VALUES (?, ?, ?, ?, ?, ?, ?)`,
-            [dados.nome, dados.categoria, dados.endereco, dados.telefone, dados.descricao, dados.imagem, destaque]
+            `INSERT INTO eventos (nome, data, local, latitude, longitude, categoria, descricao, imagem) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+            [dados.nome, dados.data, dados.local, dados.latitude, dados.longitude, dados.categoria, dados.descricao, dados.imagem]
         );
         return { id: resultado.lastID, ...dados };
     }
 
     static async update(id, dados) {
         const db = await openDb();
-        const destaque = dados.destaque ? 1 : 0;
         await db.run(
-            `UPDATE estabelecimentos SET nome=?, categoria=?, endereco=?, telefone=?, descricao=?, imagem=?, destaque=? WHERE id=?`,
-            [dados.nome, dados.categoria, dados.endereco, dados.telefone, dados.descricao, dados.imagem, destaque, id]
+            `UPDATE eventos SET nome=?, data=?, local=?, latitude=?, longitude=?, categoria=?, descricao=?, imagem=? WHERE id=?`,
+            [dados.nome, dados.data, dados.local, dados.latitude, dados.longitude, dados.categoria, dados.descricao, dados.imagem, id]
         );
         return { id, ...dados };
     }
