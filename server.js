@@ -2,7 +2,8 @@ import 'dotenv/config'; // 1. Lê as variáveis do arquivo .env
 import express from "express";
 import path from "path";
 import { fileURLToPath } from "url";
-import { inicializarBanco } from "./config/db.js";
+import { inicializarBanco } from './config/db.js';
+import { securityConfig } from "./config/security.js";
 import session from "express-session";
 import rateLimit from 'express-rate-limit';
 import helmet from "helmet";
@@ -14,42 +15,13 @@ import apiRoutes from "./routes/apiRoutes.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
-app.set('trust proxy', 1);
-// Configuração do Helmet (Blindagem de Segurança)
-app.use(helmet({
-    contentSecurityPolicy: {
-        directives: {
-            // Padrão: só confia no próprio site
-            defaultSrc: ["'self'"], 
-            
-            // Scripts: Permite scripts do próprio site, inline, E DE SITES EXTERNOS (HTTPS)
-            // Isso conserta o Leaflet/Mapas que vem de fora
-            scriptSrc: ["'self'", "'unsafe-inline'", "https:"], 
-            
-            // Estilos: Permite CSS do próprio site, inline, Google Fonts E EXTERNOS (HTTPS)
-            // Isso conserta o CSS do Leaflet
-            styleSrc: ["'self'", "'unsafe-inline'", "https:", "https://fonts.googleapis.com"], 
-            
-            // Fontes: Permite carregar do Google Fonts e outros https
-            fontSrc: ["'self'", "https:", "data:", "https://fonts.gstatic.com"], 
-            
-            // Imagens: Permite carregar de qualquer site HTTPS e Base64
-            imgSrc: ["'self'", "data:", "https:"], 
-            
-            // Conexões: Permite o site falar com a própria API e serviços externos seguros
-            connectSrc: ["'self'", "https:"], 
-            
-            // Permite abrir frames se necessário
-            frameSrc: ["'self'"],
-
-            // Impede que outros sites coloquem o seu em um iframe (Clickjacking)
-            frameAncestors: ["'self'"]
-        },
-    },
-    // Garante o header antigo X-Frame-Options também
-    xFrameOptions: { action: "deny" }
-}));
 const PORT = process.env.PORT || 3000;
+const isProduction = process.env.NODE_ENV === 'production';
+
+//  Configurações de Proxy e Segurança
+app.set('trust proxy', 1); // Necessário para deploy (Render/Vercel/Heroku)
+app.use(helmet(securityConfig));
+app.use(hpp()); // Proteção contra poluição de parâmetros HTTP
 
 // --- Configurações do Express ---
 
@@ -63,11 +35,10 @@ app.use(express.static(path.join(__dirname, "public")));
 // 3. Processamento de Dados (IMPORTANTE para Login e Formulários)
 app.use(express.json({ limit: '100kb' })); // Lê JSON até 100kb (usado pelos seus fetchs no front)
 app.use(express.urlencoded({ extended: true, limit: '100kb' })); // Lê dados de formulário tradicional até 100kb
-app.use(hpp()); // Evita bugs com parâmetros duplicados
+
 
 // 4. Sessão de Usuário (Login)
 // Verifica se estamos em produção (na internet)
-const isProduction = process.env.NODE_ENV === 'production';
 app.use(session({
     secret: process.env.SESSION_SECRET, // Lê do .env
     resave: false,
@@ -84,7 +55,7 @@ app.use(session({
 const limitadorLogin = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutos
     max: 5, // Bloqueia após 5 tentativas erradas
-    message: "Muitas tentativas de login. Tente novamente em 15 minutos."
+    message: {erro: "Muitas tentativas de login. Tente novamente em 15 minutos."}
 });
 
 // Aplica APENAS na rota de login da API
