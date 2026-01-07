@@ -13,6 +13,7 @@ import { BannersController } from "../controllers/bannersController.js";
 import { DashboardController } from "../controllers/dashboardController.js";
 import { AvaliacaoController } from "../controllers/avaliacaoController.js";
 import { eventoValidator } from "../validators/eventoValidator.js";
+import { sugestaoValidator } from "../validators/sugestaoValidator.js";
 
 const router = express.Router();
 
@@ -25,7 +26,7 @@ router.post("/login", AuthController.login);
 router.get("/pontos-mapa", MapaController.getPontosMapa);
 
 // Sugestões
-router.post("/sugestoes", SugestaoController.enviarSugestao);
+router.post("/sugestoes", sugestaoValidator, SugestaoController.enviarSugestao);
 
 // Leitura de Eventos
 router.get("/eventos", EventosController.listarEventos);
