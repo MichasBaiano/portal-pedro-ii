@@ -8,6 +8,8 @@ import session from "express-session";
 import rateLimit from 'express-rate-limit';
 import helmet from "helmet";
 import hpp from "hpp";
+import swaggerUi from 'swagger-ui-express';
+import { specs } from './config/swagger.js';
 
 // Rotas
 import siteRoutes from "./routes/siteRoutes.js";
@@ -17,6 +19,9 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
 const PORT = process.env.PORT || 3000;
 const isProduction = process.env.NODE_ENV === 'production';
+
+// Documentação Swagger
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
 
 //  Configurações de Proxy e Segurança
 app.set('trust proxy', 1); // Necessário para deploy (Render/Vercel/Heroku)

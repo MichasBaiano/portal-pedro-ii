@@ -32,6 +32,89 @@ router.get("/pontos-mapa", MapaController.getPontosMapa);
 // Sugestões
 router.post("/sugestoes", sugestaoValidator, SugestaoController.enviarSugestao);
 
+/**
+ * @swagger
+ * {
+ * "components": {
+ * "schemas": {
+ * "Evento": {
+ * "type": "object",
+ * "required": ["nome", "data", "local"],
+ * "properties": {
+ * "id": { "type": "integer", "description": "ID gerado automaticamente" },
+ * "nome": { "type": "string", "description": "Nome do evento" },
+ * "data": { "type": "string", "format": "date", "description": "Data do evento (YYYY-MM-DD)" },
+ * "local": { "type": "string", "description": "Localização do evento" },
+ * "imagem": { "type": "string", "description": "Caminho da imagem" }
+ * },
+ * "example": {
+ * "nome": "Festival de Inverno",
+ * "data": "2025-06-15",
+ * "local": "Praça da Bonelle"
+ * }
+ * }
+ * }
+ * }
+ * }
+ */
+
+/**
+ * @swagger
+ * {
+ * "/eventos": {
+ * "get": {
+ * "summary": "Lista todos os eventos (com paginação)",
+ * "tags": ["Eventos"],
+ * "parameters": [
+ * {
+ * "in": "query",
+ * "name": "pagina",
+ * "schema": { "type": "integer" },
+ * "description": "Número da página (padrão 1)"
+ * },
+ * {
+ * "in": "query",
+ * "name": "limite",
+ * "schema": { "type": "integer" },
+ * "description": "Itens por página (padrão 6)"
+ * },
+ * {
+ * "in": "query",
+ * "name": "q",
+ * "schema": { "type": "string" },
+ * "description": "Termo de busca"
+ * }
+ * ],
+ * "responses": {
+ * "200": {
+ * "description": "Lista de eventos retornada com sucesso",
+ * "content": {
+ * "application/json": {
+ * "schema": {
+ * "type": "object",
+ * "properties": {
+ * "dados": {
+ * "type": "array",
+ * "items": { "$ref": "#/components/schemas/Evento" }
+ * },
+ * "meta": {
+ * "type": "object",
+ * "properties": {
+ * "totalPaginas": { "type": "integer" },
+ * "totalItens": { "type": "integer" }
+ * }
+ * }
+ * }
+ * }
+ * }
+ * }
+ * }
+ * }
+ * }
+ * }
+ * }
+ */
+
 // Leitura de Eventos
 router.get("/eventos", EventosController.listarEventos);
 router.get("/eventos/:id", EventosController.getEvento);
