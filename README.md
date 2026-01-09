@@ -1,5 +1,7 @@
 # 💎 Portal Pedro II - A Suíça Piauiense
 
+[![Testes Automatizados (CI)](https://github.com/SEU_USUARIO/portal-pedro-ii/actions/workflows/main.yml/badge.svg)](https://github.com/SEU_USUARIO/portal-pedro-ii/actions/workflows/main.yml)
+
 > Um guia turístico e comercial completo, interativo e progressivo (PWA) para a cidade de Pedro II, Piauí.
 
 ![Node.js](https://img.shields.io/badge/Node.js-v18+-green)
