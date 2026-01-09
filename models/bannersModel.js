@@ -1,4 +1,4 @@
-import { openDb } from "../Config/db.js";
+import { openDb } from "../config/db.js";
 
 export class BannersModel {
     static async getAll() {

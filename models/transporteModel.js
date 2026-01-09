@@ -1,4 +1,4 @@
-import { openDb } from "../Config/db.js";
+import { openDb } from "../config/db.js";
 
 export class TransportesModel {
     static async getAll(limite = null, offset = 0) {

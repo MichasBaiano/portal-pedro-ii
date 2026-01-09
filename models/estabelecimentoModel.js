@@ -1,4 +1,4 @@
-import { openDb } from "../Config/db.js";
+import { openDb } from "../config/db.js";
 
 export class EstabelecimentosModel {
     static async getAll(limite = null, offset = 0) {
@@ -18,18 +18,20 @@ export class EstabelecimentosModel {
 
     static async create(dados) {
         const db = await openDb();
+        // CORREÇÃO: Tabela 'estabelecimentos' e campos corretos (endereco, telefone, destaque...)
         const resultado = await db.run(
-            `INSERT INTO eventos (nome, data, local, latitude, longitude, categoria, descricao, imagem) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-            [dados.nome, dados.data, dados.local, dados.latitude, dados.longitude, dados.categoria, dados.descricao, dados.imagem]
+            `INSERT INTO estabelecimentos (nome, categoria, endereco, telefone, descricao, imagem, destaque, latitude, longitude) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            [dados.nome, dados.categoria, dados.endereco, dados.telefone, dados.descricao, dados.imagem, dados.destaque || 0, dados.latitude, dados.longitude]
         );
         return { id: resultado.lastID, ...dados };
     }
 
     static async update(id, dados) {
         const db = await openDb();
+        // CORREÇÃO: Tabela 'estabelecimentos' e campos corretos
         await db.run(
-            `UPDATE eventos SET nome=?, data=?, local=?, latitude=?, longitude=?, categoria=?, descricao=?, imagem=? WHERE id=?`,
-            [dados.nome, dados.data, dados.local, dados.latitude, dados.longitude, dados.categoria, dados.descricao, dados.imagem, id]
+            `UPDATE estabelecimentos SET nome=?, categoria=?, endereco=?, telefone=?, descricao=?, imagem=?, destaque=?, latitude=?, longitude=? WHERE id=?`,
+            [dados.nome, dados.categoria, dados.endereco, dados.telefone, dados.descricao, dados.imagem, dados.destaque || 0, dados.latitude, dados.longitude, id]
         );
         return { id, ...dados };
     }
