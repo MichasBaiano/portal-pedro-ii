@@ -14,7 +14,7 @@ export class EventosController {
                 // Retorna no mesmo formato padronizado para não confundir o front
                 return res.json({
                     dados: resultados,
-                    meta: { total: resultados.length, pagina: 1, totalPaginas: 1 }
+                    meta: { totalItens: resultados.length, pagina: 1, totalPaginas: 1 }
                 });
             }
 

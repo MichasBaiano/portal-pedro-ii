@@ -12,7 +12,7 @@ export class EstabelecimentosController {
                 const resultados = await EstabelecimentosModel.search(busca);
                 return res.json({
                     dados: resultados,
-                    meta: { total: resultados.length, pagina: 1, totalPaginas: 1 }
+                    meta: { totalItens: resultados.length, pagina: 1, totalPaginas: 1 }
                 });
             }
 

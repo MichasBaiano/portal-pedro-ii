@@ -4,10 +4,15 @@ import bcrypt from 'bcrypt'; // Adicionamos a criptografia
 
 // Função para abrir a conexão com o banco
 export async function openDb() {
-  return open({
-    filename: './database.sqlite', // O arquivo será criado na raiz
-    driver: sqlite3.Database
-  });
+    // Se for ambiente de TESTE, usa banco em memória RAM
+    const filename = process.env.NODE_ENV === 'test'
+        ? ':memory:'
+        : './database.db';
+
+    return open({
+        filename: './database.sqlite', // O arquivo será criado na raiz
+        driver: sqlite3.Database
+    });
 }
 
 export async function inicializarBanco() {
@@ -36,7 +41,7 @@ export async function inicializarBanco() {
             icone TEXT
         )
     `);
-    
+
     // Seed Transportes (Só insere se estiver vazio)
     const qtdTransp = await db.get("SELECT count(*) as count FROM transportes");
     if (qtdTransp.count === 0) {
