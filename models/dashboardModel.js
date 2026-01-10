@@ -3,7 +3,7 @@ import { openDb } from "../config/db.js";
 export class DashboardModel {
     static async getStats() {
         const db = await openDb();
-        // Query otimizada: conta tudo de uma vez
+        // A sintaxe aqui é SQL padrão, funciona igual no Postgres
         return db.get(`
             SELECT 
                 (SELECT COUNT(*) FROM eventos) as eventos,
