@@ -8,15 +8,20 @@
     <meta name="author" content="Michel Jr.">
 
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://portalpedroii.com.br/"> <meta property="og:title" content="<%= typeof titulo !== 'undefined' ? titulo : 'Portal Pedro II' %>">
+    
+    <meta property="og:url" content="https://guiap2.onrender.com/"> 
+    
+    <meta property="og:title" content="<%= typeof titulo !== 'undefined' ? titulo : 'Portal Pedro II' %>">
     <meta property="og:description" content="O melhor guia turístico da Suíça Piauiense. Planeje sua viagem agora!">
     
-    <meta property="og:image" content="/img/banner-home.jpg">
+    <meta property="og:image" content="https://guiap2.onrender.com/img/banner-home.jpg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
 
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Portal Pedro II">
     <meta name="twitter:description" content="Descubra as belezas e eventos de Pedro II - PI.">
-    <meta name="twitter:image" content="/img/banner-home.jpg">
+    <meta name="twitter:image" content="https://guiap2.onrender.com/img/banner-home.jpg">
 
     <link rel="icon" type="image/png" href="/img/icon-192.png">
     <title><%= typeof titulo !== 'undefined' ? titulo : 'Portal Pedro II' %></title>
@@ -29,7 +34,6 @@
     
     <script src="/js/tema.js" defer></script>
 
-    
     <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#0f4c81">
     <link rel="apple-touch-icon" href="/img/icon-192.png">
@@ -46,7 +50,6 @@
             });
         }
     </script>
-
 </head>
 <body>
     <header>
@@ -63,7 +66,9 @@
                 <li><a href="/perfil">Perfil</a></li>
 
                 <li>
-                    <button id="btnTema" style="background: none; border: none; font-size: 1.2rem; cursor: pointer; padding: 0 10px;" title="Mudar Tema">
+                    <button id="btnTema"
+                        style="background: none; border: none; font-size: 1.2rem; cursor: pointer; padding: 0 10px;"
+                        title="Mudar Tema">
                         🌙
                     </button>
                 </li>
