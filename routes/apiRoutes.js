@@ -28,6 +28,7 @@ const router = express.Router();
 // Login e Mapa
 router.post("/login", AuthController.login);
 router.get("/pontos-mapa", MapaController.getPontosMapa);
+router.get('/logout', AuthController.logout);
 
 // Sugestões
 router.post("/sugestoes", sugestaoValidator, SugestaoController.enviarSugestao);
