@@ -1,41 +1,27 @@
-// Config/upload.js
+import { v2 as cloudinary } from 'cloudinary';
+import { CloudinaryStorage } from 'multer-storage-cloudinary';
 import multer from 'multer';
-import path from 'path';
-import { fileURLToPath } from 'url';
-import fs from 'fs'; // Importe o FS para garantir que a pasta existe
+import dotenv from 'dotenv';
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
+dotenv.config();
 
-// Garante que a pasta public/uploads existe
-const uploadDir = path.join(__dirname, '../public/uploads/');
-if (!fs.existsSync(uploadDir)) {
-    fs.mkdirSync(uploadDir, { recursive: true });
-}
-
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, 'public/uploads/');
-    },
-    filename: function (req, file, cb) {
-        // Garante nome único com data + extensão original
-        cb(null, Date.now() + path.extname(file.originalname));
-    }
+// 1. Configura o Cloudinary com chaves
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET
 });
 
-// Filtro para aceitar APENAS imagens
-const fileFilter = (req, file, cb) => {
-    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
-    if (allowedTypes.includes(file.mimetype)) {
-        cb(null, true);
-    } else {
-        cb(new Error('Tipo de arquivo inválido. Apenas JPG, PNG e WEBP são permitidos.'), false);
-    }
-}
-
-export const upload = multer({ 
-    storage: storage,
-    limits: {
-        fileSize: 5 * 1024 * 1024 // Limite de 5MB
+// 2. Configura o local de armazenamento (Storage)
+const storage = new CloudinaryStorage({
+    cloudinary: cloudinary,
+    params: {
+        folder: 'portal-pedro-ii', // Nome da pasta lá no Cloudinary
+        allowed_formats: ['jpg', 'png', 'jpeg', 'webp'], // Formatos aceitos
     },
-    fileFilter: fileFilter
 });
+
+// 3. Cria o middleware do Multer
+const upload = multer({ storage: storage });
+
+export default upload;

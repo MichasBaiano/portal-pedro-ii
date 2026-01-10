@@ -1,46 +1,32 @@
 import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-
-export const FileHelper = {
+export class FileHelper {
+    
     // Lógica inteligente para definir qual imagem salvar
-    processarImagem: (req, objetoAntigo = null) => {
-        // Se o usuário enviou um arquivo novo, usamos ele
+    static processarImagem(req, itemAntigo) {
+        // Cenário 1: Usuário enviou uma nova imagem
         if (req.file) {
-            // Se já existia uma imagem antiga, deleta
-            if (objetoAntigo && objetoAntigo.imagem) {
-                FileHelper.deletarArquivo(objetoAntigo.imagem);
-            }
-            return '/uploads/' + req.file.filename;
-        }
-        
-        // Se não enviou nada, mantemos a imagem que já estava no banco
-        if (objetoAntigo && objetoAntigo.imagem) {
-            return objetoAntigo.imagem;
+            // O Cloudinary (via multer) já salvou e nos deu o link completo em .path
+            return req.file.path; 
         }
 
-        return null; // Ou uma imagem padrão se preferir
-    },
+        // Cenário 2: Usuário não enviou nada, mantém a antiga
+        if (itemAntigo) {
+            return itemAntigo.imagem;
+        }
 
-    // Função para apagar o arquivo físico do computador
-    deletarArquivo: (caminhoRelativo) => {
-        if (!caminhoRelativo) return;
+        // Cenário 3: Criando do zero sem imagem
+        return null; 
+    }
 
-        // Remove a parte "/uploads/" para pegar só o nome, ou ajusta o caminho conforme sua estrutura
-        // O caminho salvo no banco é "/uploads/nome.jpg". Precisamos chegar em "public/uploads/nome.jpg"
+    // Função para apagar
+    static deletarArquivo(caminho) {
+        // Como o caminho agora é uma URL (https://res.cloudinary...), 
+        // tentar apagar do disco quebraria o servidor.
         
-        try {
-            // Ajuste do caminho: sai de 'utils', volta pra raiz, entra em 'public'
-            const caminhoAbsoluto = path.join(__dirname, '../public', caminhoRelativo);
-            
-            if (fs.existsSync(caminhoAbsoluto)) {
-                fs.unlinkSync(caminhoAbsoluto); // Deleta o arquivo
-                console.log(`Arquivo deletado: ${caminhoAbsoluto}`);
-            }
-        } catch (err) {
-            console.error("Erro ao deletar arquivo físico:", err);
+        if (caminho) {
+            console.log(`[Cloudinary] Arquivo antigo seria deletado (ignorando fs.unlink): ${caminho}`);
+            // No futuro, podemos adicionar aqui a chamada da API do Cloudinary para apagar de verdade
         }
     }
-};
+}
