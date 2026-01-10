@@ -1,10 +1,17 @@
 import { v2 as cloudinary } from 'cloudinary';
-import multerStorageCloudinary from 'multer-storage-cloudinary'; // Importa o pacote todo
-const { CloudinaryStorage } = multerStorageCloudinary;           // Extrai o que precisamos
 import multer from 'multer';
 import dotenv from 'dotenv';
+import { createRequire } from 'module'; // Importa criador de require
 
 dotenv.config();
+
+// Cria a função require manualmente para usar com bibliotecas antigas
+const require = createRequire(import.meta.url);
+// Carrega o pacote inteiro primeiro
+const pkg = require('multer-storage-cloudinary');
+// Tenta encontrar a classe CloudinaryStorage de forma segura
+// (Tenta a exportação nomeada OU a exportação padrão OU o próprio pacote)
+const CloudinaryStorage = pkg.CloudinaryStorage || pkg.default?.CloudinaryStorage || pkg;
 
 // 1. Configura o Cloudinary com chaves
 cloudinary.config({
