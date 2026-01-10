@@ -1,4 +1,4 @@
-# Dependências do Node (nunca envie isso também, é muito pesado)
+# Dependências do Node
 node_modules/
 
 # Banco de dados SQLite
@@ -13,3 +13,6 @@ database.sqlite
 
 # Segredos
 .env
+
+# Tabela dos testes
+coverage
