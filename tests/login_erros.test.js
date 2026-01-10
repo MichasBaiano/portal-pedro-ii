@@ -10,7 +10,8 @@ describe('Testes de Autenticação - Cenários de Erro e Logout', () => {
         const db = await openDb();
         const hash = await bcrypt.hash('senha_certa', 10);
         try {
-            await db.run("INSERT INTO usuarios (login, senha) VALUES (?, ?)", ['usuario_teste_erro', hash]);
+            // Usando $1, $2
+            await db.run("INSERT INTO usuarios (login, senha) VALUES ($1, $2)", ['usuario_teste_erro', hash]);
         } catch (e) {}
     });
 
@@ -33,19 +34,16 @@ describe('Testes de Autenticação - Cenários de Erro e Logout', () => {
     });
 
     it('Deve realizar LOGOUT com sucesso', async () => {
-        // Primeiro loga para ter sessão
         const loginRes = await request(app)
             .post('/api/login')
             .send({ login: 'usuario_teste_erro', senha: 'senha_certa' });
         
         const cookies = loginRes.headers['set-cookie'];
 
-        // Tenta sair
         const logoutRes = await request(app)
-            .get('/api/logout') // ou POST, dependendo da sua rota
+            .get('/api/logout')
             .set('Cookie', cookies);
 
-        // Geralmente redireciona (302) ou retorna 200
         expect([200, 302]).toContain(logoutRes.statusCode);
     });
 });

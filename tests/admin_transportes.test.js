@@ -12,7 +12,7 @@ describe('Admin - Transportes (CRUD)', () => {
         const db = await openDb();
         const senhaHash = await bcrypt.hash('senha123', 10);
         try {
-            await db.run("INSERT INTO usuarios (login, senha) VALUES (?, ?)", ['admin_transp', senhaHash]);
+            await db.run("INSERT INTO usuarios (login, senha) VALUES ($1, $2)", ['admin_transp', senhaHash]);
         } catch (e) {}
     });
 

@@ -11,11 +11,10 @@ describe('API - Sugestões (Fale Conosco) - Completo', () => {
         await inicializarBanco();
         const db = await openDb();
         
-        // Cria um admin temporário para testar as rotas protegidas
         const hash = await bcrypt.hash('123456', 10);
         try {
-            await db.run("INSERT INTO usuarios (login, senha) VALUES (?, ?)", ['admin_sugestao_coverage', hash]);
-        } catch (e) {} // Se já existir, ignora
+            await db.run("INSERT INTO usuarios (login, senha) VALUES ($1, $2)", ['admin_sugestao_coverage', hash]);
+        } catch (e) {} 
     });
 
     // --- PÚBLICO ---
@@ -64,17 +63,15 @@ describe('API - Sugestões (Fale Conosco) - Completo', () => {
     it('Admin deve conseguir LISTAR as sugestões', async () => {
         const res = await request(app)
             .get('/api/sugestoes')
-            .set('Cookie', cookieAdmin); // Envia o cookie
+            .set('Cookie', cookieAdmin); 
 
         expect(res.statusCode).toEqual(200);
         
-        // Verifica se veio alguma coisa
         const lista = Array.isArray(res.body) ? res.body : (res.body.dados || res.body.lista);
         expect(lista.length).toBeGreaterThan(0);
     });
 
     it('Admin deve conseguir DELETAR a sugestão criada', async () => {
-        // Se não salvamos o ID lá em cima, tenta pegar da lista agora
         if (!idSugestao) {
             const listRes = await request(app).get('/api/sugestoes').set('Cookie', cookieAdmin);
             const lista = Array.isArray(listRes.body) ? listRes.body : (listRes.body.dados || listRes.body.lista);

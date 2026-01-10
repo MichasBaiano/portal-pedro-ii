@@ -12,7 +12,7 @@ describe('Admin - Estabelecimentos (CRUD e Destaque)', () => {
         const db = await openDb();
         const senhaHash = await bcrypt.hash('senha123', 10);
         try {
-            await db.run("INSERT INTO usuarios (login, senha) VALUES (?, ?)", ['admin_estab', senhaHash]);
+            await db.run("INSERT INTO usuarios (login, senha) VALUES ($1, $2)", ['admin_estab', senhaHash]);
         } catch (e) {}
     });
 
@@ -44,11 +44,9 @@ describe('Admin - Estabelecimentos (CRUD e Destaque)', () => {
         expect(res.body).toHaveProperty('id');
         
         idItem = res.body.id;
-        // console.log("ID Criado para Estabelecimento:", idItem); // Debug
     });
 
     it('Verificar se foi criado (GET)', async () => {
-        // Passo extra de segurança: Tenta ler o item antes de editar
         const res = await request(app).get(`/api/estabelecimentos/${idItem}`);
         
         if (res.statusCode === 404) {
@@ -71,12 +69,10 @@ describe('Admin - Estabelecimentos (CRUD e Destaque)', () => {
             .field('destaque', 0)
             .attach('imagem', arquivoFake, 'hotel_novo.jpg');
 
-        // Se falhar, mostra o erro
         if (res.statusCode !== 200) console.error("Erro Editar Estab:", res.body);
         
         expect(res.statusCode).toEqual(200);
 
-        // Verificação Real: Busca de novo para ver se o nome mudou
         const resCheck = await request(app).get(`/api/estabelecimentos/${idItem}`);
         expect(resCheck.body.nome).toEqual("Hotel Editado");
     });
@@ -91,7 +87,6 @@ describe('Admin - Estabelecimentos (CRUD e Destaque)', () => {
 
         expect(res.statusCode).toEqual(200);
         
-        // Verificação Real
         const resCheck = await request(app).get(`/api/estabelecimentos/${idItem}`);
         expect(resCheck.body.destaque).toBeTruthy(); 
     });

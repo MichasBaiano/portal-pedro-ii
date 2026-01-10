@@ -12,7 +12,7 @@ describe('Admin - Banners (CRUD)', () => {
         const db = await openDb();
         const senhaHash = await bcrypt.hash('senha123', 10);
         try {
-            await db.run("INSERT INTO usuarios (login, senha) VALUES (?, ?)", ['admin_banner', senhaHash]);
+            await db.run("INSERT INTO usuarios (login, senha) VALUES ($1, $2)", ['admin_banner', senhaHash]);
         } catch (e) {}
     });
 
@@ -33,7 +33,6 @@ describe('Admin - Banners (CRUD)', () => {
             .attach('imagem', arquivoFake, 'banner_teste.jpg');
 
         expect(res.statusCode).toEqual(201);
-        // Garante que o ID veio e é um número
         expect(res.body).toHaveProperty('id');
         idItem = res.body.id;
     });
@@ -41,19 +40,16 @@ describe('Admin - Banners (CRUD)', () => {
     it('Editar Banner', async () => {
         const arquivoFake = Buffer.from('nova-imagem');
 
-        // 1. Faz a edição
         const res = await request(app)
             .put(`/api/banners/${idItem}`)
             .set('Cookie', cookieAdmin)
-            .field('titulo', 'Banner Editado') // Mudamos o título
+            .field('titulo', 'Banner Editado')
             .field('link', 'https://bing.com')
             .attach('imagem', arquivoFake, 'banner_novo.jpg');
 
         expect(res.statusCode).toEqual(200);
 
-        // 2. VERIFICAÇÃO REAL: Busca o item no banco para ver se mudou mesmo
         const resCheck = await request(app).get('/api/banners');
-        // Acha o banner que editamos dentro da lista
         const bannerEditado = resCheck.body.find(b => b.id === idItem);
         
         expect(bannerEditado).toBeDefined();

@@ -11,15 +11,13 @@ describe('Testes de Páginas (HTML)', () => {
         const db = await openDb();
         const hash = await bcrypt.hash('123456', 10);
         try {
-            await db.run("INSERT INTO usuarios (login, senha) VALUES (?, ?)", ['admin_pages', hash]);
+            await db.run("INSERT INTO usuarios (login, senha) VALUES ($1, $2)", ['admin_pages', hash]);
         } catch (e) {}
     });
 
     it('Deve carregar a Home Page ( / )', async () => {
         const res = await request(app).get('/');
-        // Aceita 200 (OK) ou 304 (Cache)
         expect([200, 304]).toContain(res.statusCode);
-        // Verifica se é HTML mesmo (não JSON)
         expect(res.type).toBe('text/html');
     });
 
@@ -30,24 +28,21 @@ describe('Testes de Páginas (HTML)', () => {
     });
 
     it('Admin deve conseguir acessar o Dashboard ( /admin )', async () => {
-        // 1. Faz Login
         const loginRes = await request(app)
             .post('/api/login')
             .send({ login: 'admin_pages', senha: '123456' });
         cookieAdmin = loginRes.headers['set-cookie'];
 
-        // 2. Acessa o painel
         const res = await request(app)
-            .get('/admin') // Ajuste se sua rota for diferente (ex: /painel)
+            .get('/admin') 
             .set('Cookie', cookieAdmin);
 
         expect(res.statusCode).toEqual(200);
-        expect(res.text).toContain('Painel Admin'); // Verifica se tem a palavra Painel Admin no HTML
+        expect(res.text).toContain('Painel Admin');
     });
 
     it('Visitante NÃO deve acessar o Dashboard', async () => {
         const res = await request(app).get('/admin');
-        // Deve ser redirecionado para o login
         expect(res.statusCode).toBe(302);
         expect(res.header.location).toContain('/login');
     });
