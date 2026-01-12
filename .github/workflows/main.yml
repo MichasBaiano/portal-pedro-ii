@@ -48,11 +48,7 @@ jobs:
       run: npm test
       env:
         # Conectamos o App ao Banco que criamos acima
-        DB_HOST: localhost
-        DB_USER: usuario_teste
-        DB_PASS: senha_teste
-        DB_NAME: banco_teste
-        DB_PORT: 5432
+        DATABASE_URL: postgres://usuario_teste:senha_teste@localhost:5432/banco_teste
         # Define variáveis de ambiente falsas apenas para o teste passar
         CI: true
         NODE_ENV: test
