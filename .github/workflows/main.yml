@@ -9,6 +9,23 @@ on:
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
+    
+    # Criamos o Banco de Dados para o teste
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: usuario_teste
+          POSTGRES_PASSWORD: senha_teste
+          POSTGRES_DB: banco_teste
+        ports:
+          - 5432:5432
+        # Aguarda o banco estar pronto antes de rodar os passos
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
 
     steps:
     # 1. Baixa o código do repositório
@@ -30,7 +47,17 @@ jobs:
     - name: Rodar Testes (Jest)
       run: npm test
       env:
+        # Conectamos o App ao Banco que criamos acima
+        DB_HOST: localhost
+        DB_USER: usuario_teste
+        DB_PASS: senha_teste
+        DB_NAME: banco_teste
+        DB_PORT: 5432
         # Define variáveis de ambiente falsas apenas para o teste passar
         CI: true
         NODE_ENV: test
         SESSION_SECRET: segredo_super_secreto_de_teste
+        # Credenciais Fakes do Cloudinary (nosso Mock vai interceptar, então não importa)
+        CLOUDINARY_CLOUD_NAME: teste
+        CLOUDINARY_API_KEY: 123456
+        CLOUDINARY_API_SECRET: abcdef
