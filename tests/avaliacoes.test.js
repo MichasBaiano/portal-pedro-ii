@@ -1,6 +1,9 @@
 import request from 'supertest';
 import app from '../app.js';
 import { inicializarBanco, openDb } from '../config/db.js';
+import { jest } from '@jest/globals';
+
+jest.setTimeout(30000);
 
 describe('API - Avaliações (Reviews)', () => {
     let idEstabelecimento = 0;

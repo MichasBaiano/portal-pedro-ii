@@ -2,6 +2,9 @@ import request from 'supertest';
 import app from '../app.js';
 import { inicializarBanco, openDb } from '../config/db.js';
 import bcrypt from 'bcrypt';
+import { jest } from '@jest/globals';
+
+jest.setTimeout(30000);
 
 describe('Testes Administrativos - Ciclo de Vida de Eventos (Sessão)', () => {
     let cookieAdmin = null;

@@ -20,16 +20,42 @@ cloudinary.config({
     api_secret: process.env.CLOUDINARY_API_SECRET
 });
 
-// 2. Configura o local de armazenamento (Storage)
-const storage = new CloudinaryStorage({
-    cloudinary: cloudinary,
-    params: {
-        folder: 'portal-pedro-ii', // Nome da pasta lá no Cloudinary
-        allowed_formats: ['jpg', 'png', 'jpeg', 'webp'], // Formatos aceitos
-    },
-});
+let upload;
 
-// 3. Cria o middleware do Multer
-const upload = multer({ storage: storage });
+if (process.env.NODE_ENV === 'test') {
+    // --- MODO DE TESTE ---
+    // Usamos MemoryStorage para que o Multer LEIA os campos de texto (req.body)
+    const storage = multer.memoryStorage();
+    const uploadMemory = multer({ storage: storage });
+
+    // Criamos um wrapper inteligente
+    upload = {
+        single: (campo) => (req, res, next) => {
+            // Executa o Multer real (em memória) para popular o req.body
+            uploadMemory.single(campo)(req, res, (err) => {
+                if (err) return next(err);
+                
+                // Se houver arquivo, injetamos o 'path' fake que o Controller espera
+                if (req.file) {
+                    req.file.path = 'https://res.cloudinary.com/demo/image/upload/sample.jpg';
+                    req.file.filename = 'arquivo_teste_mock';
+                }
+                next();
+            });
+        },
+        array: () => (req, res, next) => next(),
+        fields: () => (req, res, next) => next()
+    };
+} else {
+    // Se for vida real, usa o Cloudinary normal
+    const storage = new CloudinaryStorage({
+        cloudinary: cloudinary,
+        params: {
+            folder: 'portal-pedro-ii',
+            allowed_formats: ['jpg', 'png', 'jpeg', 'webp'],
+        },
+    });
+    upload = multer({ storage: storage });
+}
 
 export { upload };
