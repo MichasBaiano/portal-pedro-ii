@@ -44,15 +44,7 @@ export const inicializarBanco = async () => {
     
     console.log("Reiniciando tabelas do banco PostgreSQL...");
 
-    await db.exec(`
-        DROP TABLE IF EXISTS avaliacoes;
-        DROP TABLE IF EXISTS banners;
-        DROP TABLE IF EXISTS transportes;
-        DROP TABLE IF EXISTS sugestoes;
-        DROP TABLE IF EXISTS estabelecimentos;
-        DROP TABLE IF EXISTS eventos;
-        DROP TABLE IF EXISTS usuarios;
-    `);
+    
 
     await db.exec(`
         CREATE TABLE IF NOT EXISTS usuarios (

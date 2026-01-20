@@ -1,9 +1,10 @@
 <%- include('partials/admin-header', { page: 'eventos' }) %>
 
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
 <main class="admin-container">
     <div class="admin-header">
         <h2>Gerenciar Eventos</h2>
-        
         <div class="header-actions">
             <input type="text" id="buscaAdmin" class="header-busca" placeholder="🔍 Buscar evento...">
             <button onclick="abrirModal()" class="btn btn-enviar">+ Novo Evento</button>
@@ -22,14 +23,13 @@
                     <th>Ações</th>
                 </tr>
             </thead>
-            <tbody id="tabelaCorpo">
-                </tbody>
+            <tbody id="tabelaCorpo"></tbody>
         </table>
     </div>
 </main>
 
 <div id="modalEvento" class="modal">
-    <div class="modal-content">
+    <div class="modal-content" style="max-width: 700px;">
         <h3 id="modalTitulo">Novo Evento</h3>
         
         <form id="formEvento" enctype="multipart/form-data">
@@ -38,28 +38,39 @@
             <label>Nome do Evento:</label>
             <input type="text" id="nome" name="nome" required>
 
-            <label>Data:</label>
-            <input type="date" id="data" name="data" required>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                <div>
+                    <label>Data:</label>
+                    <input type="date" id="data" name="data" required>
+                </div>
+                <div>
+                    <label>Categoria:</label>
+                    <select id="categoria" name="categoria">
+                        <option value="Música">Música / Show</option>
+                        <option value="Feira">Feira / Exposição</option>
+                        <option value="Religioso">Religioso</option>
+                        <option value="Esporte">Esporte</option>
+                        <option value="Outro">Outro</option>
+                    </select>
+                </div>
+            </div>
 
-            <label>Local:</label>
-            <input type="text" id="local" name="local" required>
+            <label>Local (Nome):</label>
+            <input type="text" id="local" name="local" placeholder="Ex: Praça da Bonelle" required>
 
-            <label>Categoria:</label>
-            <select id="categoria" name="categoria">
-                <option value="Música">Música / Show</option>
-                <option value="Feira">Feira / Exposição</option>
-                <option value="Religioso">Religioso</option>
-                <option value="Esporte">Esporte</option>
-                <option value="Outro">Outro</option>
-            </select>
-
+            <div style="background: #f8f9fa; padding: 10px; border-radius: 8px; margin: 15px 0; border: 1px solid #ddd;">
+                <label style="color: #d32f2f;">📍 Onde será no mapa?</label>
+                <div id="mapaEventos" style="height: 300px; width: 100%; border-radius: 4px; margin-bottom: 10px; z-index: 1;"></div>
+                <div style="display: flex; gap: 10px;">
+                    <input type="text" id="lat" name="latitude" placeholder="Lat" readonly style="background: #eee;">
+                    <input type="text" id="lng" name="longitude" placeholder="Lng" readonly style="background: #eee;">
+                </div>
+            </div>
             <label>Imagem:</label>
             <div style="background: #f9f9f9; padding: 10px; border-radius: 8px; margin-bottom: 10px;">
                 <input type="file" id="imagemInput" name="imagem" accept="image/*" style="width: 100%;">
-                
                 <input type="hidden" id="imagemUrl" name="imagemUrl">
-                
-                <img id="previewImagem" src="" style="max-height: 150px; display: none; margin-top: 10px; border-radius: 8px; border: 1px solid #ddd;">
+                <img id="previewImagem" src="" style="max-height: 150px; display: none; margin-top: 10px; border-radius: 8px;">
             </div>
 
             <label>Descrição:</label>
@@ -73,12 +84,50 @@
     </div>
 </div>
 
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
 <script>
     const modal = document.getElementById('modalEvento');
     const form = document.getElementById('formEvento');
     const inputBusca = document.getElementById('buscaAdmin');
 
-    // 1. Carregar Dados
+    // --- LÓGICA DO MAPA ---
+    let map = null;
+    let marker = null;
+    const centroPedroII = [-4.4251, -41.4586];
+
+    function iniciarMapa() {
+        if (!map) {
+            map = L.map('mapaEventos').setView(centroPedroII, 14);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; OpenStreetMap'
+            }).addTo(map);
+
+            map.on('click', function(e) {
+                const lat = e.latlng.lat.toFixed(6);
+                const lng = e.latlng.lng.toFixed(6);
+                definirPonto(lat, lng);
+            });
+        }
+        setTimeout(() => { map.invalidateSize(); }, 200);
+    }
+
+    function definirPonto(lat, lng) {
+        document.getElementById('lat').value = lat;
+        document.getElementById('lng').value = lng;
+        if (marker) map.removeLayer(marker);
+        marker = L.marker([lat, lng]).addTo(map);
+    }
+
+    function resetarMapa() {
+        if(marker) map.removeLayer(marker);
+        marker = null;
+        document.getElementById('lat').value = '';
+        document.getElementById('lng').value = '';
+        if(map) map.setView(centroPedroII, 14);
+    }
+    // -----------------------
+
     async function carregar() {
         try {
             const res = await fetch('/api/eventos');
@@ -87,9 +136,10 @@
             tbody.innerHTML = '';
 
             eventos.forEach(ev => {
-                // Formata data para exibir bonitinho (DD/MM/AAAA)
-                const dataFormatada = new Date(ev.data).toLocaleDateString('pt-BR', {timeZone: 'UTC'});
-                
+                // Formata data sem problema de timezone
+                const dataObj = new Date(ev.data);
+                const dataFormatada = dataObj.toLocaleDateString('pt-BR', { timeZone: 'UTC' });
+
                 tbody.innerHTML += `
                     <tr>
                         <td>${ev.id}</td>
@@ -109,54 +159,45 @@
         }
     }
 
-    // 2. Salvar (Com Upload - usa FormData)
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
-        
         const id = document.getElementById('eventoId').value;
         const metodo = id ? 'PUT' : 'POST';
         const url = id ? `/api/eventos/${id}` : '/api/eventos';
-
         const formData = new FormData(form);
 
-        const res = await fetch(url, {
-            method: metodo,
-            body: formData
-        });
+        const res = await fetch(url, { method: metodo, body: formData });
 
-        if (res.ok) {
-            fecharModal();
-            carregar();
-        } else {
-            alert('Erro ao salvar evento.');
-        }
+        if (res.ok) { fecharModal(); carregar(); } 
+        else { alert('Erro ao salvar evento.'); }
     });
 
-    // 3. Editar
     window.editar = function(ev) {
         document.getElementById('modalTitulo').innerText = 'Editar Evento';
         document.getElementById('eventoId').value = ev.id;
         document.getElementById('nome').value = ev.nome;
-        document.getElementById('data').value = ev.data; 
+        document.getElementById('data').value = ev.data.split('T')[0]; // Ajuste para input date
         document.getElementById('local').value = ev.local;
         document.getElementById('categoria').value = ev.categoria;
         document.getElementById('descricao').value = ev.descricao;
-        
-        // Configura imagem antiga
+
         document.getElementById('imagemUrl').value = ev.imagem;
         const preview = document.getElementById('previewImagem');
-        if(ev.imagem) {
-            preview.src = ev.imagem;
-            preview.style.display = 'block';
-        } else {
-            preview.style.display = 'none';
-        }
+        if(ev.imagem) { preview.src = ev.imagem; preview.style.display = 'block'; } 
+        else { preview.style.display = 'none'; }
+        document.getElementById('imagemInput').value = '';
 
-        document.getElementById('imagemInput').value = ''; // Limpa input de arquivo
+        // --- MAPA EDITAR ---
         modal.style.display = 'flex';
+        iniciarMapa();
+        if (ev.latitude && ev.longitude) {
+            definirPonto(ev.latitude, ev.longitude);
+            map.setView([ev.latitude, ev.longitude], 16);
+        } else {
+            resetarMapa();
+        }
     };
 
-    // 4. Deletar
     window.deletar = async function(id) {
         if(confirm('Tem certeza?')) {
             await fetch(`/api/eventos/${id}`, { method: 'DELETE' });
@@ -164,7 +205,6 @@
         }
     };
 
-    // 5. Preview de Imagem
     document.getElementById('imagemInput').onchange = evt => {
         const [file] = evt.target.files;
         if (file) {
@@ -174,25 +214,25 @@
         }
     };
 
-    // 6. Busca Rápida (Filtro na tabela)
     inputBusca.addEventListener('input', function() {
         const termo = this.value.toLowerCase();
-        const linhas = document.querySelectorAll('#tabelaCorpo tr');
-        linhas.forEach(linha => {
+        document.querySelectorAll('#tabelaCorpo tr').forEach(linha => {
             linha.style.display = linha.innerText.toLowerCase().includes(termo) ? '' : 'none';
         });
     });
 
-    // Funções do Modal
     window.abrirModal = () => {
         form.reset();
         document.getElementById('eventoId').value = '';
         document.getElementById('modalTitulo').innerText = 'Novo Evento';
         document.getElementById('previewImagem').style.display = 'none';
         modal.style.display = 'flex';
+        
+        iniciarMapa();
+        resetarMapa();
     };
+
     window.fecharModal = () => modal.style.display = 'none';
 
-    // Iniciar
     carregar();
 </script>

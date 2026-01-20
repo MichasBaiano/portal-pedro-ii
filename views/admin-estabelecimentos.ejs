@@ -1,97 +1,154 @@
 <%- include('partials/admin-header', { page: 'estabelecimentos' }) %>
 
-    <main class="admin-container">
-        <div class="admin-header">
-            <h2>Gerenciar Locais</h2>
-            <button onclick="abrirModal()" class="btn btn-enviar">+ Novo Local</button>
-        </div>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 
-        <div style="margin-bottom: 1rem;">
-            <input type="text" id="buscaAdmin" placeholder="🔍 Buscar local..."
-                style="padding: 10px; width: 100%; border: 1px solid #ddd; border-radius: 6px;">
-        </div>
-
-        <div class="tabela-container">
-            <table>
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Foto</th>
-                        <th>Nome</th>
-                        <th>Categoria</th>
-                        <th>Patrocínio</th>
-                        <th>Ações</th>
-                    </tr>
-                </thead>
-                <tbody id="tabelaCorpo"></tbody>
-            </table>
-        </div>
-    </main>
-
-    <div id="modalLocal" class="modal">
-        <div class="modal-content">
-            <h3 id="modalTitulo">Novo Local</h3>
-
-            <form id="formLocal" enctype="multipart/form-data">
-                <input type="hidden" id="localId" name="id">
-
-                <label>Nome:</label>
-                <input type="text" id="nome" name="nome" required>
-
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                    <div>
-                        <label>Categoria:</label>
-                        <select id="categoria" name="categoria">
-                            <option value="Gastronomia">Gastronomia</option>
-                            <option value="Hospedagem">Hospedagem</option>
-                            <option value="Comércio">Comércio</option>
-                            <option value="Turismo">Ponto Turístico</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label>Telefone:</label>
-                        <input type="text" id="telefone" name="telefone" placeholder="(86) 9999-9999">
-                    </div>
-                </div>
-
-                <label>Endereço:</label>
-                <input type="text" id="endereco" name="endereco">
-
-                <div style="margin: 15px 0; display: flex; align-items: center; gap: 10px;">
-                    <input type="checkbox" id="destaque" name="destaque" style="width: auto;">
-                    <label for="destaque" style="margin:0;">⭐ Marcar como Destaque (Aparece na Home)</label>
-                </div>
-
-                <label>Imagem:</label>
-                <div style="background: #f9f9f9; padding: 10px; border-radius: 8px; margin-bottom: 10px;">
-                    <input type="file" id="imagemInput" name="imagem" accept="image/*" style="width: 100%;">
-                    <input type="hidden" id="imagemUrl" name="imagemUrl">
-                    <img id="previewImagem" src="" style="max-height: 150px; display: none; margin-top: 10px;">
-                </div>
-
-                <label>Descrição:</label>
-                <textarea id="descricao" name="descricao" rows="4"></textarea>
-
-                <div class="modal-buttons">
-                    <button type="button" onclick="fecharModal()" class="btn btn-cancelar">Cancelar</button>
-                    <button type="submit" class="btn btn-enviar">Salvar</button>
-                </div>
-            </form>
-        </div>
+<main class="admin-container">
+    <div class="admin-header">
+        <h2>Gerenciar Locais</h2>
+        <button onclick="abrirModal()" class="btn btn-enviar">+ Novo Local</button>
     </div>
 
-    <script>
-        const modal = document.getElementById('modalLocal');
-        const form = document.getElementById('formLocal');
+    <div style="margin-bottom: 1rem;">
+        <input type="text" id="buscaAdmin" placeholder="🔍 Buscar local..."
+            style="padding: 10px; width: 100%; border: 1px solid #ddd; border-radius: 6px;">
+    </div>
 
-        async function carregar() {
-            const res = await fetch('/api/estabelecimentos');
-            const locais = await res.json();
-            const tbody = document.getElementById('tabelaCorpo');
-            tbody.innerHTML = '';
+    <div class="tabela-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Foto</th>
+                    <th>Nome</th>
+                    <th>Categoria</th>
+                    <th>Patrocínio</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody id="tabelaCorpo"></tbody>
+        </table>
+    </div>
+</main>
 
-            locais.forEach(l => {
-                tbody.innerHTML += `
+<div id="modalLocal" class="modal">
+    <div class="modal-content" style="max-width: 700px;"> <h3 id="modalTitulo">Novo Local</h3>
+
+        <form id="formLocal" enctype="multipart/form-data">
+            <input type="hidden" id="localId" name="id">
+
+            <label>Nome:</label>
+            <input type="text" id="nome" name="nome" required>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                <div>
+                    <label>Categoria:</label>
+                    <select id="categoria" name="categoria">
+                        <option value="Gastronomia">Gastronomia</option>
+                        <option value="Hospedagem">Hospedagem</option>
+                        <option value="Comércio">Comércio</option>
+                        <option value="Turismo">Ponto Turístico</option>
+                        <option value="Saude">Saúde</option>
+                        <option value="Servico">Serviços</option>
+                    </select>
+                </div>
+                <div>
+                    <label>Telefone:</label>
+                    <input type="text" id="telefone" name="telefone" placeholder="(86) 9999-9999">
+                </div>
+            </div>
+
+            <label>Endereço:</label>
+            <input type="text" id="endereco" name="endereco">
+
+            <div style="background: #f8f9fa; padding: 10px; border-radius: 8px; margin: 15px 0; border: 1px solid #ddd;">
+                <label style="color: #d32f2f;">📍 Localização no Mapa (Clique no ponto exato):</label>
+                
+                <div id="mapaAdmin" style="height: 300px; width: 100%; border-radius: 4px; margin-bottom: 10px; z-index: 1;"></div>
+                
+                <div style="display: flex; gap: 10px;">
+                    <input type="text" id="lat" name="latitude" placeholder="Latitude" readonly style="background: #eee; font-size: 0.8rem;">
+                    <input type="text" id="lng" name="longitude" placeholder="Longitude" readonly style="background: #eee; font-size: 0.8rem;">
+                </div>
+            </div>
+            <div style="margin: 15px 0; display: flex; align-items: center; gap: 10px;">
+                <input type="checkbox" id="destaque" name="destaque" style="width: auto;">
+                <label for="destaque" style="margin:0;">⭐ Marcar como Destaque (Aparece na Home)</label>
+            </div>
+
+            <label>Imagem:</label>
+            <div style="background: #f9f9f9; padding: 10px; border-radius: 8px; margin-bottom: 10px;">
+                <input type="file" id="imagemInput" name="imagem" accept="image/*" style="width: 100%;">
+                <input type="hidden" id="imagemUrl" name="imagemUrl">
+                <img id="previewImagem" src="" style="max-height: 150px; display: none; margin-top: 10px;">
+            </div>
+
+            <label>Descrição:</label>
+            <textarea id="descricao" name="descricao" rows="4"></textarea>
+
+            <div class="modal-buttons">
+                <button type="button" onclick="fecharModal()" class="btn btn-cancelar">Cancelar</button>
+                <button type="submit" class="btn btn-enviar">Salvar</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script>
+    const modal = document.getElementById('modalLocal');
+    const form = document.getElementById('formLocal');
+
+    // --- LÓGICA DO MAPA ---
+    let map = null;
+    let marker = null;
+    const centroPedroII = [-4.4251, -41.4586]; // Centro da cidade
+
+    function iniciarMapa() {
+        if (!map) {
+            map = L.map('mapaAdmin').setView(centroPedroII, 14);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; OpenStreetMap'
+            }).addTo(map);
+
+            // Evento de Clique
+            map.on('click', function(e) {
+                const lat = e.latlng.lat.toFixed(6);
+                const lng = e.latlng.lng.toFixed(6);
+                definirPonto(lat, lng);
+            });
+        }
+        // Correção bug visual do modal (mapa cinza)
+        setTimeout(() => { map.invalidateSize(); }, 200);
+    }
+
+    function definirPonto(lat, lng) {
+        // Atualiza inputs
+        document.getElementById('lat').value = lat;
+        document.getElementById('lng').value = lng;
+
+        // Atualiza Pino
+        if (marker) map.removeLayer(marker);
+        marker = L.marker([lat, lng]).addTo(map);
+    }
+
+    function resetarMapa() {
+        if(marker) map.removeLayer(marker);
+        marker = null;
+        document.getElementById('lat').value = '';
+        document.getElementById('lng').value = '';
+        if(map) map.setView(centroPedroII, 14);
+    }
+    // -----------------------
+
+    async function carregar() {
+        const res = await fetch('/api/estabelecimentos');
+        const locais = await res.json();
+        const tbody = document.getElementById('tabelaCorpo');
+        tbody.innerHTML = '';
+
+        locais.forEach(l => {
+            tbody.innerHTML += `
                 <tr>
                     <td>${l.id}</td>
                     <td><img src="${l.imagem || '/img/placeholder.jpg'}" style="width:50px; height:50px; object-fit:cover; border-radius:4px;"></td>
@@ -99,9 +156,9 @@
                     <td>${l.categoria}</td>
                     <td>
                         <button onclick="toggleDestaque(${l.id})" 
-                        style="background: none; border: none; font-size: 1.5rem; cursor: pointer; transition: transform 0.2s;"
-                        title="Clique para alternar destaque">
-                        ${l.destaque ? '⭐' : '☆'}
+                            style="background: none; border: none; font-size: 1.5rem; cursor: pointer;"
+                            title="Clique para alternar destaque">
+                            ${l.destaque ? '⭐' : '☆'}
                         </button>
                     </td>
                     <td>
@@ -110,101 +167,97 @@
                     </td>
                 </tr>
             `;
-            });
+        });
+    }
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const id = document.getElementById('localId').value;
+        const metodo = id ? 'PUT' : 'POST';
+        const url = id ? `/api/estabelecimentos/${id}` : '/api/estabelecimentos';
+        const formData = new FormData(form);
+        const isDestaque = document.getElementById('destaque').checked;
+        formData.set('destaque', isDestaque ? 1 : 0);
+
+        const res = await fetch(url, { method: metodo, body: formData });
+        if (res.ok) { fecharModal(); carregar(); }
+        else { alert('Erro ao salvar.'); }
+    });
+
+    window.editar = function (l) {
+        document.getElementById('modalTitulo').innerText = 'Editar Local';
+        document.getElementById('localId').value = l.id;
+        document.getElementById('nome').value = l.nome;
+        document.getElementById('categoria').value = l.categoria;
+        document.getElementById('telefone').value = l.telefone;
+        document.getElementById('endereco').value = l.endereco;
+        document.getElementById('descricao').value = l.descricao;
+        document.getElementById('destaque').checked = (l.destaque == 1);
+
+        // Imagem
+        document.getElementById('imagemUrl').value = l.imagem;
+        const preview = document.getElementById('previewImagem');
+        if (l.imagem) { preview.src = l.imagem; preview.style.display = 'block'; }
+        else { preview.style.display = 'none'; }
+        document.getElementById('imagemInput').value = '';
+        
+        // --- MAPA NO EDITAR ---
+        modal.style.display = 'flex';
+        iniciarMapa();
+        
+        // Se tiver coordenadas salvas, coloca o pino
+        if (l.latitude && l.longitude) {
+            definirPonto(l.latitude, l.longitude);
+            map.setView([l.latitude, l.longitude], 16);
+        } else {
+            resetarMapa();
         }
+    };
 
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
+    window.deletar = async function (id) {
+        if (confirm('Tem certeza?')) {
+            await fetch(`/api/estabelecimentos/${id}`, { method: 'DELETE' });
+            carregar();
+        }
+    };
 
-            const id = document.getElementById('localId').value;
-            const metodo = id ? 'PUT' : 'POST';
-            const url = id ? `/api/estabelecimentos/${id}` : '/api/estabelecimentos';
-
-            const formData = new FormData(form);
-
-            // Correção para Checkbox: Se não estiver marcado, envia 0
-            const isDestaque = document.getElementById('destaque').checked;
-            formData.set('destaque', isDestaque ? 1 : 0);
-
-            const res = await fetch(url, { method: metodo, body: formData });
-
-            if (res.ok) { fecharModal(); carregar(); }
-            else { alert('Erro ao salvar.'); }
-        });
-
-        window.editar = function (l) {
-            document.getElementById('modalTitulo').innerText = 'Editar Local';
-            document.getElementById('localId').value = l.id;
-            document.getElementById('nome').value = l.nome;
-            document.getElementById('categoria').value = l.categoria;
-            document.getElementById('telefone').value = l.telefone;
-            document.getElementById('endereco').value = l.endereco;
-            document.getElementById('descricao').value = l.descricao;
-            document.getElementById('destaque').checked = (l.destaque == 1);
-
-            document.getElementById('imagemUrl').value = l.imagem;
+    document.getElementById('imagemInput').onchange = evt => {
+        const [file] = evt.target.files;
+        if (file) {
             const preview = document.getElementById('previewImagem');
-            if (l.imagem) { preview.src = l.imagem; preview.style.display = 'block'; }
-            else { preview.style.display = 'none'; }
+            preview.src = URL.createObjectURL(file);
+            preview.style.display = 'block';
+        }
+    };
 
-            document.getElementById('imagemInput').value = '';
-            modal.style.display = 'flex';
-        };
-
-        window.deletar = async function (id) {
-            if (confirm('Tem certeza?')) {
-                await fetch(`/api/estabelecimentos/${id}`, { method: 'DELETE' });
-                carregar();
-            }
-        };
-
-        document.getElementById('imagemInput').onchange = evt => {
-            const [file] = evt.target.files;
-            if (file) {
-                const preview = document.getElementById('previewImagem');
-                preview.src = URL.createObjectURL(file);
-                preview.style.display = 'block';
-            }
-        };
-
-        // Busca Rápida
-        document.getElementById('buscaAdmin').addEventListener('input', function () {
-            const termo = this.value.toLowerCase();
-            document.querySelectorAll('#tabelaCorpo tr').forEach(linha => {
-                linha.style.display = linha.innerText.toLowerCase().includes(termo) ? '' : 'none';
-            });
+    document.getElementById('buscaAdmin').addEventListener('input', function () {
+        const termo = this.value.toLowerCase();
+        document.querySelectorAll('#tabelaCorpo tr').forEach(linha => {
+            linha.style.display = linha.innerText.toLowerCase().includes(termo) ? '' : 'none';
         });
+    });
 
-        window.abrirModal = () => {
-            form.reset();
-            document.getElementById('localId').value = '';
-            document.getElementById('previewImagem').style.display = 'none';
-            modal.style.display = 'flex';
-        };
-        window.fecharModal = () => modal.style.display = 'none';
+    window.abrirModal = () => {
+        form.reset();
+        document.getElementById('localId').value = '';
+        document.getElementById('previewImagem').style.display = 'none';
+        modal.style.display = 'flex';
+        
+        // Inicia mapa zerado
+        iniciarMapa();
+        resetarMapa();
+    };
 
-        window.toggleDestaque = async (id) => {
-            try {
-                const res = await fetch(`/api/estabelecimentos/${id}/destaque`, { method: 'PATCH' });
-                if (res.ok) {
-                    // Toca um feedback visual ou recarrega a tabela suavemente
-                    const data = await res.json();
-                    // Mostra um toast rápido (opcional, se quiser usar Swal)
-                    const Toast = Swal.mixin({ toast: true, position: 'top-end', showConfirmButton: false, timer: 1500 });
-                    Toast.fire({
-                        icon: data.novoStatus ? 'success' : 'info',
-                        title: data.novoStatus ? 'Patrocínio Ativado!' : 'Patrocínio Removido'
-                    });
-                    carregar(); // Recarrega a tabela para atualizar a estrela
-                }
-            } catch (err) {
-                console.error(err);
-                alert('Erro ao alterar destaque');
-            }
-        };
+    window.fecharModal = () => modal.style.display = 'none';
 
-        carregar();
-    </script>
-    </body>
+    window.toggleDestaque = async (id) => {
+        try {
+            const res = await fetch(`/api/estabelecimentos/${id}/destaque`, { method: 'PATCH' });
+            if (res.ok) { carregar(); }
+        } catch (err) {
+            console.error(err);
+        }
+    };
 
-    </html>
+    carregar();
+</script>
