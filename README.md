@@ -28,7 +28,7 @@ O projeto foi construído com foco em performance, acessibilidade offline e mone
 
 * **Back-end:** Node.js, Express.
 * **Front-end:** HTML5, CSS3 (Moderno), JavaScript (Vanilla), EJS (View Engine).
-* **Banco de Dados:** SQLite (Leve e eficiente).
+* **Banco de Dados:** PostgreSQL.
 * **Segurança:** Bcrypt (Hash de senhas), Express-Session.
 * **Outros:** Leaflet (Mapas), Multer (Upload de Imagens).
 
@@ -36,6 +36,7 @@ O projeto foi construído com foco em performance, acessibilidade offline e mone
 
 ### Pré-requisitos
 * Node.js instalado.
+* PostgreSQL instalado.
 
 ### Passo a Passo
 
